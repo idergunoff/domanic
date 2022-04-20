@@ -496,13 +496,16 @@ def comboBox_class_lda_update():
 def comboBox_class_lda_cat_update():
     """Обновление списка дискриминантного анализа LDA категорий"""
     ui.comboBox_class_lda_cat.clear()
-    c_id = int(ui.comboBox_class_lda.currentText().split('.')[0])
-    for i in session.query(ClassByLda.category).filter(ClassByLda.id == c_id).first()[0].split(';'):
-        ui.comboBox_class_lda_cat.addItem(i)
-    ui.comboBox_class_lda_cat.setCurrentIndex(0)
-    update_table_lda_cat()
-    update_graph_lda_cat()
-    # reset_fake_lda()
+    try:
+        c_id = int(ui.comboBox_class_lda.currentText().split('.')[0])
+        for i in session.query(ClassByLda.category).filter(ClassByLda.id == c_id).first()[0].split(';'):
+            ui.comboBox_class_lda_cat.addItem(i)
+        ui.comboBox_class_lda_cat.setCurrentIndex(0)
+        update_table_lda_cat()
+        update_graph_lda_cat()
+        # reset_fake_lda()
+    except ValueError:
+        pass
 
 
 def update_table_lda_cat():
