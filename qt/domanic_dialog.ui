@@ -175,6 +175,9 @@ selection-color: rgb(85, 0, 0);</string>
                            <pointsize>8</pointsize>
                           </font>
                          </property>
+                         <property name="toolTip">
+                          <string>Отношение оценки эксцесса к его стандартному отклонению</string>
+                         </property>
                         </widget>
                        </item>
                        <item row="4" column="2">
@@ -218,6 +221,9 @@ selection-color: rgb(85, 0, 0);</string>
                            <pointsize>8</pointsize>
                           </font>
                          </property>
+                         <property name="toolTip">
+                          <string>Отношение оценки асимметрии к её стандартному отклонению</string>
+                         </property>
                         </widget>
                        </item>
                        <item row="2" column="3">
@@ -226,6 +232,9 @@ selection-color: rgb(85, 0, 0);</string>
                           <font>
                            <pointsize>8</pointsize>
                           </font>
+                         </property>
+                         <property name="toolTip">
+                          <string>Эксцесс выборки</string>
                          </property>
                         </widget>
                        </item>
@@ -269,6 +278,9 @@ selection-color: rgb(85, 0, 0);</string>
                           <font>
                            <pointsize>8</pointsize>
                           </font>
+                         </property>
+                         <property name="toolTip">
+                          <string>Асимметрия выборки</string>
                          </property>
                         </widget>
                        </item>
@@ -381,6 +393,9 @@ selection-color: rgb(85, 0, 0);</string>
                            <pointsize>8</pointsize>
                           </font>
                          </property>
+                         <property name="toolTip">
+                          <string>Максимальное значение в выборке</string>
+                         </property>
                         </widget>
                        </item>
                        <item row="1" column="1">
@@ -389,6 +404,9 @@ selection-color: rgb(85, 0, 0);</string>
                           <font>
                            <pointsize>8</pointsize>
                           </font>
+                         </property>
+                         <property name="toolTip">
+                          <string>Минимальное значение в выборке</string>
                          </property>
                         </widget>
                        </item>
@@ -399,6 +417,9 @@ selection-color: rgb(85, 0, 0);</string>
                            <pointsize>8</pointsize>
                           </font>
                          </property>
+                         <property name="toolTip">
+                          <string>Среднее геометрическое выборки</string>
+                         </property>
                         </widget>
                        </item>
                        <item row="2" column="1">
@@ -407,6 +428,9 @@ selection-color: rgb(85, 0, 0);</string>
                           <font>
                            <pointsize>8</pointsize>
                           </font>
+                         </property>
+                         <property name="toolTip">
+                          <string>Медиана выборки</string>
                          </property>
                         </widget>
                        </item>
@@ -417,6 +441,9 @@ selection-color: rgb(85, 0, 0);</string>
                            <pointsize>8</pointsize>
                           </font>
                          </property>
+                         <property name="toolTip">
+                          <string>Среднее арифметическое выборки</string>
+                         </property>
                         </widget>
                        </item>
                        <item row="0" column="3">
@@ -425,6 +452,9 @@ selection-color: rgb(85, 0, 0);</string>
                           <font>
                            <pointsize>8</pointsize>
                           </font>
+                         </property>
+                         <property name="toolTip">
+                          <string>Размер выборки</string>
                          </property>
                         </widget>
                        </item>
@@ -753,7 +783,7 @@ selection-color: rgb(85, 0, 0);</string>
                           </font>
                          </property>
                          <property name="toolTip">
-                          <string>Очистить список параметров</string>
+                          <string>Удалить выбранный параметр</string>
                          </property>
                          <property name="styleSheet">
                           <string notr="true">background-color: rgb(255, 185, 185);</string>
@@ -831,7 +861,7 @@ selection-color: rgb(85, 0, 0);</string>
                       </font>
                      </property>
                      <property name="toolTip">
-                      <string>Отобразить выбранные параметры на одном графике</string>
+                      <string>Построить график зависимости между параметрами</string>
                      </property>
                      <property name="styleSheet">
                       <string notr="true">background-color: rgb(255, 255, 222);</string>
@@ -892,6 +922,9 @@ selection-color: rgb(85, 0, 0);</string>
                          <pointsize>9</pointsize>
                         </font>
                        </property>
+                       <property name="toolTip">
+                        <string>Ось X в логарифмическом масштабе</string>
+                       </property>
                        <property name="text">
                         <string>xlg</string>
                        </property>
@@ -904,6 +937,9 @@ selection-color: rgb(85, 0, 0);</string>
                          <pointsize>9</pointsize>
                         </font>
                        </property>
+                       <property name="toolTip">
+                        <string>Ось Y в логарифмическом масштабе</string>
+                       </property>
                        <property name="text">
                         <string>ylg</string>
                        </property>
@@ -915,6 +951,9 @@ selection-color: rgb(85, 0, 0);</string>
                         <font>
                          <pointsize>9</pointsize>
                         </font>
+                       </property>
+                       <property name="toolTip">
+                        <string>Добавить линию тренда на график</string>
                        </property>
                        <property name="text">
                         <string>trend</string>
@@ -931,6 +970,9 @@ selection-color: rgb(85, 0, 0);</string>
                         <font>
                          <pointsize>10</pointsize>
                         </font>
+                       </property>
+                       <property name="toolTip">
+                        <string>Выбор цветовой схемы</string>
                        </property>
                        <item>
                         <property name="text">
@@ -1017,7 +1059,7 @@ selection-color: rgb(85, 0, 0);</string>
                         </font>
                        </property>
                        <property name="toolTip">
-                        <string>Сохранить таблицу из виджета в XLS</string>
+                        <string>Сохранить таблицу исходных данных в XLS</string>
                        </property>
                        <property name="styleSheet">
                         <string notr="true">background-color: rgb(165, 236, 255);</string>
@@ -1055,7 +1097,7 @@ selection-color: rgb(85, 0, 0);</string>
                       </font>
                      </property>
                      <property name="toolTip">
-                      <string>Очистить список параметров</string>
+                      <string>Удалить выбранный параметр</string>
                      </property>
                      <property name="styleSheet">
                       <string notr="true">background-color: rgb(255, 185, 185);</string>
@@ -1077,7 +1119,7 @@ selection-color: rgb(85, 0, 0);</string>
                       </font>
                      </property>
                      <property name="toolTip">
-                      <string>Отобразить выбранные параметры на одном графике</string>
+                      <string>Добавить все загруженные параметры из выбранной таблицы</string>
                      </property>
                      <property name="styleSheet">
                       <string notr="true">background-color: rgb(191, 255, 191);</string>
@@ -1155,7 +1197,7 @@ selection-color: rgb(85, 0, 0);</string>
                       </font>
                      </property>
                      <property name="toolTip">
-                      <string>Очистить список параметров</string>
+                      <string>Удалить выбранный параметр</string>
                      </property>
                      <property name="styleSheet">
                       <string notr="true">background-color: rgb(255, 185, 185);</string>
@@ -1173,7 +1215,7 @@ selection-color: rgb(85, 0, 0);</string>
                       </font>
                      </property>
                      <property name="toolTip">
-                      <string>Нормировать и отобразить выбранные параметры</string>
+                      <string>Построить корреляционную матрицу по выбранным парамаетрам</string>
                      </property>
                      <property name="styleSheet">
                       <string notr="true">background-color: rgb(255, 255, 222);</string>
@@ -1189,6 +1231,9 @@ selection-color: rgb(85, 0, 0);</string>
                       <font>
                        <pointsize>9</pointsize>
                       </font>
+                     </property>
+                     <property name="toolTip">
+                      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Если включено, сохраняется таблица параметров,&lt;/p&gt;&lt;p&gt;использованная для расчета корреляционной матрицы&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                      </property>
                      <property name="styleSheet">
                       <string notr="true">background-color: rgb(165, 236, 255);</string>
@@ -1251,6 +1296,9 @@ selection-color: rgb(85, 0, 0);</string>
                              <pointsize>9</pointsize>
                             </font>
                            </property>
+                           <property name="toolTip">
+                            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Значения интервалов по выбранному параметру&lt;/p&gt;&lt;p&gt;Запись: 0;1;5;20&lt;/p&gt;&lt;p&gt;Означает: 0-1; 1-5; 5-20; &amp;gt;20&lt;/p&gt;&lt;p&gt;Количество интервалов должно соответствовать&lt;/p&gt;&lt;p&gt;количеству категорий&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                           </property>
                           </widget>
                          </item>
                         </layout>
@@ -1280,6 +1328,9 @@ selection-color: rgb(85, 0, 0);</string>
                              <pointsize>9</pointsize>
                             </font>
                            </property>
+                           <property name="toolTip">
+                            <string>Выбрать классификацию</string>
+                           </property>
                           </widget>
                          </item>
                          <item row="0" column="1">
@@ -1288,6 +1339,9 @@ selection-color: rgb(85, 0, 0);</string>
                             <font>
                              <pointsize>9</pointsize>
                             </font>
+                           </property>
+                           <property name="toolTip">
+                            <string>Добавить классификацию</string>
                            </property>
                            <property name="text">
                             <string>+</string>
@@ -1300,6 +1354,9 @@ selection-color: rgb(85, 0, 0);</string>
                             <font>
                              <pointsize>9</pointsize>
                             </font>
+                           </property>
+                           <property name="toolTip">
+                            <string>Удалить классификацию</string>
                            </property>
                            <property name="text">
                             <string>-</string>
@@ -1318,7 +1375,7 @@ selection-color: rgb(85, 0, 0);</string>
                             </font>
                            </property>
                            <property name="toolTip">
-                            <string>Добавить параметр</string>
+                            <string>Добавить параметр в классификацию</string>
                            </property>
                            <property name="autoFillBackground">
                             <bool>false</bool>
@@ -1339,7 +1396,7 @@ selection-color: rgb(85, 0, 0);</string>
                             </font>
                            </property>
                            <property name="toolTip">
-                            <string>Удаление значений параметра в выбранном интервале</string>
+                            <string>Удалить параметр из классификации</string>
                            </property>
                            <property name="styleSheet">
                             <string notr="true">background-color: rgb(255, 185, 185);</string>
@@ -1361,7 +1418,7 @@ selection-color: rgb(85, 0, 0);</string>
                             </font>
                            </property>
                            <property name="toolTip">
-                            <string>Отобразить выбранные параметры на одном графике</string>
+                            <string>Выполнить выбранную классификацию</string>
                            </property>
                            <property name="styleSheet">
                             <string notr="true">background-color: rgb(255, 255, 222);</string>
@@ -1377,6 +1434,9 @@ selection-color: rgb(85, 0, 0);</string>
                             <font>
                              <pointsize>9</pointsize>
                             </font>
+                           </property>
+                           <property name="toolTip">
+                            <string>Сохранить результаты классификации</string>
                            </property>
                            <property name="styleSheet">
                             <string notr="true">background-color: rgb(165, 236, 255);</string>
@@ -1448,7 +1508,7 @@ selection-color: rgb(85, 0, 0);</string>
                         </font>
                        </property>
                        <property name="toolTip">
-                        <string>Добавить параметр</string>
+                        <string>Добавить классификацию  в конструктор</string>
                        </property>
                        <property name="autoFillBackground">
                         <bool>false</bool>
@@ -1516,7 +1576,7 @@ selection-color: rgb(85, 0, 0);</string>
                           </font>
                          </property>
                          <property name="toolTip">
-                          <string>Отобразить выбранные параметры на одном графике</string>
+                          <string>Провести классификацию по конструктору</string>
                          </property>
                          <property name="styleSheet">
                           <string notr="true">background-color: rgb(255, 255, 222);</string>
@@ -1534,7 +1594,7 @@ selection-color: rgb(85, 0, 0);</string>
                           </font>
                          </property>
                          <property name="toolTip">
-                          <string>Очистить список параметров</string>
+                          <string>Очистить конструктор</string>
                          </property>
                          <property name="styleSheet">
                           <string notr="true">background-color: rgb(255, 185, 185);</string>
@@ -1589,6 +1649,9 @@ selection-color: rgb(85, 0, 0);</string>
                              <pointsize>9</pointsize>
                             </font>
                            </property>
+                           <property name="toolTip">
+                            <string>Выбора модели классификации дискриминантного анализа</string>
+                           </property>
                           </widget>
                          </item>
                          <item row="0" column="1">
@@ -1597,6 +1660,9 @@ selection-color: rgb(85, 0, 0);</string>
                             <font>
                              <pointsize>9</pointsize>
                             </font>
+                           </property>
+                           <property name="toolTip">
+                            <string>Добавить модель классификации дискриминантного анализа</string>
                            </property>
                            <property name="text">
                             <string>+</string>
@@ -1609,6 +1675,9 @@ selection-color: rgb(85, 0, 0);</string>
                             <font>
                              <pointsize>9</pointsize>
                             </font>
+                           </property>
+                           <property name="toolTip">
+                            <string>Удалить модель классификации дискриминантного анализа</string>
                            </property>
                            <property name="text">
                             <string>-</string>
@@ -1626,6 +1695,9 @@ selection-color: rgb(85, 0, 0);</string>
                              <pointsize>9</pointsize>
                             </font>
                            </property>
+                           <property name="toolTip">
+                            <string>Выбор категории модели LDA</string>
+                           </property>
                           </widget>
                          </item>
                          <item row="0" column="1">
@@ -1636,7 +1708,7 @@ selection-color: rgb(85, 0, 0);</string>
                             </font>
                            </property>
                            <property name="toolTip">
-                            <string>Добавить параметр</string>
+                            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Добавить интервал выбранной категории в модель LDA&lt;/p&gt;&lt;p&gt;Интервал указать в блоке &amp;quot;Интервал исследований&amp;quot;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                            </property>
                            <property name="autoFillBackground">
                             <bool>false</bool>
@@ -1668,7 +1740,7 @@ selection-color: rgb(85, 0, 0);</string>
                             </font>
                            </property>
                            <property name="toolTip">
-                            <string>Добавить параметр</string>
+                            <string>Добавить параметр для LDA</string>
                            </property>
                            <property name="autoFillBackground">
                             <bool>false</bool>
@@ -1688,6 +1760,9 @@ selection-color: rgb(85, 0, 0);</string>
                              <pointsize>9</pointsize>
                             </font>
                            </property>
+                           <property name="toolTip">
+                            <string>Cохранить результаты LDA в xls-файл </string>
+                           </property>
                            <property name="styleSheet">
                             <string notr="true">background-color: rgb(165, 236, 255);</string>
                            </property>
@@ -1704,7 +1779,7 @@ selection-color: rgb(85, 0, 0);</string>
                             </font>
                            </property>
                            <property name="toolTip">
-                            <string>Отобразить выбранные параметры на одном графике</string>
+                            <string>Построить диаграмму рассеяния для обучающей выборки</string>
                            </property>
                            <property name="styleSheet">
                             <string notr="true">background-color: rgb(255, 255, 222);</string>
@@ -1740,7 +1815,7 @@ selection-color: rgb(85, 0, 0);</string>
                             </font>
                            </property>
                            <property name="toolTip">
-                            <string>Добавить параметр</string>
+                            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-family:'Calibri,sans-serif'; font-size:12pt;&quot;&gt;Проверка и удаление образцов из обучающей выборки,&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-family:'Calibri,sans-serif'; font-size:12pt;&quot;&gt;которые не разделяются по заданной разметке&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                            </property>
                            <property name="autoFillBackground">
                             <bool>false</bool>
@@ -1761,7 +1836,7 @@ selection-color: rgb(85, 0, 0);</string>
                             </font>
                            </property>
                            <property name="toolTip">
-                            <string>Отобразить выбранные параметры на одном графике</string>
+                            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-family:'Calibri,sans-serif'; font-size:12pt;&quot;&gt;Расчёт линейного дискриминантного анализа (LDA) для выбранной скважины&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                            </property>
                            <property name="styleSheet">
                             <string notr="true">background-color: rgb(255, 255, 222);</string>
@@ -1803,7 +1878,7 @@ selection-color: rgb(85, 0, 0);</string>
                               </font>
                              </property>
                              <property name="toolTip">
-                              <string>Отобразить выбранные параметры на одном графике</string>
+                              <string>Рассчитать ресурсы по выбранным категориям</string>
                              </property>
                              <property name="styleSheet">
                               <string notr="true">background-color: rgb(255, 255, 222);</string>
@@ -1821,7 +1896,7 @@ selection-color: rgb(85, 0, 0);</string>
                               </font>
                              </property>
                              <property name="toolTip">
-                              <string>Очистить список параметров</string>
+                              <string>Очистить</string>
                              </property>
                              <property name="styleSheet">
                               <string notr="true">background-color: rgb(255, 185, 185);</string>
@@ -1835,6 +1910,9 @@ selection-color: rgb(85, 0, 0);</string>
                          </item>
                          <item row="0" column="0">
                           <widget class="QWidget" name="cat_resource" native="true">
+                           <property name="toolTip">
+                            <string>Выбор категорий для расчёта ресурсов</string>
+                           </property>
                            <layout class="QGridLayout" name="gridLayout_40">
                             <item row="0" column="0">
                              <layout class="QGridLayout" name="gridLayout_resourse">
@@ -1862,6 +1940,9 @@ selection-color: rgb(85, 0, 0);</string>
                             <font>
                              <pointsize>7</pointsize>
                             </font>
+                           </property>
+                           <property name="toolTip">
+                            <string>Расчётные ресурсы</string>
                            </property>
                           </widget>
                          </item>
@@ -2694,6 +2775,9 @@ selection-color: rgb(85, 0, 0);</string>
                <attribute name="title">
                 <string>PIR</string>
                </attribute>
+               <attribute name="toolTip">
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Данные пиролиза&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               </attribute>
                <layout class="QGridLayout" name="gridLayout_9">
                 <item row="0" column="0">
                  <widget class="QToolBox" name="toolBox_pir">
@@ -2716,6 +2800,9 @@ selection-color: rgb(85, 0, 0);</string>
                    </property>
                    <attribute name="label">
                     <string>KERN</string>
+                   </attribute>
+                   <attribute name="toolTip">
+                    <string>Данные пиролиза керна</string>
                    </attribute>
                    <layout class="QGridLayout" name="gridLayout_13">
                     <item row="0" column="0">
@@ -2741,6 +2828,9 @@ selection-color: rgb(85, 0, 0);</string>
                    <attribute name="label">
                     <string>EXTRACT</string>
                    </attribute>
+                   <attribute name="toolTip">
+                    <string>Данные пиролиза керна после экстракции</string>
+                   </attribute>
                    <layout class="QGridLayout" name="gridLayout_14">
                     <item row="0" column="0">
                      <widget class="QListWidget" name="listWidget_pir_extr">
@@ -2761,6 +2851,9 @@ selection-color: rgb(85, 0, 0);</string>
                <attribute name="title">
                 <string>CHROM</string>
                </attribute>
+               <attribute name="toolTip">
+                <string>Данные хроматографии</string>
+               </attribute>
                <layout class="QGridLayout" name="gridLayout_15">
                 <item row="0" column="0">
                  <widget class="QToolBox" name="toolBox_chrom">
@@ -2770,7 +2863,7 @@ selection-color: rgb(85, 0, 0);</string>
                    </font>
                   </property>
                   <property name="currentIndex">
-                   <number>0</number>
+                   <number>1</number>
                   </property>
                   <widget class="QWidget" name="tab_chrom_kern">
                    <property name="geometry">
@@ -2783,6 +2876,9 @@ selection-color: rgb(85, 0, 0);</string>
                    </property>
                    <attribute name="label">
                     <string>KERN</string>
+                   </attribute>
+                   <attribute name="toolTip">
+                    <string>Данные хроматографии керна</string>
                    </attribute>
                    <layout class="QGridLayout" name="gridLayout_16">
                     <item row="0" column="0">
@@ -2801,12 +2897,15 @@ selection-color: rgb(85, 0, 0);</string>
                     <rect>
                      <x>0</x>
                      <y>0</y>
-                     <width>98</width>
-                     <height>91</height>
+                     <width>223</width>
+                     <height>263</height>
                     </rect>
                    </property>
                    <attribute name="label">
                     <string>EXTRACT</string>
+                   </attribute>
+                   <attribute name="toolTip">
+                    <string>Данные хроматографии экстракта</string>
                    </attribute>
                    <layout class="QGridLayout" name="gridLayout_18">
                     <item row="0" column="0">
@@ -2828,6 +2927,9 @@ selection-color: rgb(85, 0, 0);</string>
                <attribute name="title">
                 <string>LIT</string>
                </attribute>
+               <attribute name="toolTip">
+                <string>Данные литологии</string>
+               </attribute>
                <layout class="QGridLayout" name="gridLayout_19">
                 <item row="0" column="0">
                  <widget class="QListWidget" name="listWidget_lit"/>
@@ -2837,6 +2939,9 @@ selection-color: rgb(85, 0, 0);</string>
               <widget class="QWidget" name="tab_las">
                <attribute name="title">
                 <string>LAS</string>
+               </attribute>
+               <attribute name="toolTip">
+                <string>Данные ГИС</string>
                </attribute>
                <layout class="QGridLayout" name="gridLayout_20">
                 <item row="0" column="0">
