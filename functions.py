@@ -605,6 +605,44 @@ def category_to_resource(list_cat):
         ui.checkBox.setText(i)
         ui.gridLayout_resourse.addWidget(ui.checkBox)
         ui.checkBox.setStyleSheet(f'background-color:{color_list[n]}')
+        ui.checkBox.clicked.connect(interval_to_db)
+
+
+def interval_to_db():
+    try:
+        session.query(IntervalFromCat).delete()
+        d, n = get_n_cat_column()
+        start, stop = check_start_stop()
+        list_cat_for_calc = []
+        for i in ui.cat_resource.findChildren(QtWidgets.QCheckBox):
+            if i.isChecked():
+                list_cat_for_calc.append(i.text())
+        # list_calc_int = []
+        list_int = []
+        for i in range(ui.tableWidget.rowCount()):
+            if stop > float(ui.tableWidget.item(i, d).text()) > start:
+                if ui.tableWidget.item(i, n).text() in list_cat_for_calc:
+                    if len(list_int) == 0 and i != 0:
+                        value = (float(ui.tableWidget.item(i, d).text()) + float(ui.tableWidget.item(i - 1, d).text())) / 2
+                        list_int.append(round(value, 2))
+                    else:
+                        list_int.append(float(ui.tableWidget.item(i, d).text()))
+                else:
+                    if len(list_int) > 0:
+                        value = (float(ui.tableWidget.item(i, d).text()) + float(ui.tableWidget.item(i - 1, d).text())) / 2
+                        list_int.append(round(value, 2))
+                        # list_calc_int.append([list_int[0], list_int[-1]])
+                        new_int = IntervalFromCat(int_from=list_int[0], int_to=list_int[-1])
+                        session.add(new_int)
+                        list_int = []
+        if len(list_int) > 0:
+            # list_calc_int.append([list_int[0], list_int[-1]])
+            new_int = IntervalFromCat(int_from=list_int[0], int_to=list_int[-1])
+            session.add(new_int)
+        session.commit()
+    except UnboundLocalError:
+        ui.label_info.setText(f'Внимание! Для выбора категорий необходима таблица результатов классификации. Выполните расчёт классификации заново.')
+        ui.label_info.setStyleSheet('color: red')
 
 
 def del_category_to_resource():

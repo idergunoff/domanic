@@ -1638,6 +1638,232 @@ selection-color: rgb(85, 0, 0);</string>
                        </property>
                       </widget>
                      </item>
+                     <item row="2" column="0">
+                      <layout class="QGridLayout" name="gridLayout_71">
+                       <item row="0" column="0">
+                        <widget class="QLabel" name="label_param_3">
+                         <property name="font">
+                          <font>
+                           <pointsize>11</pointsize>
+                           <italic>true</italic>
+                           <underline>true</underline>
+                          </font>
+                         </property>
+                         <property name="text">
+                          <string>Ресурсы:</string>
+                         </property>
+                        </widget>
+                       </item>
+                       <item row="1" column="0">
+                        <widget class="QTabWidget" name="tabWidget_resource">
+                         <property name="currentIndex">
+                          <number>0</number>
+                         </property>
+                         <widget class="QWidget" name="tab_3">
+                          <attribute name="title">
+                           <string>расчёт</string>
+                          </attribute>
+                          <layout class="QGridLayout" name="gridLayout_39">
+                           <item row="0" column="0">
+                            <layout class="QGridLayout" name="gridLayout_21" columnstretch="1,1">
+                             <item row="1" column="0" colspan="2">
+                              <layout class="QGridLayout" name="gridLayout_73">
+                               <item row="0" column="2">
+                                <widget class="QCheckBox" name="checkBox_save_table_resource">
+                                 <property name="font">
+                                  <font>
+                                   <pointsize>10</pointsize>
+                                  </font>
+                                 </property>
+                                 <property name="toolTip">
+                                  <string>Рассчитать и сохранить в таблицу
+ресурсы по выбранным категориям</string>
+                                 </property>
+                                 <property name="styleSheet">
+                                  <string notr="true">background-color: rgb(165, 236, 255);</string>
+                                 </property>
+                                 <property name="text">
+                                  <string>SAVE</string>
+                                 </property>
+                                </widget>
+                               </item>
+                               <item row="0" column="0">
+                                <widget class="QPushButton" name="pushButton_calc_resourse">
+                                 <property name="font">
+                                  <font>
+                                   <pointsize>10</pointsize>
+                                  </font>
+                                 </property>
+                                 <property name="toolTip">
+                                  <string>Рассчитать ресурсы по выбранным категориям</string>
+                                 </property>
+                                 <property name="styleSheet">
+                                  <string notr="true">background-color: rgb(255, 255, 222);</string>
+                                 </property>
+                                 <property name="text">
+                                  <string>CALC</string>
+                                 </property>
+                                </widget>
+                               </item>
+                               <item row="0" column="1">
+                                <widget class="QPushButton" name="pushButton_clear_resourse">
+                                 <property name="font">
+                                  <font>
+                                   <pointsize>10</pointsize>
+                                  </font>
+                                 </property>
+                                 <property name="toolTip">
+                                  <string>Очистить</string>
+                                 </property>
+                                 <property name="styleSheet">
+                                  <string notr="true">background-color: rgb(255, 185, 185);</string>
+                                 </property>
+                                 <property name="text">
+                                  <string>CLEAR</string>
+                                 </property>
+                                </widget>
+                               </item>
+                              </layout>
+                             </item>
+                             <item row="0" column="0">
+                              <widget class="QWidget" name="cat_resource" native="true">
+                               <property name="toolTip">
+                                <string>Выбор категорий для расчёта ресурсов</string>
+                               </property>
+                               <layout class="QGridLayout" name="gridLayout_40">
+                                <item row="0" column="0">
+                                 <layout class="QGridLayout" name="gridLayout_resourse">
+                                  <item row="0" column="0">
+                                   <spacer name="verticalSpacer_5">
+                                    <property name="orientation">
+                                     <enum>Qt::Vertical</enum>
+                                    </property>
+                                    <property name="sizeHint" stdset="0">
+                                     <size>
+                                      <width>20</width>
+                                      <height>40</height>
+                                     </size>
+                                    </property>
+                                   </spacer>
+                                  </item>
+                                 </layout>
+                                </item>
+                               </layout>
+                              </widget>
+                             </item>
+                             <item row="0" column="1">
+                              <widget class="QTextEdit" name="textEdit_resourse">
+                               <property name="font">
+                                <font>
+                                 <pointsize>7</pointsize>
+                                </font>
+                               </property>
+                               <property name="toolTip">
+                                <string>Расчётные ресурсы</string>
+                               </property>
+                              </widget>
+                             </item>
+                            </layout>
+                           </item>
+                          </layout>
+                         </widget>
+                         <widget class="QWidget" name="tab_4">
+                          <attribute name="title">
+                           <string>добавить параметры в таблицу</string>
+                          </attribute>
+                          <layout class="QGridLayout" name="gridLayout_44">
+                           <item row="0" column="0">
+                            <layout class="QGridLayout" name="gridLayout_41">
+                             <item row="0" column="0" colspan="2">
+                              <widget class="QListWidget" name="listWidget_param_resource_tab">
+                               <property name="styleSheet">
+                                <string notr="true">font: 9pt &quot;MS Shell Dlg 2&quot;;</string>
+                               </property>
+                              </widget>
+                             </item>
+                             <item row="1" column="0">
+                              <widget class="QPushButton" name="pushButton_add_param_res">
+                               <property name="font">
+                                <font>
+                                 <pointsize>10</pointsize>
+                                </font>
+                               </property>
+                               <property name="toolTip">
+                                <string>Добавить параметр</string>
+                               </property>
+                               <property name="autoFillBackground">
+                                <bool>false</bool>
+                               </property>
+                               <property name="styleSheet">
+                                <string notr="true">background-color: rgb(191, 255, 191);</string>
+                               </property>
+                               <property name="text">
+                                <string>ADD</string>
+                               </property>
+                              </widget>
+                             </item>
+                             <item row="1" column="1">
+                              <widget class="QPushButton" name="pushButton_add_tab_res">
+                               <property name="font">
+                                <font>
+                                 <pointsize>10</pointsize>
+                                </font>
+                               </property>
+                               <property name="toolTip">
+                                <string>Добавить все загруженные параметры из выбранной таблицы</string>
+                               </property>
+                               <property name="styleSheet">
+                                <string notr="true">background-color: rgb(191, 255, 191);</string>
+                               </property>
+                               <property name="text">
+                                <string>ADD ALL TAB</string>
+                               </property>
+                              </widget>
+                             </item>
+                             <item row="2" column="0">
+                              <widget class="QPushButton" name="pushButton_del_param_res">
+                               <property name="font">
+                                <font>
+                                 <pointsize>10</pointsize>
+                                </font>
+                               </property>
+                               <property name="toolTip">
+                                <string>Удалить выбранный параметр</string>
+                               </property>
+                               <property name="styleSheet">
+                                <string notr="true">background-color: rgb(255, 185, 185);</string>
+                               </property>
+                               <property name="text">
+                                <string>DEL</string>
+                               </property>
+                              </widget>
+                             </item>
+                             <item row="2" column="1">
+                              <widget class="QPushButton" name="pushButton_clear_param_res">
+                               <property name="font">
+                                <font>
+                                 <pointsize>10</pointsize>
+                                </font>
+                               </property>
+                               <property name="toolTip">
+                                <string>Очистить список параметров</string>
+                               </property>
+                               <property name="styleSheet">
+                                <string notr="true">background-color: rgb(255, 185, 185);</string>
+                               </property>
+                               <property name="text">
+                                <string>CLEAR</string>
+                               </property>
+                              </widget>
+                             </item>
+                            </layout>
+                           </item>
+                          </layout>
+                         </widget>
+                        </widget>
+                       </item>
+                      </layout>
+                     </item>
                      <item row="1" column="0">
                       <layout class="QGridLayout" name="gridLayout_62">
                        <item row="0" column="0">
@@ -1757,7 +1983,7 @@ selection-color: rgb(85, 0, 0);</string>
                           <widget class="QCheckBox" name="checkBox_save_class_lda">
                            <property name="font">
                             <font>
-                             <pointsize>9</pointsize>
+                             <pointsize>10</pointsize>
                             </font>
                            </property>
                            <property name="toolTip">
@@ -1843,125 +2069,6 @@ selection-color: rgb(85, 0, 0);</string>
                            </property>
                            <property name="text">
                             <string>CALC</string>
-                           </property>
-                          </widget>
-                         </item>
-                        </layout>
-                       </item>
-                      </layout>
-                     </item>
-                     <item row="2" column="0">
-                      <layout class="QGridLayout" name="gridLayout_71">
-                       <item row="0" column="0">
-                        <widget class="QLabel" name="label_param_3">
-                         <property name="font">
-                          <font>
-                           <pointsize>11</pointsize>
-                           <italic>true</italic>
-                           <underline>true</underline>
-                          </font>
-                         </property>
-                         <property name="text">
-                          <string>Ресурсы:</string>
-                         </property>
-                        </widget>
-                       </item>
-                       <item row="1" column="0">
-                        <layout class="QGridLayout" name="gridLayout_21" columnstretch="1,1">
-                         <item row="1" column="0" colspan="2">
-                          <layout class="QGridLayout" name="gridLayout_73">
-                           <item row="0" column="0">
-                            <widget class="QPushButton" name="pushButton_calc_resourse">
-                             <property name="font">
-                              <font>
-                               <pointsize>10</pointsize>
-                              </font>
-                             </property>
-                             <property name="toolTip">
-                              <string>Рассчитать ресурсы по выбранным категориям</string>
-                             </property>
-                             <property name="styleSheet">
-                              <string notr="true">background-color: rgb(255, 255, 222);</string>
-                             </property>
-                             <property name="text">
-                              <string>CALC</string>
-                             </property>
-                            </widget>
-                           </item>
-                           <item row="0" column="2">
-                            <widget class="QPushButton" name="pushButton_clear_resourse">
-                             <property name="font">
-                              <font>
-                               <pointsize>10</pointsize>
-                              </font>
-                             </property>
-                             <property name="toolTip">
-                              <string>Очистить</string>
-                             </property>
-                             <property name="styleSheet">
-                              <string notr="true">background-color: rgb(255, 185, 185);</string>
-                             </property>
-                             <property name="text">
-                              <string>CLEAR</string>
-                             </property>
-                            </widget>
-                           </item>
-                           <item row="0" column="1">
-                            <widget class="QPushButton" name="pushButton_table_resource">
-                             <property name="font">
-                              <font>
-                               <pointsize>10</pointsize>
-                              </font>
-                             </property>
-                             <property name="toolTip">
-                              <string>Рассчитать и сохранить в таблицу
-ресурсы по выбранным категориям</string>
-                             </property>
-                             <property name="styleSheet">
-                              <string notr="true">background-color: rgb(255, 255, 222);</string>
-                             </property>
-                             <property name="text">
-                              <string>TABLE</string>
-                             </property>
-                            </widget>
-                           </item>
-                          </layout>
-                         </item>
-                         <item row="0" column="0">
-                          <widget class="QWidget" name="cat_resource" native="true">
-                           <property name="toolTip">
-                            <string>Выбор категорий для расчёта ресурсов</string>
-                           </property>
-                           <layout class="QGridLayout" name="gridLayout_40">
-                            <item row="0" column="0">
-                             <layout class="QGridLayout" name="gridLayout_resourse">
-                              <item row="0" column="0">
-                               <spacer name="verticalSpacer_5">
-                                <property name="orientation">
-                                 <enum>Qt::Vertical</enum>
-                                </property>
-                                <property name="sizeHint" stdset="0">
-                                 <size>
-                                  <width>20</width>
-                                  <height>40</height>
-                                 </size>
-                                </property>
-                               </spacer>
-                              </item>
-                             </layout>
-                            </item>
-                           </layout>
-                          </widget>
-                         </item>
-                         <item row="0" column="1">
-                          <widget class="QTextEdit" name="textEdit_resourse">
-                           <property name="font">
-                            <font>
-                             <pointsize>7</pointsize>
-                            </font>
-                           </property>
-                           <property name="toolTip">
-                            <string>Расчётные ресурсы</string>
                            </property>
                           </widget>
                          </item>
@@ -2889,7 +2996,7 @@ selection-color: rgb(85, 0, 0);</string>
                     <rect>
                      <x>0</x>
                      <y>0</y>
-                     <width>98</width>
+                     <width>91</width>
                      <height>91</height>
                     </rect>
                    </property>

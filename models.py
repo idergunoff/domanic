@@ -437,4 +437,12 @@ class ClassByLdaMark(Base):
     class_lda = relationship('ClassByLda', backref='class_by_LDA_mark')
 
 
+class IntervalFromCat(Base):
+    __tablename__ = 'interval_from_cat'
+
+    id = Column(Integer, primary_key=True)
+    int_from = Column(Float)
+    int_to = Column(Float)
+
+
 Base.metadata.create_all(engine)
