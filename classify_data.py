@@ -528,7 +528,7 @@ def calc_resource():
                         list_int = []
         if len(list_int) > 0:
             list_calc_int.append([list_int[0], list_int[-1]])
-        list_Qhs1, list_Qhs2, list_Ro, list_h, list_s1, list_s2 = [], [], [], [], [], []
+        list_Qhs1, list_Qhs2, list_Ro, list_Ro_param, list_h, list_s1, list_s2 = [], [], [], [], [], [], []
         for i in list_calc_int:
             w_id = get_well_id()
             h = i[1] - i[0]
@@ -544,12 +544,16 @@ def calc_resource():
                 DataLit.well_id == w_id, DataLit.depth >= i[0], DataLit.depth <= i[1]).all())), [])))
             if not np.isnan(density):
                 Ro = density
+                Ro_param = 'density'
             elif not np.isnan(ggk):
                 Ro = ggk
+                Ro_param = 'ggk'
             elif not np.isnan(sgk):
                 Ro = sgk
+                Ro_param = 'sgk'
             else:
                 Ro = list_Ro[-1]
+                Ro_param = list_Ro_param[-1]
                 mes = f'{round(h, 2)} м. {i[0]} - {i[1]}'
                 set_info(mes, 'red')
                 mes = 'Данные по плотности отсутствуют.'
@@ -573,6 +577,12 @@ def calc_resource():
             Qhs2 = h * Ro * s2
             mes = f'{round(h, 2)} м. {i[0]} - {i[1]}'
             set_info(mes, 'blue')
+            mes = f'Ro ({Ro_param}) = {round(Ro, 2)}'
+            set_info(mes, 'blue')
+            mes = f'S1 = {round(s1, 2)}'
+            set_info(mes, 'blue')
+            mes = f'S2 = {round(s2, 2)}'
+            set_info(mes, 'blue')
             mes = f'Qhs1 = {round(Qhs1, 2)}'
             set_info(mes, 'blue')
             mes = f'Qhs2 = {round(Qhs2, 2)}'
@@ -580,6 +590,7 @@ def calc_resource():
             mes = ''
             set_info(mes, 'blue')
             list_Ro.append(Ro)
+            list_Ro_param.append(Ro_param)
             list_Qhs1.append(Qhs1)
             list_Qhs2.append(Qhs2)
             list_h.append(h)
@@ -595,8 +606,142 @@ def calc_resource():
         set_info(mes, 'green')
         mes = f'Qhs2 = {round(sum(list_Qhs2), 2)}'
         set_info(mes, 'green')
+        mes = ''
+        set_info(mes, 'green')
     except IndexError:
         ui.label_info.setText(f'Внимание! Для данной скважины отсутствуют параметры для расчёта ресурсов.')
+        ui.label_info.setStyleSheet('color: red')
+    except UnboundLocalError:
+        ui.label_info.setText(f'Внимание! Для расчёта ресурсов необходима таблица результатов классификации. Выполните расчёт классификации заново.')
+        ui.label_info.setStyleSheet('color: red')
+
+
+def save_table_resource():
+    try:
+        d, n = get_n_cat_column()
+        start, stop = check_start_stop()
+        list_cat_for_calc = []
+        for i in ui.cat_resource.findChildren(QtWidgets.QCheckBox):
+            if i.isChecked():
+                list_cat_for_calc.append(i.text())
+        list_calc_int = []
+        list_int = []
+        for i in range(ui.tableWidget.rowCount()):
+            if stop > float(ui.tableWidget.item(i, d).text()) > start:
+                if ui.tableWidget.item(i, n).text() in list_cat_for_calc:
+                    if len(list_int) == 0 and i != 0:
+                        value = (float(ui.tableWidget.item(i, d).text()) + float(ui.tableWidget.item(i - 1, d).text())) / 2
+                        list_int.append(round(value, 2))
+                    else:
+                        list_int.append(float(ui.tableWidget.item(i, d).text()))
+                else:
+                    if len(list_int) > 0:
+                        value = (float(ui.tableWidget.item(i, d).text()) + float(ui.tableWidget.item(i - 1, d).text())) / 2
+                        list_int.append(round(value, 2))
+                        list_calc_int.append([list_int[0], list_int[-1]])
+                        list_int = []
+        if len(list_int) > 0:
+            list_calc_int.append([list_int[0], list_int[-1]])
+        list_Qhs1, list_Qhs2, list_Ro, list_Ro_param, list_h, list_s1, list_s2 = [], [], [], [], [], [], []
+        list_col = ['h', 'int_ot', 'int_do', 'Qhs1', 'Qhs2', 's1', 's2', 'Ro', 'Ro_param']
+        resource_table = pd.DataFrame(columns=list_col)
+        for i in list_calc_int:
+            w_id = get_well_id()
+            h = i[1] - i[0]
+            s1 = np.mean(del_none_from_list(sum(list(map(list, session.query(DataPirolizKern.s1).filter(
+                DataPirolizKern.well_id == w_id, DataPirolizKern.depth >= i[0], DataPirolizKern.depth <= i[1]).all())), [])))
+            s2 = np.mean(del_none_from_list(sum(list(map(list, session.query(DataPirolizKern.s2).filter(
+                DataPirolizKern.well_id == w_id, DataPirolizKern.depth >= i[0], DataPirolizKern.depth <= i[1]).all())), [])))
+            ggk = np.mean(del_none_from_list(sum(list(map(list, session.query(DataLas.GGK).filter(
+                DataLas.well_id == w_id, DataLas.depth >= i[0], DataLas.depth <= i[1]).all())), [])))
+            sgk = np.mean(del_none_from_list(sum(list(map(list, session.query(DataLit.SGK).filter(
+                DataLit.well_id == w_id, DataLit.depth >= i[0], DataLit.depth <= i[1]).all())), [])))
+            density = np.mean(del_none_from_list(sum(list(map(list, session.query(DataLit.density).filter(
+                DataLit.well_id == w_id, DataLit.depth >= i[0], DataLit.depth <= i[1]).all())), [])))
+            if not np.isnan(density):
+                Ro = density
+                Ro_param = 'density'
+            elif not np.isnan(ggk):
+                Ro = ggk
+                Ro_param = 'ggk'
+            elif not np.isnan(sgk):
+                Ro = sgk
+                Ro_param = 'sgk'
+            else:
+                Ro = list_Ro[-1]
+                Ro_param = list_Ro_param[-1]
+                mes = f'{round(h, 2)} м. {i[0]} - {i[1]}'
+                set_info(mes, 'red')
+                mes = 'Данные по плотности отсутствуют.'
+                set_info(mes, 'red')
+                mes = 'Значения для расчетов взяты из предыдущего интервала.'
+                set_info(mes, 'red')
+                mes = ''
+                set_info(mes, 'blue')
+            if np.isnan(s1) or np.isnan(s2):
+                s1 = list_s1[-1]
+                s2 = list_s2[-1]
+                mes = f'{round(h, 2)} м. {i[0]} - {i[1]}'
+                set_info(mes, 'red')
+                mes = 'S1 и S2 отсутствуют.'
+                set_info(mes, 'red')
+                mes = 'Значения для расчетов взяты из предыдущего интервала.'
+                set_info(mes, 'red')
+                mes = ''
+                set_info(mes, 'blue')
+            Qhs1 = h * Ro * s1
+            Qhs2 = h * Ro * s2
+            mes = f'{round(h, 2)} м. {i[0]} - {i[1]}'
+            set_info(mes, 'blue')
+            mes = f'Ro ({Ro_param}) = {round(Ro, 2)}'
+            set_info(mes, 'blue')
+            mes = f'S1 = {round(s1, 2)}'
+            set_info(mes, 'blue')
+            mes = f'S2 = {round(s2, 2)}'
+            set_info(mes, 'blue')
+            mes = f'Qhs1 = {round(Qhs1, 2)}'
+            set_info(mes, 'blue')
+            mes = f'Qhs2 = {round(Qhs2, 2)}'
+            set_info(mes, 'blue')
+            mes = ''
+            set_info(mes, 'blue')
+            list_Ro.append(Ro)
+            list_Ro_param.append(Ro_param)
+            list_Qhs1.append(Qhs1)
+            list_Qhs2.append(Qhs2)
+            list_h.append(h)
+            list_s1.append(s1)
+            list_s2.append(s2)
+            dict_int = {'h': h, 'int_ot': i[0], 'int_do': i[1], 'Qhs1': Qhs1, 'Qhs2': Qhs2, 's1': s1, 's2': s2, 'Ro': Ro, 'Ro_param': Ro_param}
+            resource_table = resource_table.append(dict_int, ignore_index=True)
+        try:
+            file_name = f'Ресурсы_{"_".join(list_cat_for_calc)}_{ui.comboBox_area.currentText()}_скв.' \
+                        f'{ui.comboBox_well.currentText()}.xlsx'
+            fn = QFileDialog.getSaveFileName(caption="Сохранить расчёты ресурсов в таблицу",
+                                             directory=file_name,
+                                             filter="Excel Files (*.xlsx)")
+            resource_table.to_excel(fn[0])
+            ui.label_info.setText(f'Таблица сохранена в файл: {fn[0]}')
+            ui.label_info.setStyleSheet('color: green')
+        except ValueError:
+            pass
+        mes = ''
+        set_info(mes, 'green')
+        mes = f'Суммарная мощность - {round(sum(list_h), 2)} м.'
+        set_info(mes, 'green')
+        mes = f'Суммарные ресурсы:'
+        set_info(mes, 'green')
+        mes = f'Qhs1 = {round(sum(list_Qhs1), 2)}'
+        set_info(mes, 'green')
+        mes = f'Qhs2 = {round(sum(list_Qhs2), 2)}'
+        set_info(mes, 'green')
+        mes = ''
+        set_info(mes, 'green')
+    except IndexError:
+        ui.label_info.setText(f'Внимание! Для данной скважины отсутствуют параметры для расчёта ресурсов.')
+        ui.label_info.setStyleSheet('color: red')
+    except UnboundLocalError:
+        ui.label_info.setText(f'Внимание! Для расчёта ресурсов необходима таблица результатов классификации. Выполните расчёт классификации заново.')
         ui.label_info.setStyleSheet('color: red')
 
 

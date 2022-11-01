@@ -625,6 +625,7 @@ def get_n_cat_column():
     return n_depth, n_cat
 
 
+
 def del_none_from_list(values):
     return [value for value in values if value]
 

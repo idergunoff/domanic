@@ -1888,7 +1888,7 @@ selection-color: rgb(85, 0, 0);</string>
                              </property>
                             </widget>
                            </item>
-                           <item row="0" column="1">
+                           <item row="0" column="2">
                             <widget class="QPushButton" name="pushButton_clear_resourse">
                              <property name="font">
                               <font>
@@ -1903,6 +1903,25 @@ selection-color: rgb(85, 0, 0);</string>
                              </property>
                              <property name="text">
                               <string>CLEAR</string>
+                             </property>
+                            </widget>
+                           </item>
+                           <item row="0" column="1">
+                            <widget class="QPushButton" name="pushButton_table_resource">
+                             <property name="font">
+                              <font>
+                               <pointsize>10</pointsize>
+                              </font>
+                             </property>
+                             <property name="toolTip">
+                              <string>Рассчитать и сохранить в таблицу
+ресурсы по выбранным категориям</string>
+                             </property>
+                             <property name="styleSheet">
+                              <string notr="true">background-color: rgb(255, 255, 222);</string>
+                             </property>
+                             <property name="text">
+                              <string>TABLE</string>
                              </property>
                             </widget>
                            </item>
@@ -2870,8 +2889,8 @@ selection-color: rgb(85, 0, 0);</string>
                     <rect>
                      <x>0</x>
                      <y>0</y>
-                     <width>223</width>
-                     <height>263</height>
+                     <width>98</width>
+                     <height>91</height>
                     </rect>
                    </property>
                    <attribute name="label">
