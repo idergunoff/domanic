@@ -183,18 +183,26 @@ def load_param_pir_chrom(file_name, table, rename_column):
     list_columns = table.__table__.columns.keys()  # список параметров таблицы
     [list_columns.remove(i) for i in ['id', 'well_id', 'name']]  # удаляем не нужные колонки
     ui.progressBar.setMaximum(len(data_tab.columns))
+    val_str = False # флаг строчных значений в таблице
     for n, i in enumerate(data_tab.columns):
         if i in list_columns:
             ui.label_info.setText(f'Загрузка параметра "{i}"...')
             ui.label_info.setStyleSheet('color: blue')
             for j in data_tab.index:
-                session.query(table).filter(table.name == replace_letter_of_name(str(data_tab['n_obr'][j])),
+                if type(data_tab[i][j]) is not str:
+                    session.query(table).filter(table.name == replace_letter_of_name(str(data_tab['n_obr'][j])),
                                                    table.well_id == w_id).update({i: round(data_tab[i][j], 5)},
                                                                                         synchronize_session="fetch")
+                else:
+                    val_str = True
         ui.progressBar.setValue(n+1)
     session.commit()
-    ui.label_info.setText('Готово. Загруженные параметры отобразаются в "списке загруженных параметров".')
-    ui.label_info.setStyleSheet('color: green')
+    if val_str:
+        ui.label_info.setText('Готово. Внимание! В таблице содержались строчные значения. Такие данные не закгружены.')
+        ui.label_info.setStyleSheet('color: orange')
+    else:
+        ui.label_info.setText('Готово. Загруженные параметры отображаются в "списке загруженных параметров".')
+        ui.label_info.setStyleSheet('color: green')
 
 
 def load_depth_name_param(file_name, w_id, table):
