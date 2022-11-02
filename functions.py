@@ -620,21 +620,21 @@ def interval_to_db():
         # list_calc_int = []
         list_int = []
         for i in range(ui.tableWidget.rowCount()):
-            if stop > float(ui.tableWidget.item(i, d).text()) > start:
-                if ui.tableWidget.item(i, n).text() in list_cat_for_calc:
-                    if len(list_int) == 0 and i != 0:
-                        value = (float(ui.tableWidget.item(i, d).text()) + float(ui.tableWidget.item(i - 1, d).text())) / 2
-                        list_int.append(round(value, 2))
-                    else:
-                        list_int.append(float(ui.tableWidget.item(i, d).text()))
+            # if stop > float(ui.tableWidget.item(i, d).text()) > start:
+            if ui.tableWidget.item(i, n).text() in list_cat_for_calc:
+                if len(list_int) == 0 and i != 0:
+                    value = (float(ui.tableWidget.item(i, d).text()) + float(ui.tableWidget.item(i - 1, d).text())) / 2
+                    list_int.append(round(value, 2))
                 else:
-                    if len(list_int) > 0:
-                        value = (float(ui.tableWidget.item(i, d).text()) + float(ui.tableWidget.item(i - 1, d).text())) / 2
-                        list_int.append(round(value, 2))
-                        # list_calc_int.append([list_int[0], list_int[-1]])
-                        new_int = IntervalFromCat(int_from=list_int[0], int_to=list_int[-1])
-                        session.add(new_int)
-                        list_int = []
+                    list_int.append(float(ui.tableWidget.item(i, d).text()))
+            else:
+                if len(list_int) > 0:
+                    value = (float(ui.tableWidget.item(i, d).text()) + float(ui.tableWidget.item(i - 1, d).text())) / 2
+                    list_int.append(round(value, 2))
+                    # list_calc_int.append([list_int[0], list_int[-1]])
+                    new_int = IntervalFromCat(int_from=list_int[0], int_to=list_int[-1])
+                    session.add(new_int)
+                    list_int = []
         if len(list_int) > 0:
             # list_calc_int.append([list_int[0], list_int[-1]])
             new_int = IntervalFromCat(int_from=list_int[0], int_to=list_int[-1])

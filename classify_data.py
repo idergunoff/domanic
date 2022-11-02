@@ -528,79 +528,104 @@ def calc_resource():
         #                 list_int = []
         # if len(list_int) > 0:
         #     list_calc_int.append([list_int[0], list_int[-1]])
+        start, stop = check_start_stop()
         list_calc_int = session.query(IntervalFromCat.int_from, IntervalFromCat.int_to).all()
         list_Qhs1, list_Qhs2, list_Ro, list_Ro_param, list_h, list_s1, list_s2 = [], [], [], [], [], [], []
         list_col = ['h', 'int_ot', 'int_do', 'Qhs1', 'Qhs2', 's1', 's2', 'Ro', 'Ro_param']
+
+        # дополнительные параметры в таблицу ресурсов
+        list_column, list_param, list_tab = [], [], []
+        for i in range(ui.listWidget_param_resource_tab.count()):
+            item = ui.listWidget_param_resource_tab.item(i).text().split(' ')
+            list_param.append(item[0])
+            list_tab.append(item[1])
+            list_column.append(ui.listWidget_param_resource_tab.item(i).text())
+        list_col += list_column
+
         resource_table = pd.DataFrame(columns=list_col)
         for i in list_calc_int:
-            w_id = get_well_id()
-            h = i[1] - i[0]
-            s1 = np.mean(del_none_from_list(sum(list(map(list, session.query(DataPirolizKern.s1).filter(
-                DataPirolizKern.well_id == w_id, DataPirolizKern.depth >= i[0], DataPirolizKern.depth <= i[1]).all())), [])))
-            s2 = np.mean(del_none_from_list(sum(list(map(list, session.query(DataPirolizKern.s2).filter(
-                DataPirolizKern.well_id == w_id, DataPirolizKern.depth >= i[0], DataPirolizKern.depth <= i[1]).all())), [])))
-            ggk = np.mean(del_none_from_list(sum(list(map(list, session.query(DataLas.GGK).filter(
-                DataLas.well_id == w_id, DataLas.depth >= i[0], DataLas.depth <= i[1]).all())), [])))
-            sgk = np.mean(del_none_from_list(sum(list(map(list, session.query(DataLit.SGK).filter(
-                DataLit.well_id == w_id, DataLit.depth >= i[0], DataLit.depth <= i[1]).all())), [])))
-            density = np.mean(del_none_from_list(sum(list(map(list, session.query(DataLit.density).filter(
-                DataLit.well_id == w_id, DataLit.depth >= i[0], DataLit.depth <= i[1]).all())), [])))
-            if not np.isnan(density):
-                Ro = density
-                Ro_param = 'density'
-            elif not np.isnan(ggk):
-                Ro = ggk
-                Ro_param = 'ggk'
-            elif not np.isnan(sgk):
-                Ro = sgk
-                Ro_param = 'sgk'
-            else:
-                Ro = list_Ro[-1]
-                Ro_param = list_Ro_param[-1]
-                mes = f'{round(h, 2)} м. {i[0]} - {i[1]}'
-                set_info(mes, 'red')
-                mes = 'Данные по плотности отсутствуют.'
-                set_info(mes, 'red')
-                mes = 'Значения для расчетов взяты из предыдущего интервала.'
-                set_info(mes, 'red')
+            # проверка интервала исследований
+            if start < i[1] < stop or start < i[0] < stop:
+                h0 = i[0] if i[0] > start else start
+                h1 = i[1] if i[1] < stop else stop
+
+                w_id = get_well_id()
+                h = h1 - h0
+                s1 = np.mean(del_none_from_list(sum(list(map(list, session.query(DataPirolizKern.s1).filter(
+                    DataPirolizKern.well_id == w_id, DataPirolizKern.depth >= h0, DataPirolizKern.depth <= h1).all())), [])))
+                s2 = np.mean(del_none_from_list(sum(list(map(list, session.query(DataPirolizKern.s2).filter(
+                    DataPirolizKern.well_id == w_id, DataPirolizKern.depth >= h0, DataPirolizKern.depth <= h1).all())), [])))
+                ggk = np.mean(del_none_from_list(sum(list(map(list, session.query(DataLas.GGK).filter(
+                    DataLas.well_id == w_id, DataLas.depth >= h0, DataLas.depth <= h1).all())), [])))
+                sgk = np.mean(del_none_from_list(sum(list(map(list, session.query(DataLit.SGK).filter(
+                    DataLit.well_id == w_id, DataLit.depth >= h0, DataLit.depth <= h1).all())), [])))
+                density = np.mean(del_none_from_list(sum(list(map(list, session.query(DataLit.density).filter(
+                    DataLit.well_id == w_id, DataLit.depth >= h0, DataLit.depth <= h1).all())), [])))
+                if not np.isnan(density):
+                    Ro = density
+                    Ro_param = 'density'
+                elif not np.isnan(ggk):
+                    Ro = ggk
+                    Ro_param = 'ggk'
+                elif not np.isnan(sgk):
+                    Ro = sgk
+                    Ro_param = 'sgk'
+                else:
+                    Ro = list_Ro[-1]
+                    Ro_param = list_Ro_param[-1]
+                    mes = f'{round(h, 2)} м. {h0} - {h1}'
+                    set_info(mes, 'red')
+                    mes = 'Данные по плотности отсутствуют.'
+                    set_info(mes, 'red')
+                    mes = 'Значения для расчетов взяты из предыдущего интервала.'
+                    set_info(mes, 'red')
+                    mes = ''
+                    set_info(mes, 'blue')
+                if np.isnan(s1) or np.isnan(s2):
+                    s1 = list_s1[-1]
+                    s2 = list_s2[-1]
+                    mes = f'{round(h, 2)} м. {h0} - {h1}'
+                    set_info(mes, 'red')
+                    mes = 'S1 и S2 отсутствуют.'
+                    set_info(mes, 'red')
+                    mes = 'Значения для расчетов взяты из предыдущего интервала.'
+                    set_info(mes, 'red')
+                    mes = ''
+                    set_info(mes, 'blue')
+                Qhs1 = h * Ro * s1
+                Qhs2 = h * Ro * s2
+                mes = f'{round(h, 2)} м. {h0} - {h1}'
+                set_info(mes, 'blue')
+                mes = f'Ro ({Ro_param}) = {round(Ro, 2)}'
+                set_info(mes, 'blue')
+                mes = f'S1 = {round(s1, 2)}'
+                set_info(mes, 'blue')
+                mes = f'S2 = {round(s2, 2)}'
+                set_info(mes, 'blue')
+                mes = f'Qhs1 = {round(Qhs1, 2)}'
+                set_info(mes, 'blue')
+                mes = f'Qhs2 = {round(Qhs2, 2)}'
+                set_info(mes, 'blue')
                 mes = ''
                 set_info(mes, 'blue')
-            if np.isnan(s1) or np.isnan(s2):
-                s1 = list_s1[-1]
-                s2 = list_s2[-1]
-                mes = f'{round(h, 2)} м. {i[0]} - {i[1]}'
-                set_info(mes, 'red')
-                mes = 'S1 и S2 отсутствуют.'
-                set_info(mes, 'red')
-                mes = 'Значения для расчетов взяты из предыдущего интервала.'
-                set_info(mes, 'red')
-                mes = ''
-                set_info(mes, 'blue')
-            Qhs1 = h * Ro * s1
-            Qhs2 = h * Ro * s2
-            mes = f'{round(h, 2)} м. {i[0]} - {i[1]}'
-            set_info(mes, 'blue')
-            mes = f'Ro ({Ro_param}) = {round(Ro, 2)}'
-            set_info(mes, 'blue')
-            mes = f'S1 = {round(s1, 2)}'
-            set_info(mes, 'blue')
-            mes = f'S2 = {round(s2, 2)}'
-            set_info(mes, 'blue')
-            mes = f'Qhs1 = {round(Qhs1, 2)}'
-            set_info(mes, 'blue')
-            mes = f'Qhs2 = {round(Qhs2, 2)}'
-            set_info(mes, 'blue')
-            mes = ''
-            set_info(mes, 'blue')
-            list_Ro.append(Ro)
-            list_Ro_param.append(Ro_param)
-            list_Qhs1.append(Qhs1)
-            list_Qhs2.append(Qhs2)
-            list_h.append(h)
-            list_s1.append(s1)
-            list_s2.append(s2)
-            dict_int = {'h': h, 'int_ot': i[0], 'int_do': i[1], 'Qhs1': Qhs1, 'Qhs2': Qhs2, 's1': s1, 's2': s2, 'Ro': Ro, 'Ro_param': Ro_param}
-            resource_table = resource_table.append(dict_int, ignore_index=True)
+                list_Ro.append(Ro)
+                list_Ro_param.append(Ro_param)
+                list_Qhs1.append(Qhs1)
+                list_Qhs2.append(Qhs2)
+                list_h.append(h)
+                list_s1.append(s1)
+                list_s2.append(s2)
+                dict_int = {}
+                dict_int = {'h': h, 'int_ot': h0, 'int_do': h1, 'Qhs1': Qhs1, 'Qhs2': Qhs2, 's1': s1, 's2': s2, 'Ro': Ro, 'Ro_param': Ro_param}
+
+                # дополнительные параметры
+                for j in range(len(list_param)):
+                    table = get_table(list_tab[j])
+                    value = np.mean(del_none_from_list(sum(list(map(list, session.query(literal_column(f'{list_tab[j]}.{list_param[j]}')).filter(
+                    table.well_id == w_id, table.depth >= h0, table.depth <= h1).all())), [])))
+                    dict_int[list_column[j]] = value
+
+                resource_table = resource_table.append(dict_int, ignore_index=True)
         if ui.checkBox_save_table_resource.isChecked():
             try:
                 list_cat_for_calc = []
@@ -635,6 +660,47 @@ def calc_resource():
     except UnboundLocalError:
         ui.label_info.setText(f'Внимание! Для расчёта ресурсов необходима таблица результатов классификации. Выполните расчёт классификации заново.')
         ui.label_info.setStyleSheet('color: red')
+
+
+def add_param_resource():
+    """ Добавление дополнительного параметра для добавления в таблицу ресурсов """
+    table, table_text, widget = check_tabWidjet()
+    try:
+        param = widget.currentItem().text()
+        if ui.listWidget_param_resource_tab.findItems(f'{param} {table_text}', QtCore.Qt.MatchExactly):
+            ui.label_info.setText(f'Внимание! Параметр "{param}" уже добавлен.')
+            ui.label_info.setStyleSheet('color: red')
+        else:
+            ui.listWidget_param_resource_tab.addItem(f'{param} {table_text}')
+            ui.label_info.setText(f'Параметр {param} добавлен.')
+            ui.label_info.setStyleSheet('color: green')
+    except AttributeError:
+        ui.label_info.setText(f'Внимание! Не выбран параметр.')
+        ui.label_info.setStyleSheet('color: red')
+
+
+def add_all_param_resource():
+    """ Добавление всех параметров выбранной таблицы для добавления в таблицу ресурсов """
+    table, table_text, widget = check_tabWidjet()
+    no_add = ''
+    for i in range(widget.count()):
+        param = widget.item(i).text()
+        if ui.listWidget_param_resource_tab.findItems(f'{param} {table_text}', QtCore.Qt.MatchExactly):
+            no_add += f'{param}, '
+            ui.label_info.setText(f'Внимание! Параметры {no_add} уже добавлены.')
+            ui.label_info.setStyleSheet('color: red')
+        else:
+            ui.listWidget_param_resource_tab.addItem(f'{param} {table_text}')
+
+
+def clear_param_resource():
+    """ Очистка списка выбранных параметров """
+    ui.listWidget_param_resource_tab.clear()
+
+
+def del_param_resource():
+    """ Удалить выбранный параметр """
+    ui.listWidget_param_resource_tab.takeItem(ui.listWidget_param_resource_tab.currentRow())
 
 
 def add_constr():
