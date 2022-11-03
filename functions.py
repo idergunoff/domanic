@@ -620,15 +620,16 @@ def interval_to_db():
     try:
         session.query(IntervalFromCat).delete()
         d, n = get_n_cat_column()
-        start, stop = check_start_stop()
         list_cat_for_calc = []
+        text_int = 'Выбраны интервалы: '
         for i in ui.cat_resource.findChildren(QtWidgets.QCheckBox):
             if i.isChecked():
                 list_cat_for_calc.append(i.text())
-        # list_calc_int = []
+                text_int += f'{i.text()}, '
+        ui.label_int.setText(text_int)
         list_int = []
+        text_int_res = 'Расчёт русурсов в интервалах: '
         for i in range(ui.tableWidget.rowCount()):
-            # if stop > float(ui.tableWidget.item(i, d).text()) > start:
             if ui.tableWidget.item(i, n).text() in list_cat_for_calc:
                 if len(list_int) == 0 and i != 0:
                     value = (float(ui.tableWidget.item(i, d).text()) + float(ui.tableWidget.item(i - 1, d).text())) / 2
@@ -639,15 +640,16 @@ def interval_to_db():
                 if len(list_int) > 0:
                     value = (float(ui.tableWidget.item(i, d).text()) + float(ui.tableWidget.item(i - 1, d).text())) / 2
                     list_int.append(round(value, 2))
-                    # list_calc_int.append([list_int[0], list_int[-1]])
                     new_int = IntervalFromCat(int_from=list_int[0], int_to=list_int[-1])
                     session.add(new_int)
+                    text_int_res += f'\n{str(list_int[0])} - {str(list_int[-1])} м.'
                     list_int = []
         if len(list_int) > 0:
-            # list_calc_int.append([list_int[0], list_int[-1]])
             new_int = IntervalFromCat(int_from=list_int[0], int_to=list_int[-1])
+            text_int_res += f'\n{str(list_int[0])} - {str(list_int[-1])} м.'
             session.add(new_int)
         session.commit()
+        ui.label_int_resource.setText(text_int_res)
     except UnboundLocalError:
         ui.label_info.setText(f'Внимание! Для выбора категорий необходима таблица результатов классификации. Выполните расчёт классификации заново.')
         ui.label_info.setStyleSheet('color: red')

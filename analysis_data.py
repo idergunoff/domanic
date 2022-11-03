@@ -238,40 +238,51 @@ def draw_relation():
             data['name'] = 0
         start, stop = check_start_stop()
         ui.progressBar.setMaximum(int((stop - start) / 0.1))
+        if ui.checkBox_class_int_rel.isChecked():
+            # расчёт в выбранных интервалах классификации
+            list_calc_int = session.query(IntervalFromCat.int_from, IntervalFromCat.int_to).all()
+        else:
+            list_calc_int = [[start, stop]]
         d, n = start, 0
         while d <= stop:
             d = round(d, 2)
-            dict_values = {}
-            value_1 = session.query(literal_column(f'{table_name_1}.{param_1}')).filter(table_1.depth >= d,
-                                                        table_1.depth < d + 0.1, table_1.well_id == w_id).first()
-            value_2 = session.query(literal_column(f'{table_name_2}.{param_2}')).filter(table_2.depth >= d,
-                                                        table_2.depth < d + 0.1, table_2.well_id == w_id).first()
-            if value_1 and value_2:
-                if value_1[0] and value_2[0]:
-                    dict_values[f'{param_1}_{table_name_1}'] = value_1[0]
-                    dict_values[f'{param_2}_{table_name_2}'] = value_2[0]
-                    if table_name_1 != 'data_las':
-                        name = session.query(table_1.name).filter(table_1.depth >= d, table_1.depth < d + 0.1,
-                                                                  table_1.well_id == w_id).first()
-                        dict_values['name'] = name[0]
-                    if ui.listWidget_relation.count() > 2:
-                        value_3 = session.query(literal_column(f'{table_name_3}.{param_3}')).filter(table_3.depth >= d,
-                                                        table_3.depth < d + 0.1, table_3.well_id == w_id).first()
-                        if value_3:
-                            if value_3[0]:
-                                dict_values[f'{param_3}_{table_name_3}'] = value_3[0]
-                                if ui.listWidget_relation.count() > 3:
-                                    value_4 = session.query(literal_column(f'{table_name_4}.{param_4}')).filter(table_4.depth >= d,
-                                                                        table_4.depth < d + 0.1, table_4.well_id == w_id).first()
-                                    if value_4:
-                                        if value_4[0]:
-                                            dict_values[f'{param_4}_{table_name_4}'] = value_4[0]
-            if table_name_1 != 'data_las':
-                if len(dict_values) == ui.listWidget_relation.count() + 1:
-                    data = data.append(dict_values, ignore_index=True)
-            else:
-                if len(dict_values) == ui.listWidget_relation.count():
-                    data = data.append(dict_values, ignore_index=True)
+            flag_int = False
+            for i in list_calc_int:
+                if i[0] <= d <= i[1]:
+                    flag_int = True
+                    break
+            if flag_int:
+                dict_values = {}
+                value_1 = session.query(literal_column(f'{table_name_1}.{param_1}')).filter(table_1.depth >= d,
+                                                            table_1.depth < d + 0.1, table_1.well_id == w_id).first()
+                value_2 = session.query(literal_column(f'{table_name_2}.{param_2}')).filter(table_2.depth >= d,
+                                                            table_2.depth < d + 0.1, table_2.well_id == w_id).first()
+                if value_1 and value_2:
+                    if value_1[0] and value_2[0]:
+                        dict_values[f'{param_1}_{table_name_1}'] = value_1[0]
+                        dict_values[f'{param_2}_{table_name_2}'] = value_2[0]
+                        if table_name_1 != 'data_las':
+                            name = session.query(table_1.name).filter(table_1.depth >= d, table_1.depth < d + 0.1,
+                                                                      table_1.well_id == w_id).first()
+                            dict_values['name'] = name[0]
+                        if ui.listWidget_relation.count() > 2:
+                            value_3 = session.query(literal_column(f'{table_name_3}.{param_3}')).filter(table_3.depth >= d,
+                                                            table_3.depth < d + 0.1, table_3.well_id == w_id).first()
+                            if value_3:
+                                if value_3[0]:
+                                    dict_values[f'{param_3}_{table_name_3}'] = value_3[0]
+                                    if ui.listWidget_relation.count() > 3:
+                                        value_4 = session.query(literal_column(f'{table_name_4}.{param_4}')).filter(table_4.depth >= d,
+                                                                            table_4.depth < d + 0.1, table_4.well_id == w_id).first()
+                                        if value_4:
+                                            if value_4[0]:
+                                                dict_values[f'{param_4}_{table_name_4}'] = value_4[0]
+                if table_name_1 != 'data_las':
+                    if len(dict_values) == ui.listWidget_relation.count() + 1:
+                        data = data.append(dict_values, ignore_index=True)
+                else:
+                    if len(dict_values) == ui.listWidget_relation.count():
+                        data = data.append(dict_values, ignore_index=True)
             d += 0.1
             n += 1
             ui.progressBar.setValue(n)
@@ -341,44 +352,55 @@ def save_relation():
             data['name'] = 0
         start, stop = check_start_stop()
         ui.progressBar.setMaximum(int((stop - start) / 0.1))
+        if ui.checkBox_class_int_rel.isChecked():
+            # расчёт в выбранных интервалах классификации
+            list_calc_int = session.query(IntervalFromCat.int_from, IntervalFromCat.int_to).all()
+        else:
+            list_calc_int = [[start, stop]]
         d, n = start, 0
         while d <= stop:
             d = round(d, 2)
-            dict_values = {}
-            value_1 = session.query(literal_column(f'{table_name_1}.{param_1}')).filter(table_1.depth >= d,
-                                                                                        table_1.depth < d + 0.1,
-                                                                                        table_1.well_id == w_id).first()
-            value_2 = session.query(literal_column(f'{table_name_2}.{param_2}')).filter(table_2.depth >= d,
-                                                                                        table_2.depth < d + 0.1,
-                                                                                        table_2.well_id == w_id).first()
-            if value_1 and value_2:
-                if value_1[0] and value_2[0]:
-                    dict_values[f'{param_1}_{table_name_1}'] = value_1[0]
-                    dict_values[f'{param_2}_{table_name_2}'] = value_2[0]
-                    if table_name_1 != 'data_las':
-                        name = session.query(table_1.name).filter(table_1.depth >= d, table_1.depth < d + 0.1,
-                                                                  table_1.well_id == w_id).first()
-                        dict_values['name'] = name[0]
-                    if ui.listWidget_relation.count() > 2:
-                        value_3 = session.query(literal_column(f'{table_name_3}.{param_3}')).filter(table_3.depth >= d,
-                                                                                                    table_3.depth < d + 0.1,
-                                                                                                    table_3.well_id == w_id).first()
-                        if value_3:
-                            if value_3[0]:
-                                dict_values[f'{param_3}_{table_name_3}'] = value_3[0]
-                                if ui.listWidget_relation.count() > 3:
-                                    value_4 = session.query(literal_column(f'{table_name_4}.{param_4}')).filter(
-                                        table_4.depth >= d,
-                                        table_4.depth < d + 0.1, table_4.well_id == w_id).first()
-                                    if value_4:
-                                        if value_4[0]:
-                                            dict_values[f'{param_4}_{table_name_4}'] = value_4[0]
-            if table_name_1 != 'data_las':
-                if len(dict_values) == ui.listWidget_relation.count() + 1:
-                    data = data.append(dict_values, ignore_index=True)
-            else:
-                if len(dict_values) == ui.listWidget_relation.count():
-                    data = data.append(dict_values, ignore_index=True)
+            flag_int = False
+            for i in list_calc_int:
+                if i[0] <= d <= i[1]:
+                    flag_int = True
+                    break
+            if flag_int:
+                dict_values = {}
+                value_1 = session.query(literal_column(f'{table_name_1}.{param_1}')).filter(table_1.depth >= d,
+                                                                                            table_1.depth < d + 0.1,
+                                                                                            table_1.well_id == w_id).first()
+                value_2 = session.query(literal_column(f'{table_name_2}.{param_2}')).filter(table_2.depth >= d,
+                                                                                            table_2.depth < d + 0.1,
+                                                                                            table_2.well_id == w_id).first()
+                if value_1 and value_2:
+                    if value_1[0] and value_2[0]:
+                        dict_values[f'{param_1}_{table_name_1}'] = value_1[0]
+                        dict_values[f'{param_2}_{table_name_2}'] = value_2[0]
+                        if table_name_1 != 'data_las':
+                            name = session.query(table_1.name).filter(table_1.depth >= d, table_1.depth < d + 0.1,
+                                                                      table_1.well_id == w_id).first()
+                            dict_values['name'] = name[0]
+                        if ui.listWidget_relation.count() > 2:
+                            value_3 = session.query(literal_column(f'{table_name_3}.{param_3}')).filter(table_3.depth >= d,
+                                                                                                        table_3.depth < d + 0.1,
+                                                                                                        table_3.well_id == w_id).first()
+                            if value_3:
+                                if value_3[0]:
+                                    dict_values[f'{param_3}_{table_name_3}'] = value_3[0]
+                                    if ui.listWidget_relation.count() > 3:
+                                        value_4 = session.query(literal_column(f'{table_name_4}.{param_4}')).filter(
+                                            table_4.depth >= d,
+                                            table_4.depth < d + 0.1, table_4.well_id == w_id).first()
+                                        if value_4:
+                                            if value_4[0]:
+                                                dict_values[f'{param_4}_{table_name_4}'] = value_4[0]
+                if table_name_1 != 'data_las':
+                    if len(dict_values) == ui.listWidget_relation.count() + 1:
+                        data = data.append(dict_values, ignore_index=True)
+                else:
+                    if len(dict_values) == ui.listWidget_relation.count():
+                        data = data.append(dict_values, ignore_index=True)
             d += 0.1
             n += 1
             ui.progressBar.setValue(n)
@@ -471,19 +493,30 @@ def calc_corr():
     data_corr = pd.DataFrame(columns=list_column)
     start, stop = check_start_stop()
     ui.progressBar.setMaximum(int((stop - start) / 0.1))
+    if ui.checkBox_class_int.isChecked():
+        # расчёт в выбранных интервалах классификации
+        list_calc_int = session.query(IntervalFromCat.int_from, IntervalFromCat.int_to).all()
+    else:
+        list_calc_int = [[start, stop]]
     d, n = start, 0
     while d <= stop:
+        flag_int = False
         d = round(d, 2)
-        dict_values = {}
-        for i in range(len(list_param)):
-            table = get_table(list_tab[i])
-            value = session.query(literal_column(f'{list_tab[i]}.{list_param[i]}')).filter(
-                table.depth >= d, table.depth < d + 0.1, table.well_id == w_id).first()
-            if value:
-                if value[0]:
-                    dict_values[f'{list_param[i]} {list_tab[i]}'] = value[0]
-            if len(dict_values) == len(list_param):
-                data_corr = data_corr.append(dict_values, ignore_index=True)
+        for i in list_calc_int:
+            if i[0] <= d <= i[1]:
+                flag_int = True
+                break
+        if flag_int:
+            dict_values = {}
+            for i in range(len(list_param)):
+                table = get_table(list_tab[i])
+                value = session.query(literal_column(f'{list_tab[i]}.{list_param[i]}')).filter(
+                    table.depth >= d, table.depth < d + 0.1, table.well_id == w_id).first()
+                if value:
+                    if value[0]:
+                        dict_values[f'{list_param[i]} {list_tab[i]}'] = value[0]
+                if len(dict_values) == len(list_param):
+                    data_corr = data_corr.append(dict_values, ignore_index=True)
         d += 0.1
         n += 1
         ui.progressBar.setValue(n)
