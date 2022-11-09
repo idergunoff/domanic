@@ -249,6 +249,28 @@ def select_start_stop_depth(w_id, table):
     return start_depth, stop_depth
 
 
+def select_start_stop_depth_param(w_id, table_text, param):
+    """ Выбор минимального и максимального значений глубины в таблице по параметру """
+    table = get_table(table_text)
+    stop_depth = session.query(table.depth).filter(table.well_id == w_id, literal_column(f'{table_text}.{param}') != None).order_by(desc(table.depth)).first()[0]
+    start_depth = session.query(table.depth).filter(table.well_id == w_id, literal_column(f'{table_text}.{param}') != None).order_by(table.depth).first()[0]
+    return start_depth, stop_depth
+
+
+def get_min_max_tablet_graph():
+    """ Получаем минимум/максимум параметров планшета """
+    params_graph_tablet = session.query(DrawGraphTablet).all()
+    count_graph = len(params_graph_tablet)
+    list_min, list_max = [], []
+    for i in range(count_graph):
+        p = params_graph_tablet[i]
+        if p.param:
+            min_depth, max_depth = select_start_stop_depth_param(p.well_id, p.table, p.param)
+            list_min.append(min_depth)
+            list_max.append(max_depth)
+    return min(list_min), max(list_max)
+
+
 def replace_letter_of_name(name):
     """ Замена кириллицы на английские буквы. Для названий образцов """
     list_old = ['е', 'у', 'о', 'р', 'х', 'а', 'с', 'б', ' ']
@@ -387,9 +409,79 @@ def choice_dash():
     return get_dash
 
 
+def get_line_dash(dash):
+    """ Получение штриха из строки """
+    if dash == '9':
+        get_dash = '__________'
+    elif dash == '1 4':
+        get_dash = '.................'
+    elif dash == '6 6':
+        get_dash = '- - - - - - - - - '
+    elif dash == '9 4 2 4':
+        get_dash = '-.-.-.-.-.-.-.-.'
+    else:
+        get_dash = '__________'
+    return get_dash
+
+
+def get_dash(dash_str: str):
+    if dash_str == '9':
+        dash = '-'
+    elif dash_str == '1 4':
+        dash = '--'
+    elif dash_str == '6 6':
+        dash = ':'
+    elif dash_str == '9 4 2 4':
+        dash = '-.'
+    else:
+        dash = '-'
+    return dash
+
+
+# def get_hatch(dash_str: str):
+#     if dash_str == '9':
+#         hatch = ''
+#     elif dash_str == '1 4':
+#         hatch = '|'
+#     elif dash_str == '6 6':
+#         hatch = '.'
+#     elif dash_str == '9 4 2 4':
+#         hatch = 'x'
+#     else:
+#         hatch = ''
+#     return hatch
+
+
 def choice_width():
     """ Выбор толщины """
     return float(ui.comboBox_width.currentText())
+
+
+def choice_color_tablet():
+    """ Выбор цвета """
+    return ui.comboBox_color_tablet.currentText()
+
+
+def choice_dash_tablet():
+    """ Выбор штриха """
+    dash = ui.comboBox_dash_tablet.currentText()
+    if dash == '__________':
+        get_dash = [9]
+    elif dash == '.................':
+        get_dash = [1, 4]
+    elif dash == '- - - - - - - - - ':
+        get_dash = [6, 6]
+    elif dash == '-.-.-.-.-.-.-.-.':
+        get_dash = [9, 4, 2, 4]
+    else:
+        get_dash = [9]
+    return get_dash
+
+
+def choice_width_tablet():
+    """ Выбор толщины """
+    return float(ui.comboBox_width_tablet.currentText())
+
 
 
 def get_table(table_text):
@@ -680,3 +772,15 @@ def del_none_from_list(values):
 
 def set_info(text, color):
     ui.textEdit_resourse.append(f'<span style =\"color:{color};\" >{text}</span>')
+
+
+def show_list_tablet():
+    ui.listWidget_param_tablet.clear()
+    for i in session.query(DrawGraphTablet).all():
+        if i.param:
+            color = i.color
+            color = 'grey' if color == 'black' else color
+            ui.listWidget_param_tablet.addItem(f'{i.id} {i.param} {i.table} {get_line_dash(i.dash)} {i.width}')
+            ui.listWidget_param_tablet.item(ui.listWidget_param_tablet.count() - 1).setBackground(QtGui.QColor(color))
+        else:
+            ui.listWidget_param_tablet.addItem(f'{i.id} Новый график')

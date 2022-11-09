@@ -391,6 +391,21 @@ class DrawSeveralGraph(Base):
     width = Column(String)
 
 
+class DrawGraphTablet(Base):
+    __tablename__ = 'draw_graph_tablet'
+
+    id = Column(Integer, primary_key=True)
+    well_id = Column(Integer, ForeignKey('wells.id'), nullable=False)
+
+    well = relationship("Well", backref='draw_graph_tablet')
+
+    table = Column(String)
+    param = Column(String)
+    color = Column(String)
+    dash = Column(String)
+    width = Column(String)
+
+
 class ClassByLimits(Base):
     __tablename__ = 'class_by_limits'
 

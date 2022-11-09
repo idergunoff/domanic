@@ -1,6 +1,7 @@
 from load_data import *
 from analysis_data import *
 from classify_data import *
+from graph_tablet import *
 
 
 MainWindow.show()
@@ -84,6 +85,12 @@ ui.pushButton_add_param_res.clicked.connect(add_param_resource)
 ui.pushButton_add_tab_res.clicked.connect(add_all_param_resource)
 ui.pushButton_clear_param_res.clicked.connect(clear_param_resource)
 ui.pushButton_del_param_res.clicked.connect(del_param_resource)
+ui.pushButton_add_param_tablet.clicked.connect(add_param_tablet)
+ui.pushButton_edit_param_tablet.clicked.connect(edit_param_tablet)
+ui.pushButton_clear_param_tablet.clicked.connect(clear_param_tablet)
+ui.pushButton_del_param_tablet.clicked.connect(del_param_tablet)
+ui.pushButton_draw_param_tablet.clicked.connect(draw_graph_tablet)
+ui.pushButton_next_graph_tablet.clicked.connect(add_next_graph)
 
 ui.comboBox_region.activated.connect(comboBox_area_update)
 ui.comboBox_area.activated.connect(comboBox_well_update)
@@ -91,6 +98,7 @@ ui.comboBox_well.activated.connect(well_interval)
 ui.comboBox_color.activated.connect(set_style_combobox)
 ui.comboBox_dash.activated.connect(set_style_combobox)
 ui.comboBox_width.activated.connect(set_style_combobox)
+ui.comboBox_color_tablet.activated.connect(set_style_combobox_tablet)
 ui.comboBox_class_lim.activated.connect(display_param_limits)
 ui.comboBox_class_lda.activated.connect(comboBox_class_lda_cat_update)
 ui.comboBox_class_lda.activated.connect(reset_fake_lda)
@@ -112,7 +120,9 @@ ui.tableWidget.clicked.connect(click_table)
 reset_fake_lda()
 comboBox_region_update()
 set_style_combobox()
+set_style_combobox_tablet()
 clear_param()
+clear_param_tablet()
 comboBox_class_lda_update()
 comboBox_class_lim_update()
 display_param_limits()

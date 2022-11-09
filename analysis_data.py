@@ -51,10 +51,10 @@ def draw_sev_param():
     ui.graphicsView.clear()
     for i in sev_param:
         tab = get_table(i.table)
-        X = sum(list(map(list, session.query(literal_column(f'{i.table}.{i.param}')).filter(tab.depth > start,
-                        tab.depth < stop, tab.well_id == i.well_id, literal_column(f'{i.table}.{i.param}') != None).
+        X = sum(list(map(list, session.query(literal_column(f'{i.table}.{i.param}')).filter(tab.depth >= start,
+                        tab.depth <= stop, tab.well_id == i.well_id, literal_column(f'{i.table}.{i.param}') != None).
                          order_by(tab.depth).all())), [])
-        Y = sum(list(map(list, session.query(tab.depth).filter(tab.depth > start, tab.depth < stop,
+        Y = sum(list(map(list, session.query(tab.depth).filter(tab.depth >= start, tab.depth <= stop,
             tab.well_id == i.well_id, literal_column(f'{i.table}.{i.param}') != None).order_by(tab.depth).all())), [])
         if i.table == 'data_las':
             curve = pg.PlotCurveItem(x=X, y=Y, pen=pg.mkPen(color=i.color, width=float(i.width),
@@ -77,11 +77,11 @@ def draw_norm_sev_param():
     ui.graphicsView.clear()
     for i in sev_param:
         tab = get_table(i.table)
-        X = sum(list(map(list, session.query(literal_column(f'{i.table}.{i.param}')).filter(tab.depth > start,
-                tab.depth < stop, tab.well_id == i.well_id, literal_column(f'{i.table}.{i.param}') != None).
+        X = sum(list(map(list, session.query(literal_column(f'{i.table}.{i.param}')).filter(tab.depth >= start,
+                tab.depth <= stop, tab.well_id == i.well_id, literal_column(f'{i.table}.{i.param}') != None).
                                                                                 order_by(tab.depth).all())), [])
         X = [(j - min(X)) / (max(X) - min(X)) for j in X]
-        Y = sum(list(map(list, session.query(tab.depth).filter(tab.depth > start, tab.depth < stop,
+        Y = sum(list(map(list, session.query(tab.depth).filter(tab.depth >= start, tab.depth <= stop,
                         tab.well_id == i.well_id, literal_column(f'{i.table}.{i.param}') != None).order_by(
                         tab.depth).all())), [])
         if i.table == 'data_las':
