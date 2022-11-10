@@ -681,6 +681,20 @@ selection-color: rgb(85, 0, 0);</string>
                          </item>
                         </widget>
                        </item>
+                       <item row="0" column="3">
+                        <widget class="QComboBox" name="comboBox_type_graph">
+                         <item>
+                          <property name="text">
+                           <string>bar</string>
+                          </property>
+                         </item>
+                         <item>
+                          <property name="text">
+                           <string>stem</string>
+                          </property>
+                         </item>
+                        </widget>
+                       </item>
                       </layout>
                      </item>
                      <item row="1" column="0">

@@ -17,7 +17,8 @@ def add_param_tablet():
         param = widget.currentItem().text()
         color = choice_color_tablet()
         new_param_tablet = DrawGraphTablet(well_id=get_well_id(), table=table_text, param=param, color=color,
-                                     dash=' '.join(list(map(str, choice_dash_tablet()))), width=choice_width_tablet())
+                                     dash=' '.join(list(map(str, choice_dash_tablet()))), width=choice_width_tablet(),
+                                           type_graph=ui.comboBox_type_graph.currentText())
         session.add(new_param_tablet)  # параметр добавляется в отдельную таблицу + параметры графика
         session.commit()
         show_list_tablet()
@@ -29,7 +30,7 @@ def add_param_tablet():
 def add_next_graph():
     """ Добавление нового графика для графического планшета """
     new_param_tablet = DrawGraphTablet(well_id=get_well_id(), table='', param='', color='',
-                                       dash='', width='')
+                                       dash='', width='', type_graph='')
     session.add(new_param_tablet)  # параметр добавляется в отдельную таблицу + параметры графика
     session.commit()
     show_list_tablet()
@@ -61,8 +62,8 @@ def edit_param_tablet():
         current_param_text = ui.listWidget_param_tablet.currentItem().text()
         id_param = current_param_text.split(' ')[0]
         session.query(DrawGraphTablet).filter(DrawGraphTablet.id == id_param).update({'color': choice_color_tablet(),
-            'dash': ' '.join(list(map(str, choice_dash_tablet()))), 'width': choice_width_tablet()},
-            synchronize_session="fetch")
+            'dash': ' '.join(list(map(str, choice_dash_tablet()))), 'width': choice_width_tablet(),
+            'type_graph': ui.comboBox_type_graph.currentText()}, synchronize_session="fetch")
         session.commit()
         show_list_tablet()
     except AttributeError:
@@ -113,8 +114,17 @@ def add_graph_tablet(param_row, min_Y, max_Y, count_graph, n_graph, fig, n):
     if param_row.table == 'data_las':
         ax.plot(X, Y, c=param_row.color, lw=param_row.width, ls=get_dash(param_row.dash))
     else:
-        ax.barh(Y, X, color=param_row.color, height=float(param_row.width)*0.1)
-    plt.ylim(min_Y, max_Y)
+        if param_row.type_graph == 'bar':
+            ax.barh(Y, X, color=param_row.color, height=float(param_row.width)*0.1)
+        else:
+            try:
+                ax.stem(Y, X, orientation='horizontal', linefmt=(get_dash(param_row.dash), param_row.color),
+                    markerfmt=(get_marker(param_row.dash), param_row.color), basefmt=('black'))
+            except TypeError:
+                ui.label_info.setText(f'Графики формата "stem" не принимают оттенки цветов (с приставкой dark и light)')
+                ui.label_info.setStyleSheet('color: red')
+    height_grapf = max_Y - min_Y
+    plt.ylim(min_Y - height_grapf / 100, max_Y + height_grapf / 100)
 
     tkw = dict(size=4, width=1.5)
     ax.tick_params(axis='x', color=param_row.color, labelcolor=param_row.color, **tkw)

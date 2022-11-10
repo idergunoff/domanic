@@ -404,6 +404,7 @@ class DrawGraphTablet(Base):
     color = Column(String)
     dash = Column(String)
     width = Column(String)
+    type_graph = Column(String)
 
 
 class ClassByLimits(Base):

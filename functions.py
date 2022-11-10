@@ -438,6 +438,20 @@ def get_dash(dash_str: str):
     return dash
 
 
+def get_marker(dash_str: str):
+    if dash_str == '9':
+        marker = 'o'
+    elif dash_str == '1 4':
+        marker = '.'
+    elif dash_str == '6 6':
+        marker = '<'
+    elif dash_str == '9 4 2 4':
+        marker = 's'
+    else:
+        marker = 'o'
+    return marker
+
+
 # def get_hatch(dash_str: str):
 #     if dash_str == '9':
 #         hatch = ''
@@ -780,7 +794,7 @@ def show_list_tablet():
         if i.param:
             color = i.color
             color = 'grey' if color == 'black' else color
-            ui.listWidget_param_tablet.addItem(f'{i.id} {i.param} {i.table} {get_line_dash(i.dash)} {i.width}')
+            ui.listWidget_param_tablet.addItem(f'{i.id} {i.param} {i.table} {i.type_graph} {get_line_dash(i.dash)} {i.width}')
             ui.listWidget_param_tablet.item(ui.listWidget_param_tablet.count() - 1).setBackground(QtGui.QColor(color))
         else:
             ui.listWidget_param_tablet.addItem(f'{i.id} Новый график')
