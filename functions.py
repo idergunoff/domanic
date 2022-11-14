@@ -10,6 +10,7 @@ import pandas as pd
 
 import traceback
 import matplotlib.pyplot as plt
+from matplotlib.backends import backend_ps
 import seaborn as sns
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 
