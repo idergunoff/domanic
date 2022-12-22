@@ -326,6 +326,8 @@ class DataLas(Base):
     Ang = Column(Float)
     Ag = Column(Float)
 
+    SUM_GAS = Column(Float)
+
 
 class DataLit(Base):
     __tablename__ = 'data_lit'
