@@ -1,3 +1,5 @@
+import pandas as pd
+
 from functions import *
 
 
@@ -207,7 +209,7 @@ def calc_class_lim():
 
     ui.graphicsView.clear()
     for n, i in enumerate(list_name_cat):
-        Y = pd_data[['depth']].loc[pd_data['category'] == i]
+        Y = pd_data['depth'].loc[pd_data['category'] == i].values
         if len(Y) > 0:
             color = color_list[n]
             curve = pg.BarGraphItem(x0=0, y=Y, height=0.1, width=n + 1, brush=color, pen=pg.mkPen(color=color))
@@ -466,7 +468,7 @@ def calc_lda():
     ui.label_info.setStyleSheet('color: green')
     ui.graphicsView.clear()
     for n, i in enumerate(list_cat):
-        Y = working_data[['depth']].loc[working_data['mark'] == i]
+        Y = working_data['depth'].loc[working_data['mark'] == i]
         if len(Y) > 0:
             color = color_list[n]
             curve = pg.BarGraphItem(x0=0, y=Y, height=0.1, width=n + 1, brush=color, pen=pg.mkPen(color=color))
@@ -615,7 +617,6 @@ def calc_resource():
                 list_h.append(h)
                 list_s1.append(s1)
                 list_s2.append(s2)
-                dict_int = {}
                 dict_int = {'h': h, 'int_ot': h0, 'int_do': h1, 'Qhs1': Qhs1, 'Qhs2': Qhs2, 's1': s1, 's2': s2, 'Ro': Ro, 'Ro_param': Ro_param}
 
                 # дополнительные параметры
@@ -849,13 +850,13 @@ def calc_constr():
                     pd_data = pd_data[['depth', 'name'] + list_param + ['category']]
                 ui.graphicsView.clear()
                 for n, i in enumerate(list_name_cat):
-                    Y = pd_data[['depth']].loc[pd_data['category'] == i]
+                    Y = pd_data['depth'].loc[pd_data['category'] == i]
                     if len(Y) > 0:
                         color = color_list[n]
                         curve = pg.BarGraphItem(x0=0, y=Y, height=0.1, width=n + 1, brush=color,
                                                 pen=pg.mkPen(color=color))
                         ui.graphicsView.addItem(curve)
-                Y = pd_data[['depth']].loc[pd_data['category'] == 'Не вошёл']
+                Y = pd_data['depth'].loc[pd_data['category'] == 'Не вошёл']
                 if len(Y) > 0:
                     curve = pg.BarGraphItem(x0=0, y=Y, height=0.1, width=0.5, brush='grey',
                                             pen=pg.mkPen(color='grey'))

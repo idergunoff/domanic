@@ -1,8 +1,6 @@
 from functions import *
 
 
-
-
 def set_style_combobox_tablet():
     """ Установка выбранного цвета фоном комбобокса (выпадающего списка) """
     color = choice_color_tablet()

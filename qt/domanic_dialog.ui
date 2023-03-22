@@ -1179,7 +1179,7 @@ selection-color: rgb(85, 0, 0);</string>
                          </property>
                         </widget>
                        </item>
-                       <item row="0" column="1">
+                       <item row="0" column="3">
                         <widget class="QPushButton" name="pushButton_table">
                          <property name="font">
                           <font>
@@ -1194,6 +1194,21 @@ selection-color: rgb(85, 0, 0);</string>
                          </property>
                          <property name="text">
                           <string>TABLE</string>
+                         </property>
+                        </widget>
+                       </item>
+                       <item row="0" column="1">
+                        <widget class="QPushButton" name="pushButton_add_all_param">
+                         <property name="font">
+                          <font>
+                           <pointsize>10</pointsize>
+                          </font>
+                         </property>
+                         <property name="styleSheet">
+                          <string notr="true">background-color: rgb(191, 255, 191);</string>
+                         </property>
+                         <property name="text">
+                          <string>ADD ALL</string>
                          </property>
                         </widget>
                        </item>
@@ -1454,13 +1469,6 @@ selection-color: rgb(85, 0, 0);</string>
                      </item>
                     </layout>
                    </item>
-                   <item row="0" column="2">
-                    <widget class="QCheckBox" name="checkBox_class_int_rel">
-                     <property name="text">
-                      <string>в интервалах</string>
-                     </property>
-                    </widget>
-                   </item>
                    <item row="3" column="0">
                     <widget class="QPushButton" name="pushButton_del_param_rel">
                      <property name="font">
@@ -1479,17 +1487,28 @@ selection-color: rgb(85, 0, 0);</string>
                      </property>
                     </widget>
                    </item>
+                   <item row="0" column="2">
+                    <layout class="QGridLayout" name="gridLayout_51">
+                     <item row="0" column="0">
+                      <widget class="QCheckBox" name="checkBox_class_int_rel">
+                       <property name="text">
+                        <string>в интервалах</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item row="0" column="1">
+                      <widget class="QCheckBox" name="checkBox_class_int_mean_rel">
+                       <property name="text">
+                        <string>по средним</string>
+                       </property>
+                      </widget>
+                     </item>
+                    </layout>
+                   </item>
                   </layout>
                  </item>
                  <item row="1" column="0">
                   <layout class="QGridLayout" name="gridLayout_42">
-                   <item row="0" column="2">
-                    <widget class="QCheckBox" name="checkBox_class_int">
-                     <property name="text">
-                      <string>в интервалах</string>
-                     </property>
-                    </widget>
-                   </item>
                    <item row="2" column="0">
                     <widget class="QPushButton" name="pushButton_add_param_corr">
                      <property name="font">
@@ -1561,13 +1580,6 @@ selection-color: rgb(85, 0, 0);</string>
                      </property>
                     </widget>
                    </item>
-                   <item row="1" column="0" colspan="3">
-                    <widget class="QListWidget" name="listWidget_correlation">
-                     <property name="styleSheet">
-                      <string notr="true">font: 9pt &quot;MS Shell Dlg 2&quot;;</string>
-                     </property>
-                    </widget>
-                   </item>
                    <item row="3" column="1">
                     <widget class="QPushButton" name="pushButton_clear_param_corr">
                      <property name="font">
@@ -1583,6 +1595,13 @@ selection-color: rgb(85, 0, 0);</string>
                      </property>
                      <property name="text">
                       <string>CLEAR</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="1" column="0" colspan="3">
+                    <widget class="QListWidget" name="listWidget_correlation">
+                     <property name="styleSheet">
+                      <string notr="true">font: 9pt &quot;MS Shell Dlg 2&quot;;</string>
                      </property>
                     </widget>
                    </item>
@@ -1621,6 +1640,24 @@ selection-color: rgb(85, 0, 0);</string>
                       <string>SAVE</string>
                      </property>
                     </widget>
+                   </item>
+                   <item row="0" column="2">
+                    <layout class="QGridLayout" name="gridLayout_52">
+                     <item row="0" column="0">
+                      <widget class="QCheckBox" name="checkBox_class_int">
+                       <property name="text">
+                        <string>в интервалах</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item row="0" column="1">
+                      <widget class="QCheckBox" name="checkBox_class_int_mean">
+                       <property name="text">
+                        <string>по средним</string>
+                       </property>
+                      </widget>
+                     </item>
+                    </layout>
                    </item>
                   </layout>
                  </item>
@@ -1913,7 +1950,7 @@ selection-color: rgb(85, 0, 0);</string>
                          <rect>
                           <x>0</x>
                           <y>0</y>
-                          <width>318</width>
+                          <width>346</width>
                           <height>292</height>
                          </rect>
                         </property>
@@ -3584,7 +3621,7 @@ selection-color: rgb(85, 0, 0);</string>
   <customwidget>
    <class>PlotWidget</class>
    <extends>QGraphicsView</extends>
-   <header location="global">pyqtgraph</header>
+   <header>pyqtgraph</header>
   </customwidget>
  </customwidgets>
  <resources/>

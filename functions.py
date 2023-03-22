@@ -663,15 +663,20 @@ def update_graph_lda_cat():
 
 def build_table_train_lda():
     """ Собирает DataFrame для обучающей выборки по выбранным параметрам """
+    # Получаем id класса из выпадающего списка в UI
     c_id = int(ui.comboBox_class_lda.currentText().split('.')[0])
+    # Получаем список параметров и таблиц для запросов из списка параметров в UI
     list_param = []
     list_tab = []
     for i in range(ui.listWidget_class_lda_param.count()):
         item_i = ui.listWidget_class_lda_param.item(i).text().split(' ')
         list_param.append(item_i[0])
         list_tab.append(item_i[1])
+    # Создаем пустой DataFrame с нужными колонками
     data_train = pd.DataFrame(columns=['depth', 'mark'] + list_param)
+    # Итерируемся по всем объектам класса, удовлетворяющим условию
     for i in session.query(ClassByLdaMark).filter(ClassByLdaMark.class_id == c_id, ClassByLdaMark.fake == 0).all():
+        # Для каждого объекта создаем словарь со значениями параметров, соответствующими его глубине
         dict_value = {}
         for j in range(len(list_param)):
             tab = get_table(list_tab[j])
@@ -680,10 +685,12 @@ def build_table_train_lda():
             if val:
                 if val[0]:
                     dict_value[list_param[j]] = val[0]
+        # Если для всех параметров есть значения, то добавляем строку в DataFrame
         if len(dict_value) == len(list_param):
             dict_value['mark'] = i.mark
             dict_value['depth'] = i.depth
             data_train = data_train.append(dict_value, ignore_index=True)
+    # Возвращаем DataFrame и списки параметров и таблиц
     return data_train, list_param, list_tab
 
 
