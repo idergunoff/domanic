@@ -62,7 +62,7 @@ def read_las_info(file_name):
     """Считывает информацию из las-файла"""
     with open(file_name) as f:
         n = 0
-        while n < 100:
+        while n < 1000:
             n += 1
             line = f.readline()
             if line.strip().startswith('VERS.'):
@@ -80,15 +80,19 @@ def read_las_info(file_name):
         if version == '2.0':
             with open(file_name) as f:
                 n = 0
-                while n < 100:
+                while n < 1000:
                     n += 1
                     line = f.readline()
                     if line.strip().startswith('#CURVE'):
                         param = line.split(':')[0].split()[1]
         if type(param) is list:
             if '~A' in param:
-                param.remove('~A')
-                param.remove('Log')
+                # todo убрать костыль, не везде есть Log
+                try:
+                    param.remove('~A')
+                    param.remove('Log')
+                except:
+                    pass
         return version, start_depth, stop_depth, null_value, param, data_row
 
 
