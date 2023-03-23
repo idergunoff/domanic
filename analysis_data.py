@@ -349,7 +349,7 @@ def draw_relation():
     if ui.checkBox_ylg.isChecked():
         ax.set(yscale="log")
     if ui.listWidget_relation.count() == 2:
-        sns.scatterplot(data=data, x=f'{param_1}_{table_name_1}', y=f'{param_2}_{table_name_2}')
+        sns.scatterplot(data=data, x=f'{param_1}_{table_name_1}', y=f'{param_2}_{table_name_2}', s=100)
         # sns.lmplot(data=data, x=f'{param_1}_{table_name_1}', y=f'{param_2}_{table_name_2}')
     elif ui.listWidget_relation.count() == 3:
         sns.scatterplot(data=data, x=f'{param_1}_{table_name_1}', y=f'{param_2}_{table_name_2}',
