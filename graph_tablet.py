@@ -1,11 +1,12 @@
 from functions import *
 
 
-def set_style_combobox_tablet():
-    """ Установка выбранного цвета фоном комбобокса (выпадающего списка) """
-    color = choice_color_tablet()
-    color = 'grey' if color == 'black' else color
-    ui.comboBox_color_tablet.setStyleSheet(f"background-color: {color};")
+def change_color_tablet():
+    button_color = ui.pushButton_color_tablet.palette().color(ui.pushButton_color_tablet.backgroundRole())
+    color = QColorDialog.getColor(button_color)
+    ui.pushButton_color_tablet.setStyleSheet(f"background-color: {color.name()};")
+    # ui.pushButton_color.setText(color.name())
+
 
 
 def add_param_tablet():

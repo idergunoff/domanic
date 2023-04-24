@@ -10,13 +10,16 @@ def click_table():
     depth_line.setPos(depth_table)
 
 
-def set_style_combobox():
-    """ Установка выбранного цвета фоном комбобокса (выпадающего списка) """
-    color = choice_color()
-    color = 'grey' if color == 'black' else color
-    ui.comboBox_color.setStyleSheet(f"background-color: {color};")
+def draw_current_graph_by_style():
     table, table_text, widget = check_tabWidjet()
     draw_param_graph(widget, table, table_text)
+
+
+def set_style_pushbutton_color():
+    """ Установка выбранного цвета фоном кнопки """
+    color = QColorDialog.getColor(QColor('#6973ff'))
+    ui.pushButton_rel_color.setStyleSheet(f"background-color: {color.name()};")
+
 
 
 def choice_param():
@@ -24,7 +27,7 @@ def choice_param():
     table, table_text, widget = check_tabWidjet()
     try:
         param = widget.currentItem().text()
-        color = choice_color()
+        color = choice_color_rel()
         new_graph = DrawSeveralGraph(well_id=get_well_id(), table=table_text, param=param, color=color,
                                      dash=' '.join(list(map(str, choice_dash()))), width=choice_width())
         session.add(new_graph)  # параметр добавляется в отдельную таблицу + параметры графика
@@ -48,7 +51,7 @@ def choice_all_param():
             ui.label_info.setText(f'Внимание! Параметры {no_add} уже добавлены.')
             ui.label_info.setStyleSheet('color: red')
         else:
-            color = choice_color()
+            color = choice_color_tablet()
             new_graph = DrawSeveralGraph(well_id=get_well_id(), table=table_text, param=param, color=color,
                                          dash=' '.join(list(map(str, choice_dash()))), width=choice_width())
             session.add(new_graph)  # параметр добавляется в отдельную таблицу + параметры графика

@@ -1,4 +1,9 @@
-from PyQt5.QtWidgets import QTableWidgetItem, QFileDialog, QCheckBox
+import random
+
+from PyQt5.QtWidgets import QTableWidgetItem, QFileDialog, QCheckBox, QColorDialog, QListWidgetItem
+from PyQt5.QtGui import QColor
+from PyQt5.QtCore import Qt
+
 from sqlalchemy import text, desc, literal_column
 from pandas import read_excel
 import pyqtgraph as pg
@@ -19,6 +24,7 @@ from qt.add_region_dialog import *
 from qt.add_well_dialog import *
 from qt.add_class_limit import *
 from qt.add_class_lda import *
+from qt.edit_user_interval import *
 
 from objects import *
 
@@ -337,6 +343,15 @@ def draw_param_graph(widget_list, table, table_text):
     :param table: таблица в БД с нужным параметром
     :param table_text: текстовое название таблицы для literal_column
     """
+    # выключаем пользовательские интервалы
+    # for i in range(ui.listWidget_user_int.count()):
+    #     item = ui.listWidget_user_int.item(i)
+    #     if isinstance(item, QListWidgetItem):
+    #         checkbox = ui.listWidget_user_int.itemWidget(item)
+    #         if isinstance(checkbox, QCheckBox):
+    #             checkbox.setChecked(False)
+    # ui.checkBox_choose_all_user_int.setChecked(False)
+
     w_id = get_well_id()
     try:
         param = widget_list.currentItem().text()
@@ -393,9 +408,13 @@ def check_tabWidjet():
     return Data_table, Data_table_text, widget
 
 
-def choice_color():
+def choice_color_rel():
     """ Выбор цвета """
-    return ui.comboBox_color.currentText()
+    return ui.pushButton_rel_color.palette().color(ui.pushButton_rel_color.backgroundRole()).name()
+
+
+def choice_color():
+    return ui.pushButton_color.palette().color(ui.pushButton_color.backgroundRole()).name()
 
 
 def choice_dash():
@@ -478,7 +497,7 @@ def choice_width():
 
 def choice_color_tablet():
     """ Выбор цвета """
-    return ui.comboBox_color_tablet.currentText()
+    return ui.pushButton_color_tablet.palette().color(ui.pushButton_rel_color.backgroundRole()).name()
 
 
 def choice_dash_tablet():
@@ -695,6 +714,7 @@ def build_table_train_lda():
             dict_value['depth'] = i.depth
             data_train = data_train.append(dict_value, ignore_index=True)
     # Возвращаем DataFrame и списки параметров и таблиц
+    print(data_train)
     return data_train, list_param, list_tab
 
 
@@ -810,3 +830,27 @@ def show_list_tablet():
             ui.listWidget_param_tablet.item(ui.listWidget_param_tablet.count() - 1).setBackground(QtGui.QColor(color))
         else:
             ui.listWidget_param_tablet.addItem(f'{i.id} Новый график')
+
+
+def get_random_color():
+    red = random.randint(0, 255)
+    green = random.randint(0, 255)
+    blue = random.randint(0, 255)
+    color = f'#{red:02x}{green:02x}{blue:02x}'
+    return color
+
+
+def set_random_color(button):
+    color = get_random_color()
+    button.setStyleSheet(f"background-color: {color};")
+    button.setText(color)
+
+
+def change_color():
+    button_color = ui.pushButton_color.palette().color(ui.pushButton_color.backgroundRole())
+    color = QColorDialog.getColor(button_color)
+    ui.pushButton_color.setStyleSheet(f"background-color: {color.name()};")
+    ui.pushButton_color.setText(color.name())
+    table, table_text, widget = check_tabWidjet()
+    draw_param_graph(widget, table, table_text)
+

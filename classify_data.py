@@ -457,8 +457,10 @@ def calc_lda():
                 tab = get_table(list_tab[0])
                 dict_value['name'] = session.query(tab.name).filter(
                     tab.well_id == w_id, tab.depth >= d, tab.depth < d + 0.1).first()[0]
+
             working_data = working_data.append(dict_value, ignore_index=True)
             data_trans_coef = data_trans_coef.append(dict_trans_coef, ignore_index=True)
+
         d = round(d + 0.1, 1)
         n += 1
         ui.progressBar.setValue(n)

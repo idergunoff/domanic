@@ -34,6 +34,7 @@ class Well(Base):
     area_id = Column(Integer, ForeignKey('areas.id'), nullable=False)
 
     area = relationship("Area", backref='wells')
+    user_interval = relationship("UserInterval", back_populates='well')
 
 
 class DataAge(Base):
@@ -461,6 +462,19 @@ class IntervalFromCat(Base):
     id = Column(Integer, primary_key=True)
     int_from = Column(Float)
     int_to = Column(Float)
+
+
+class UserInterval(Base):
+    __tablename__ = 'user_interval'
+
+    id = Column(Integer, primary_key=True)
+    well_id = Column(Integer, ForeignKey('wells.id'), nullable=False)
+    int_from = Column(Float)
+    int_to = Column(Float)
+    title = Column(String)
+    color = Column(String)
+
+    well = relationship("Well", back_populates='user_interval')
 
 
 Base.metadata.create_all(engine)

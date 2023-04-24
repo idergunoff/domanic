@@ -2,6 +2,7 @@ from load_data import *
 from analysis_data import *
 from classify_data import *
 from graph_tablet import *
+from user_interval import *
 
 
 MainWindow.show()
@@ -33,8 +34,10 @@ def log_uncaught_exceptions(ex_cls, ex, tb):
     sys.exit()
 
 
+
 proxy = pg.SignalProxy(ui.graphicsView.scene().sigMouseMoved, rateLimit=60, slot=mouseMoved)
 
+ui.pushButton_color.clicked.connect(change_color)
 ui.toolButton_add_region.clicked.connect(add_region)
 ui.toolButton_add_area.clicked.connect(add_area)
 ui.toolButton_add_well.clicked.connect(add_well)
@@ -92,14 +95,16 @@ ui.pushButton_clear_param_tablet.clicked.connect(clear_param_tablet)
 ui.pushButton_del_param_tablet.clicked.connect(del_param_tablet)
 ui.pushButton_draw_param_tablet.clicked.connect(draw_graph_tablet)
 ui.pushButton_next_graph_tablet.clicked.connect(add_next_graph)
+ui.pushButton_color_tablet.clicked.connect(change_color_tablet)
+ui.pushButton_rel_color.clicked.connect(set_style_pushbutton_color)
 
 ui.comboBox_region.activated.connect(comboBox_area_update)
 ui.comboBox_area.activated.connect(comboBox_well_update)
 ui.comboBox_well.activated.connect(well_interval)
-ui.comboBox_color.activated.connect(set_style_combobox)
-ui.comboBox_dash.activated.connect(set_style_combobox)
-ui.comboBox_width.activated.connect(set_style_combobox)
-ui.comboBox_color_tablet.activated.connect(set_style_combobox_tablet)
+# ui.comboBox_color.activated.connect(set_style_combobox)
+ui.comboBox_dash.activated.connect(draw_current_graph_by_style)
+ui.comboBox_width.activated.connect(draw_current_graph_by_style)
+# ui.comboBox_color_tablet.activated.connect(set_style_combobox_tablet)
 ui.comboBox_class_lim.activated.connect(display_param_limits)
 ui.comboBox_class_lda.activated.connect(comboBox_class_lda_cat_update)
 ui.comboBox_class_lda.activated.connect(reset_fake_lda)
@@ -116,18 +121,28 @@ ui.listWidget_lit.itemSelectionChanged.connect(draw_param_lit)
 
 ui.tableWidget.clicked.connect(click_table)
 
+# user interval
+ui.pushButton_add_user_int.clicked.connect(add_user_interval)
+ui.pushButton_add_from_cat_user_int.clicked.connect(add_user_interval_from_category)
+ui.pushButton_edit_user_int.clicked.connect(edit_user_interval)
+ui.pushButton_del_user_int.clicked.connect(delete_user_interval)
+ui.pushButton_to_work_user_int.clicked.connect(user_interval_to_work)
+ui.checkBox_choose_all_user_int.clicked.connect(choose_all_user_interval)
 
 
 reset_fake_lda()
 comboBox_region_update()
-set_style_combobox()
-set_style_combobox_tablet()
+draw_current_graph_by_style()
+# set_style_combobox_tablet()
 clear_param()
 clear_param_tablet()
 comboBox_class_lda_update()
 comboBox_class_lim_update()
 display_param_limits()
 comboBox_class_lda_cat_update()
+for button in [ui.pushButton_color, ui.pushButton_color_tablet, ui.pushButton_rel_color]:
+    set_random_color(button)
+user_interval_list_update()
 
 
 sys.excepthook = log_uncaught_exceptions
