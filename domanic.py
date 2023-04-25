@@ -37,6 +37,7 @@ def log_uncaught_exceptions(ex_cls, ex, tb):
 
 proxy = pg.SignalProxy(ui.graphicsView.scene().sigMouseMoved, rateLimit=60, slot=mouseMoved)
 
+ui.toolButton_int_reset.clicked.connect(well_interval)
 ui.pushButton_color.clicked.connect(change_color)
 ui.toolButton_add_region.clicked.connect(add_region)
 ui.toolButton_add_area.clicked.connect(add_area)
