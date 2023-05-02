@@ -1,5 +1,3 @@
-import pandas as pd
-
 from functions import *
 
 
@@ -458,8 +456,8 @@ def calc_lda():
                 dict_value['name'] = session.query(tab.name).filter(
                     tab.well_id == w_id, tab.depth >= d, tab.depth < d + 0.1).first()[0]
 
-            working_data = working_data.append(dict_value, ignore_index=True)
-            data_trans_coef = data_trans_coef.append(dict_trans_coef, ignore_index=True)
+            working_data = pd.concat([working_data, pd.DataFrame(pd.Series(dict_value)).T], ignore_index=True)
+            data_trans_coef = pd.concat([data_trans_coef, pd.DataFrame(pd.Series(dict_trans_coef)).T], ignore_index=True)
 
         d = round(d + 0.1, 1)
         n += 1
@@ -470,7 +468,7 @@ def calc_lda():
     ui.label_info.setStyleSheet('color: green')
     ui.graphicsView.clear()
     for n, i in enumerate(list_cat):
-        Y = working_data['depth'].loc[working_data['mark'] == i]
+        Y = working_data['depth'].loc[working_data['mark'] == i].tolist()
         if len(Y) > 0:
             color = color_list[n]
             curve = pg.BarGraphItem(x0=0, y=Y, height=0.1, width=n + 1, brush=color, pen=pg.mkPen(color=color))
@@ -628,7 +626,7 @@ def calc_resource():
                     table.well_id == w_id, table.depth >= h0, table.depth <= h1).all())), [])))
                     dict_int[list_column[j]] = value
 
-                resource_table = resource_table.append(dict_int, ignore_index=True)
+                resource_table = pd.concat([resource_table, pd.DataFrame(pd.Series(dict_int)).T], ignore_index=True)
         if ui.checkBox_save_table_resource.isChecked():
             try:
                 list_cat_for_calc = []

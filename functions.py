@@ -712,9 +712,9 @@ def build_table_train_lda():
         if len(dict_value) == len(list_param):
             dict_value['mark'] = i.mark
             dict_value['depth'] = i.depth
-            data_train = data_train.append(dict_value, ignore_index=True)
+            data_train = pd.concat([data_train, pd.DataFrame(pd.Series(dict_value)).T], ignore_index=True)
+
     # Возвращаем DataFrame и списки параметров и таблиц
-    print(data_train)
     return data_train, list_param, list_tab
 
 

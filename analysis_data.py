@@ -1,3 +1,7 @@
+import numpy as np
+
+import pandas as pd
+
 from functions import *
 
 
@@ -145,7 +149,7 @@ def build_table_sev_param():
             d = round(d, 2)
             empty_row = {}
             [empty_row.update({i: None}) for i in list_param]
-            pd_tab = pd_tab.append(empty_row, ignore_index=True)
+            pd_tab = pd.concat([pd_tab, pd.DataFrame(pd.Series(empty_row)).T], ignore_index=True)
             pd_tab['depth'][n] = d
             ui.tableWidget.insertRow(n)
             ui.tableWidget.setItem(n, 0, QTableWidgetItem(str(round(d, 1))))
@@ -296,7 +300,7 @@ def draw_relation():
                                         table_4.depth >= h0, table_4.depth <= h1, table_4.well_id == w_id).all())), [])))
                                     if value_4:
                                         dict_values[f'{param_4}_{table_name_4}'] = value_4
-                    data = data.append(dict_values, ignore_index=True)
+                    data = pd.concat([data, pd.DataFrame(pd.Series(dict_values)).T], ignore_index=True)
         else:
             d, n = start, 0
             while d <= stop:
@@ -334,10 +338,10 @@ def draw_relation():
                                                     dict_values[f'{param_4}_{table_name_4}'] = value_4[0]
                     if table_name_1 != 'data_las':
                         if len(dict_values) == ui.listWidget_relation.count() + 1:
-                            data = data.append(dict_values, ignore_index=True)
+                            data = pd.concat([data, pd.DataFrame(pd.Series(dict_values)).T], ignore_index=True)
                     else:
                         if len(dict_values) == ui.listWidget_relation.count():
-                            data = data.append(dict_values, ignore_index=True)
+                            data = pd.concat([data, pd.DataFrame(pd.Series(dict_values)).T], ignore_index=True)
                 d += 0.1
                 n += 1
                 ui.progressBar.setValue(n)
@@ -361,7 +365,9 @@ def draw_relation():
         sns.scatterplot(data=data, x=f'{param_1}_{table_name_1}', y=f'{param_2}_{table_name_2}',
                         hue=f'{param_3}_{table_name_3}', size=f'{param_4}_{table_name_4}', sizes=(5, 250), palette=pal)
     if ui.checkBox_trend.isChecked():
-        a, b = np.polyfit(data[f'{param_1}_{table_name_1}'], data[f'{param_2}_{table_name_2}'], deg=1)  # расчитываем коэф уравнения для линии тренда
+        a, b = np.polyfit(
+            data[f'{param_1}_{table_name_1}'].astype(float),
+            data[f'{param_2}_{table_name_2}'].astype(float), deg=1)  # расчитываем коэф уравнения для линии тренда
         x = data[f'{param_1}_{table_name_1}']
         y_trend = a * x + b
         ax.plot(x, y_trend, '-')
@@ -452,10 +458,10 @@ def save_relation():
                                                 dict_values[f'{param_4}_{table_name_4}'] = value_4[0]
                 if table_name_1 != 'data_las':
                     if len(dict_values) == ui.listWidget_relation.count() + 1:
-                        data = data.append(dict_values, ignore_index=True)
+                        data = pd.concat([data, pd.DataFrame(pd.Series(dict_values)).T], ignore_index=True)
                 else:
                     if len(dict_values) == ui.listWidget_relation.count():
-                        data = data.append(dict_values, ignore_index=True)
+                        data = pd.concat([data, pd.DataFrame(pd.Series(dict_values)).T], ignore_index=True)
             d += 0.1
             n += 1
             ui.progressBar.setValue(n)
@@ -572,7 +578,7 @@ def calc_corr():
                         sum(list(map(list, session.query(literal_column(f'{list_tab[j]}.{list_param[j]}')).filter(
                             table.well_id == w_id, table.depth >= h0, table.depth <= h1).all())), [])))
                     dict_corr[list_column[j]] = value
-                data_corr = data_corr.append(dict_corr, ignore_index=True)
+                data_corr = pd.concat([data_corr, pd.DataFrame(pd.Series(dict_corr)).T], ignore_index=True)
     else:
         d, n = start, 0
         while d <= stop:
@@ -598,7 +604,7 @@ def calc_corr():
                             dict_values[f'{list_param[i]} {list_tab[i]}'] = value[0]
                     # Если получены все значения параметров, добавить их в DataFrame
                     if len(dict_values) == len(list_param):
-                        data_corr = data_corr.append(dict_values, ignore_index=True)
+                        data_corr = pd.concat([data_corr, pd.DataFrame(pd.Series(dict_values)).T], ignore_index=True)
             d += 0.1
             n += 1
             ui.progressBar.setValue(n)
@@ -622,3 +628,5 @@ def calc_corr():
             ui.label_info.setStyleSheet('color: green')
         except ValueError:
             pass
+
+
