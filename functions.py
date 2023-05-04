@@ -315,22 +315,25 @@ def draw_param_table(widget_list, table, table_text):
     if table == DataLas:        # для las файлов отображается только столбец глубины и значения параметра
         data_table = session.query(table.depth, literal_column(f'{table_text}.{param}')).filter(table.well_id == w_id,
                                   literal_column(f'{table_text}.{param}') != None).order_by(table.depth).all()
-        ui.tableWidget.setColumnCount(2)
-        ui.tableWidget.setHorizontalHeaderLabels(['depth', param])
+        ui.tableWidget.setColumnCount(3)
+        ui.tableWidget.setHorizontalHeaderLabels(['depth', param, 'age'])
     else:   # для остальных данных отображается глубина, название образца
         data_table = session.query(table.depth, table.name, literal_column(f'{table_text}.{param}')).\
             filter(table.well_id == w_id, literal_column(f'{table_text}.{param}') != None). \
             order_by(table.depth).all()
-        ui.tableWidget.setColumnCount(3)
-        ui.tableWidget.setHorizontalHeaderLabels(['depth', 'name', param])
+        ui.tableWidget.setColumnCount(4)
+        ui.tableWidget.setHorizontalHeaderLabels(['depth', 'name', param, 'age'])
     for n, i in enumerate(data_table):
         ui.tableWidget.insertRow(n)
         for k, j in enumerate(i):
             if k == 0:
                 j = round(j, 1)
+                age = session.query(DataAge.age).filter(DataAge.well_id == w_id, DataAge.depth >= j, DataAge.depth < j + 0.1).first()
+                age = '' if age is None else str(age[0])
             if k == 2:
                 j = round(j, 5)
             ui.tableWidget.setItem(n, k, QTableWidgetItem(str(j)))
+        ui.tableWidget.setItem(n, k + 1, QTableWidgetItem(age))
     ui.tableWidget.verticalHeader().hide()
     ui.tableWidget.resizeColumnsToContents()
     ui.label_table_name.setText(f'{param} скв. {ui.comboBox_well.currentText()}')
@@ -853,4 +856,5 @@ def change_color():
     ui.pushButton_color.setText(color.name())
     table, table_text, widget = check_tabWidjet()
     draw_param_graph(widget, table, table_text)
+
 

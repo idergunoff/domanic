@@ -34,7 +34,6 @@ def log_uncaught_exceptions(ex_cls, ex, tb):
     sys.exit()
 
 
-
 proxy = pg.SignalProxy(ui.graphicsView.scene().sigMouseMoved, rateLimit=60, slot=mouseMoved)
 
 ui.toolButton_int_reset.clicked.connect(well_interval)
@@ -48,6 +47,7 @@ ui.pushButton_pir_extr.clicked.connect(load_data_pir_extr)
 ui.pushButton_chrom.clicked.connect(load_data_chrom)
 ui.pushButton_chrom_extr.clicked.connect(load_data_chrom_extr)
 ui.pushButton_depth.clicked.connect(load_depth_name)
+ui.pushButton_add_age.clicked.connect(load_age)
 ui.pushButton_lit.clicked.connect(load_data_lit)
 ui.pushButton_del_param.clicked.connect(del_param)
 ui.pushButton_add_param.clicked.connect(choice_param)

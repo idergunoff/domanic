@@ -274,6 +274,40 @@ def load_depth_name():
         return
 
 
+def load_age():
+    """ Загрузка возраста """
+    w_id = get_well_id()
+    try:
+        file_name = QFileDialog.getOpenFileName(
+            caption='Выберите файл excel, в котором перый столбец это начало интервала, второй столбец конец '
+                    'инетервала, третий столбец возраст данного интервала',
+            filter='*.xls *.xlsx')[0]
+        ui.label_info.setText('Загрузка возраста...')
+        ui.label_info.setStyleSheet('color: blue')
+        data_age = pd.read_excel(file_name, header=None)
+        for i_age_row in data_age.index:
+            start = round(data_age[0][i_age_row], 1)
+            stop = round(data_age[1][i_age_row],  1)
+            age = data_age[2][i_age_row]
+            ui.progressBar.setMaximum(int((stop - start)/0.1))
+            step = 0
+            while start <= stop:
+                start = round(start, 1)
+                if session.query(DataAge).filter_by(well_id=w_id, depth=start).first():
+                    session.query(DataAge).filter_by(well_id=w_id, depth=start).update({'age': age}, synchronize_session='fetch')
+                else:
+                    new_age = DataAge(well_id=w_id, depth=start, age=age)
+                    session.add(new_age)
+                start += 0.1
+                step += 1
+                ui.progressBar.setValue(step)
+        session.commit()
+        ui.label_info.setText('Данные о возрасте загружены')
+        ui.label_info.setStyleSheet('color: green')
+    except FileNotFoundError:
+        return
+
+
 def del_param():
     """ Удаление параметра в выбранном интервале """
     w_id = get_well_id()

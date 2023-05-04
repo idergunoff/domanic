@@ -134,7 +134,7 @@ def build_table_sev_param():
     start, stop = check_start_stop()
     sev_param = session.query(DrawSeveralGraph).all()
     if sev_param:
-        list_param = ['depth', 'n_obr']
+        list_param = ['depth', 'age', 'n_obr']
         [list_param.append(i.param) for i in sev_param]
         wlist_param = []
         [wlist_param.append([i.table, i.param]) for i in sev_param]
@@ -153,6 +153,10 @@ def build_table_sev_param():
             pd_tab['depth'][n] = d
             ui.tableWidget.insertRow(n)
             ui.tableWidget.setItem(n, 0, QTableWidgetItem(str(round(d, 1))))
+            age = session.query(DataAge.age).filter(DataAge.well_id == w_id, DataAge.depth >= d,
+                                                    DataAge.depth < d + 0.1).first()
+            age = '' if age is None else str(age[0])
+            ui.tableWidget.setItem(n, 1, QTableWidgetItem(age))
             for col, l in enumerate(wlist_param):
                 tab = get_table(l[0])
                 if l[0] == 'data_las':
@@ -160,20 +164,20 @@ def build_table_sev_param():
                                                                                    tab.well_id == w_id).first()
                     if value:
                         pd_tab[l[1]][n] = value[0]
-                        ui.tableWidget.setItem(n, col + 2, QTableWidgetItem(str(value[0])))
+                        ui.tableWidget.setItem(n, col + 3, QTableWidgetItem(str(value[0])))
                 else:
                     value = session.query(literal_column(f'{l[0]}.{l[1]}')).filter(tab.depth >= d, tab.depth < d + 0.1,
                                                                                    tab.well_id == w_id).first()
                     if value:
                         pd_tab[l[1]][n] = value[0]
                         if value[0]:
-                            ui.tableWidget.setItem(n, col + 2, QTableWidgetItem(str(round(value[0], 5))))
+                            ui.tableWidget.setItem(n, col + 3, QTableWidgetItem(str(round(value[0], 5))))
                         else:
-                            ui.tableWidget.setItem(n, col + 2, QTableWidgetItem(str(value[0])))
+                            ui.tableWidget.setItem(n, col + 3, QTableWidgetItem(str(value[0])))
                         value = session.query(tab.name).filter(tab.depth >= d, tab.depth < d + 0.1,
                                                                         tab.well_id == w_id).first()
                         pd_tab['n_obr'][n] = value.name
-                        ui.tableWidget.setItem(n, 1, QTableWidgetItem(value.name))
+                        ui.tableWidget.setItem(n, 2, QTableWidgetItem(value.name))
             d += 0.1
             n += 1
             ui.progressBar.setValue(n)
@@ -193,7 +197,7 @@ def save_table_sev_param():
         for row in range(ui.tableWidget.rowCount()):
             if ui.tableWidget.item(row, n) is not None:
                 if ui.tableWidget.item(row, n).text() != 'None':
-                    if i in ['n_obr', 'name']:
+                    if i in ['n_obr', 'age', 'name']:
                         data.append(ui.tableWidget.item(row, n).text())
                     else:
                         data.append(float(ui.tableWidget.item(row, n).text()))
@@ -207,6 +211,8 @@ def save_table_sev_param():
         list_col.remove('n_obr')
     if 'name' in list_col:
         list_col.remove('name')
+    if 'age' in list_col:
+        list_col.remove('age')
     for i in pd_tab.index:
         l = []
         for j in list_col:
