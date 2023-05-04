@@ -1206,7 +1206,7 @@ class Ui_MainWindow(object):
         self.gridLayout_80.addWidget(self.pushButton_compare_del_param, 2, 0, 1, 1)
         self.gridLayout_79.addLayout(self.gridLayout_80, 1, 0, 1, 1)
         self.gridLayout_58.addLayout(self.gridLayout_79, 0, 1, 1, 1)
-        self.gridLayout_58.setColumnStretch(0, 3)
+        self.gridLayout_58.setColumnStretch(0, 2)
         self.gridLayout_58.setColumnStretch(1, 1)
         self.gridLayout_57.addLayout(self.gridLayout_58, 1, 0, 1, 1)
         self.gridLayout_81 = QtWidgets.QGridLayout()
