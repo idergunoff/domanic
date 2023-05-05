@@ -31,7 +31,7 @@ class Ui_MainWindow(object):
         self.verticalLayout_6.addWidget(self.progressBar)
         self.label_info = QtWidgets.QLabel(self.centralwidget)
         self.label_info.setEnabled(True)
-        self.label_info.setMaximumSize(QtCore.QSize(1268, 16))
+        self.label_info.setMaximumSize(QtCore.QSize(1268, 24))
         font = QtGui.QFont()
         font.setPointSize(10)
         self.label_info.setFont(font)
