@@ -175,7 +175,9 @@ selection-color: rgb(85, 0, 0);</string>
                         <property name="font">
                          <font>
                           <pointsize>11</pointsize>
+                          <weight>75</weight>
                           <italic>true</italic>
+                          <bold>true</bold>
                           <underline>true</underline>
                          </font>
                         </property>
@@ -211,7 +213,9 @@ selection-color: rgb(85, 0, 0);</string>
                        <property name="font">
                         <font>
                          <pointsize>11</pointsize>
+                         <weight>75</weight>
                          <italic>true</italic>
+                         <bold>true</bold>
                          <underline>true</underline>
                         </font>
                        </property>
@@ -635,7 +639,9 @@ selection-color: rgb(85, 0, 0);</string>
                            <property name="font">
                             <font>
                              <pointsize>11</pointsize>
+                             <weight>75</weight>
                              <italic>true</italic>
+                             <bold>true</bold>
                              <underline>true</underline>
                             </font>
                            </property>
@@ -898,7 +904,9 @@ selection-color: rgb(85, 0, 0);</string>
                          <property name="font">
                           <font>
                            <pointsize>11</pointsize>
+                           <weight>75</weight>
                            <italic>true</italic>
+                           <bold>true</bold>
                            <underline>true</underline>
                           </font>
                          </property>
@@ -1173,7 +1181,9 @@ selection-color: rgb(85, 0, 0);</string>
                      <property name="font">
                       <font>
                        <pointsize>11</pointsize>
+                       <weight>75</weight>
                        <italic>true</italic>
+                       <bold>true</bold>
                        <underline>true</underline>
                       </font>
                      </property>
@@ -1378,7 +1388,9 @@ selection-color: rgb(85, 0, 0);</string>
                      <property name="font">
                       <font>
                        <pointsize>11</pointsize>
+                       <weight>75</weight>
                        <italic>true</italic>
+                       <bold>true</bold>
                        <underline>true</underline>
                       </font>
                      </property>
@@ -1523,7 +1535,9 @@ selection-color: rgb(85, 0, 0);</string>
                        <property name="font">
                         <font>
                          <pointsize>11</pointsize>
+                         <weight>75</weight>
                          <italic>true</italic>
+                         <bold>true</bold>
                          <underline>true</underline>
                         </font>
                        </property>
@@ -1888,7 +1902,9 @@ selection-color: rgb(85, 0, 0);</string>
                        <property name="font">
                         <font>
                          <pointsize>11</pointsize>
+                         <weight>75</weight>
                          <italic>true</italic>
+                         <bold>true</bold>
                          <underline>true</underline>
                         </font>
                        </property>
@@ -1904,7 +1920,9 @@ selection-color: rgb(85, 0, 0);</string>
                          <property name="font">
                           <font>
                            <pointsize>11</pointsize>
+                           <weight>75</weight>
                            <italic>true</italic>
+                           <bold>true</bold>
                            <underline>true</underline>
                           </font>
                          </property>
@@ -2352,7 +2370,7 @@ selection-color: rgb(85, 0, 0);</string>
                 </attribute>
                 <layout class="QGridLayout" name="gridLayout_56">
                  <item row="1" column="1">
-                  <layout class="QGridLayout" name="gridLayout_54" rowstretch="0,0">
+                  <layout class="QGridLayout" name="gridLayout_54" rowstretch="2,3">
                    <item row="0" column="0">
                     <layout class="QGridLayout" name="gridLayout_55">
                      <item row="3" column="2">
@@ -2380,7 +2398,9 @@ selection-color: rgb(85, 0, 0);</string>
                        <property name="font">
                         <font>
                          <pointsize>11</pointsize>
+                         <weight>75</weight>
                          <italic>true</italic>
+                         <bold>true</bold>
                          <underline>true</underline>
                         </font>
                        </property>
@@ -2432,13 +2452,15 @@ selection-color: rgb(85, 0, 0);</string>
                     </layout>
                    </item>
                    <item row="1" column="0">
-                    <layout class="QGridLayout" name="gridLayout_57">
+                    <layout class="QGridLayout" name="gridLayout_82">
                      <item row="0" column="0">
-                      <widget class="QLabel" name="label_10">
+                      <widget class="QLabel" name="label_26">
                        <property name="font">
                         <font>
                          <pointsize>11</pointsize>
+                         <weight>75</weight>
                          <italic>true</italic>
+                         <bold>true</bold>
                          <underline>true</underline>
                         </font>
                        </property>
@@ -2448,25 +2470,12 @@ selection-color: rgb(85, 0, 0);</string>
                       </widget>
                      </item>
                      <item row="1" column="0">
-                      <layout class="QGridLayout" name="gridLayout_58" columnstretch="2,1">
+                      <layout class="QGridLayout" name="gridLayout_83">
                        <item row="0" column="0">
-                        <layout class="QGridLayout" name="gridLayout_59">
-                         <item row="0" column="0">
-                          <widget class="QLabel" name="label_2">
-                           <property name="font">
-                            <font>
-                             <pointsize>9</pointsize>
-                             <underline>true</underline>
-                            </font>
-                           </property>
-                           <property name="text">
-                            <string>Интервалы:</string>
-                           </property>
-                          </widget>
-                         </item>
-                         <item row="1" column="0">
-                          <layout class="QGridLayout" name="gridLayout_60">
-                           <item row="1" column="0">
+                        <layout class="QGridLayout" name="gridLayout_84">
+                         <item row="2" column="0">
+                          <layout class="QGridLayout" name="gridLayout_85">
+                           <item row="0" column="0">
                             <widget class="QPushButton" name="pushButton_compare_add_int">
                              <property name="styleSheet">
                               <string notr="true">background-color: rgb(191, 255, 191);</string>
@@ -2476,10 +2485,7 @@ selection-color: rgb(85, 0, 0);</string>
                              </property>
                             </widget>
                            </item>
-                           <item row="0" column="0" colspan="2">
-                            <widget class="QListWidget" name="listWidget_compare_int"/>
-                           </item>
-                           <item row="2" column="0">
+                           <item row="0" column="1">
                             <widget class="QPushButton" name="pushButton_compare_del_int">
                              <property name="styleSheet">
                               <string notr="true">background-color: rgb(255, 185, 185);</string>
@@ -2489,7 +2495,7 @@ selection-color: rgb(85, 0, 0);</string>
                              </property>
                             </widget>
                            </item>
-                           <item row="2" column="1">
+                           <item row="0" column="2">
                             <widget class="QPushButton" name="pushButton_compare_clear_int">
                              <property name="styleSheet">
                               <string notr="true">background-color: rgb(255, 185, 185);</string>
@@ -2501,16 +2507,34 @@ selection-color: rgb(85, 0, 0);</string>
                            </item>
                           </layout>
                          </item>
-                        </layout>
-                       </item>
-                       <item row="0" column="1">
-                        <layout class="QGridLayout" name="gridLayout_79">
                          <item row="0" column="0">
-                          <widget class="QLabel" name="label_24">
+                          <widget class="QLabel" name="label_27">
                            <property name="font">
                             <font>
-                             <pointsize>9</pointsize>
-                             <underline>true</underline>
+                             <pointsize>8</pointsize>
+                             <italic>true</italic>
+                             <underline>false</underline>
+                            </font>
+                           </property>
+                           <property name="text">
+                            <string>Интервалы:</string>
+                           </property>
+                          </widget>
+                         </item>
+                         <item row="1" column="0">
+                          <widget class="QListWidget" name="listWidget_compare_int"/>
+                         </item>
+                        </layout>
+                       </item>
+                       <item row="1" column="0">
+                        <layout class="QGridLayout" name="gridLayout_86">
+                         <item row="0" column="0">
+                          <widget class="QLabel" name="label_30">
+                           <property name="font">
+                            <font>
+                             <pointsize>8</pointsize>
+                             <italic>true</italic>
+                             <underline>false</underline>
                             </font>
                            </property>
                            <property name="text">
@@ -2519,8 +2543,11 @@ selection-color: rgb(85, 0, 0);</string>
                           </widget>
                          </item>
                          <item row="1" column="0">
-                          <layout class="QGridLayout" name="gridLayout_80">
-                           <item row="1" column="0">
+                          <widget class="QListWidget" name="listWidget_compare_param"/>
+                         </item>
+                         <item row="2" column="0">
+                          <layout class="QGridLayout" name="gridLayout_87">
+                           <item row="0" column="0">
                             <widget class="QPushButton" name="pushButton_compare_add_param">
                              <property name="styleSheet">
                               <string notr="true">background-color: rgb(191, 255, 191);</string>
@@ -2530,26 +2557,23 @@ selection-color: rgb(85, 0, 0);</string>
                              </property>
                             </widget>
                            </item>
-                           <item row="0" column="0" colspan="2">
-                            <widget class="QListWidget" name="listWidget_compare_param"/>
-                           </item>
-                           <item row="2" column="1">
-                            <widget class="QPushButton" name="pushButton_compare_clear_param">
-                             <property name="styleSheet">
-                              <string notr="true">background-color: rgb(255, 185, 185);</string>
-                             </property>
-                             <property name="text">
-                              <string>CLEAR</string>
-                             </property>
-                            </widget>
-                           </item>
-                           <item row="2" column="0">
+                           <item row="0" column="1">
                             <widget class="QPushButton" name="pushButton_compare_del_param">
                              <property name="styleSheet">
                               <string notr="true">background-color: rgb(255, 185, 185);</string>
                              </property>
                              <property name="text">
                               <string>DEL</string>
+                             </property>
+                            </widget>
+                           </item>
+                           <item row="0" column="2">
+                            <widget class="QPushButton" name="pushButton_compare_clear_param">
+                             <property name="styleSheet">
+                              <string notr="true">background-color: rgb(255, 185, 185);</string>
+                             </property>
+                             <property name="text">
+                              <string>CLEAR</string>
                              </property>
                             </widget>
                            </item>
@@ -2560,7 +2584,7 @@ selection-color: rgb(85, 0, 0);</string>
                       </layout>
                      </item>
                      <item row="2" column="0">
-                      <layout class="QGridLayout" name="gridLayout_81">
+                      <layout class="QGridLayout" name="gridLayout_88">
                        <item row="0" column="0">
                         <widget class="QPushButton" name="pushButton_compare_table">
                          <property name="styleSheet">
@@ -3368,8 +3392,10 @@ selection-color: rgb(85, 0, 0);</string>
              <widget class="QLabel" name="label_well_2">
               <property name="font">
                <font>
-                <pointsize>11</pointsize>
+                <pointsize>10</pointsize>
+                <weight>75</weight>
                 <italic>true</italic>
+                <bold>true</bold>
                 <underline>true</underline>
                </font>
               </property>
@@ -3451,7 +3477,7 @@ selection-color: rgb(85, 0, 0);</string>
                      <x>0</x>
                      <y>0</y>
                      <width>223</width>
-                     <height>263</height>
+                     <height>265</height>
                     </rect>
                    </property>
                    <attribute name="label">
@@ -3478,7 +3504,7 @@ selection-color: rgb(85, 0, 0);</string>
                      <x>0</x>
                      <y>0</y>
                      <width>223</width>
-                     <height>263</height>
+                     <height>265</height>
                     </rect>
                    </property>
                    <attribute name="label">
@@ -3526,7 +3552,7 @@ selection-color: rgb(85, 0, 0);</string>
                     <rect>
                      <x>0</x>
                      <y>0</y>
-                     <width>91</width>
+                     <width>98</width>
                      <height>91</height>
                     </rect>
                    </property>
@@ -3554,7 +3580,7 @@ selection-color: rgb(85, 0, 0);</string>
                      <x>0</x>
                      <y>0</y>
                      <width>223</width>
-                     <height>263</height>
+                     <height>265</height>
                     </rect>
                    </property>
                    <attribute name="label">
