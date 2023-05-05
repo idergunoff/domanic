@@ -3,7 +3,7 @@ from analysis_data import *
 from classify_data import *
 from graph_tablet import *
 from user_interval import *
-
+from compare_interval import *
 
 MainWindow.show()
 
@@ -130,6 +130,17 @@ ui.pushButton_del_user_int.clicked.connect(delete_user_interval)
 ui.pushButton_to_work_user_int.clicked.connect(user_interval_to_work)
 ui.checkBox_choose_all_user_int.clicked.connect(choose_all_user_interval)
 
+# compare interval
+ui.pushButton_compare_add_int.clicked.connect(add_compare_interval)
+ui.pushButton_compare_add_param.clicked.connect(add_compare_parameter)
+ui.pushButton_compare_del_int.clicked.connect(delete_compare_interval)
+ui.pushButton_compare_del_param.clicked.connect(delete_compare_parameter)
+ui.pushButton_compare_clear_int.clicked.connect(clear_compare_interval)
+ui.pushButton_compare_clear_param.clicked.connect(clear_compare_parameter)
+ui.pushButton_compare_draw.clicked.connect(draw_compare_interval)
+ui.pushButton_compare_matrix.clicked.connect(matrix_compare_interval)
+ui.pushButton_compare_table.clicked.connect(table_compare_interval)
+ui.pushButton_compare_save.clicked.connect(save_compare_interval)
 
 reset_fake_lda()
 comboBox_region_update()
@@ -144,6 +155,7 @@ comboBox_class_lda_cat_update()
 for button in [ui.pushButton_color, ui.pushButton_color_tablet, ui.pushButton_rel_color]:
     set_random_color(button)
 user_interval_list_update()
+update_list_compare_interval()
 
 
 sys.excepthook = log_uncaught_exceptions

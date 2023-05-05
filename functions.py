@@ -1,6 +1,6 @@
 import random
 
-from PyQt5.QtWidgets import QTableWidgetItem, QFileDialog, QCheckBox, QColorDialog, QListWidgetItem
+from PyQt5.QtWidgets import QTableWidgetItem, QFileDialog, QCheckBox, QColorDialog, QListWidgetItem, QLabel
 from PyQt5.QtGui import QColor
 from PyQt5.QtCore import Qt
 

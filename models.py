@@ -35,6 +35,7 @@ class Well(Base):
 
     area = relationship("Area", backref='wells')
     user_interval = relationship("UserInterval", back_populates='well')
+    compare_interval = relationship("CompareInterval", back_populates='well')
 
 
 class DataAge(Base):
@@ -475,6 +476,19 @@ class UserInterval(Base):
     color = Column(String)
 
     well = relationship("Well", back_populates='user_interval')
+
+
+class CompareInterval(Base):
+    __tablename__ = 'compare_interval'
+
+    id = Column(Integer, primary_key=True)
+    well_id = Column(Integer, ForeignKey('wells.id'), nullable=False)
+    int_from = Column(Float)
+    int_to = Column(Float)
+    title = Column(String)
+    color = Column(String)
+
+    well = relationship("Well", back_populates='compare_interval')
 
 
 Base.metadata.create_all(engine)
