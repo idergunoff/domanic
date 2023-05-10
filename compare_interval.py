@@ -1,3 +1,5 @@
+import pandas as pd
+
 from functions import *
 
 
@@ -97,7 +99,7 @@ def add_compare_parameter():
             ui.label_info.setText(f'Внимание! Параметр "{param}" уже добавлен.')
             ui.label_info.setStyleSheet('color: red')
         else:
-            ui.listWidget_compare_param.addItem(f'{param} {table_text}')
+            ui.listWidget_compare_param.addItem(f'{table_text} {param}')
     except AttributeError:
         ui.label_info.setText(f'Внимание! Не выбран параметр.')
         ui.label_info.setStyleSheet('color: red')
@@ -120,8 +122,37 @@ def clear_compare_parameter():
 
 
 def table_compare_interval():
-   """ Рассчёт параметров для интервалов сравнения и отображение в таблице """
-   pass
+    """ Отображение таблицы сравнения интервалов """
+    clear_table(ui.tableWidget)
+    ui.tableWidget.setColumnCount(12)
+    ui.tableWidget.setHorizontalHeaderLabels(['Парам.', 'Инт-л', 'Кол-во', 'Мин', 'Макс', 'Ср.арифм.',
+                                              'Ср.геом', 'Медиана',  'Ассим.', 'Эксцесс', 'Норм.ассим', 'Норм.эксцесс'])
+    pd_compare, list_int_id, list_param = get_table_compare_interval()
+    n_row = 0
+    for param in list_param:
+        for int_id in list_int_id:
+            ui.tableWidget.insertRow(n_row)
+            interval = session.query(CompareInterval).filter(CompareInterval.id == int_id).first()
+            values = pd_compare[param].loc[pd_compare['int_id'] == int_id]
+            stats = values.describe()
+            ui.tableWidget.setItem(n_row, 0, QtWidgets.QTableWidgetItem(param.split(' ')[1]))
+            ui.tableWidget.setItem(n_row, 1, QtWidgets.QTableWidgetItem(interval.title))
+            ui.tableWidget.setItem(n_row, 2, QtWidgets.QTableWidgetItem(str(stats['count'])))
+            ui.tableWidget.setItem(n_row, 3, QtWidgets.QTableWidgetItem(str(stats['min'])))
+            ui.tableWidget.setItem(n_row, 4, QtWidgets.QTableWidgetItem(str(stats['max'])))
+
+
+
+def get_table_compare_interval():
+    """ Рассчёт параметров для интервалов сравнения и отображение в таблице """
+    list_param = [ui.listWidget_compare_param.item(i).text() for i in range(ui.listWidget_compare_param.count())]
+    pd_compare = pd.DataFrame(columns=['int_id']+list_param)
+    list_int_id = []
+    for i in range(ui.listWidget_compare_int.count()):
+        int_id = ui.listWidget_compare_int.itemWidget(ui.listWidget_compare_int.item(i)).property('interval_id')
+        pd_compare = pd.concat([pd_compare, get_pamameters_for_interval(int_id, list_param)], ignore_index=True)
+        list_int_id.append(int_id)
+    return pd_compare, list_int_id, list_param
 
 
 def draw_compare_interval():
@@ -137,3 +168,30 @@ def matrix_compare_interval():
 def save_compare_interval():
    """ Сохранение таблицы параметров интервалов сравнения """
    pass
+
+
+def get_pamameters_for_interval(int_id, list_param):
+    """ Получение параметров для интервала сравнения """
+    interval = session.query(CompareInterval).filter_by(id=int_id).first()
+    pd_interval = pd.DataFrame()
+    for param in list_param:
+        pd_interval[param] = get_param_for_int(interval.well_id, interval.int_from, interval.int_to, param)
+    pd_interval['int_id'] = [int_id] * len(pd_interval.index)
+    return pd_interval
+
+
+def get_param_for_int(w_id, int_from, int_to, tab_param):
+    """ Получение списка значений параметра для интервала """
+    d, list_value = int_from, []
+    table, param = tab_param.split(' ')[0], tab_param.split(' ')[1]
+    tab = get_table(table)
+    while d <= int_to:
+        value = session.query(literal_column(f'{table}.{param}')).filter(
+            tab.depth >= d, tab.depth <= d + 0.1, tab.well_id == w_id
+        ).first()
+        if value:
+            list_value.append(value[0])
+        else:
+            list_value.append(None)
+        d += 0.1
+    return list_value
