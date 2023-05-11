@@ -206,7 +206,19 @@ def table_compare_interval():
         fig.tight_layout()
         fig.show()
 
+    def save_table_compare_stat():
+        """ Сохранение таблицы сравнения интервалов """
+        file_name = QFileDialog.getSaveFileName(None, 'Сохранить таблицу стаистики сравнения интервалов', '', '*.xlsx')[0]
+        if file_name:
+            for row in pd_stat.index:
+                intl = session.query(CompareInterval).filter(CompareInterval.id == pd_stat['Инт-л'][row]).first()
+                pd_stat['Инт-л'][row] = intl.title
+            pd_stat.to_excel(file_name, index=False)
+            ui.label_info.setText(f'Таблица сравнения интервалов сохранена в файл: {file_name}.')
+            ui.label_info.setStyleSheet('color: green')
+
     ui_cit.tableWidget.clicked.connect(click_compare_table)
+    ui_cit.pushButton_save.clicked.connect(save_table_compare_stat)
 
     Compare_Table.exec_()
 
