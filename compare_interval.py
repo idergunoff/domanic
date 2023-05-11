@@ -129,42 +129,85 @@ def table_compare_interval():
     Compare_Table.show()
     Compare_Table.setAttribute(QtCore.Qt.WA_DeleteOnClose)  # атрибут удаления виджета после закрытия
     ui_cit.tableWidget.setColumnCount(12)
-    ui_cit.tableWidget.setHorizontalHeaderLabels(['Парам.', 'Инт-л', 'Кол-во', 'Мин', 'Макс', 'Ср.арифм.',
-                                              'Ср.геом', 'Медиана',  'Ассим.', 'Эксцесс', 'Норм.ассим', 'Норм.эксцесс'])
+    header_list = ['Парам.', 'Инт-л', 'Кол-во', 'Мин', 'Макс', 'Ср.арифм.', 'Ср.геом', 'Медиана', 'Ассим.', 'Эксцесс', 'Норм.ассим', 'Норм.эксцесс']
+    ui_cit.tableWidget.setHorizontalHeaderLabels(header_list)
     pd_compare, list_int_id, list_param = get_table_compare_interval()
+    pd_stat = pd.DataFrame(columns=header_list)
     n_row = 0
     for param in list_param:
         for int_id in list_int_id:
+            stat_dict = {}
             ui_cit.tableWidget.insertRow(n_row)
             interval = session.query(CompareInterval).filter(CompareInterval.id == int_id).first()
             values = pd_compare[param].loc[pd_compare['int_id'] == int_id]
             values = remove_nan(values.tolist())
+            ui_cit.tableWidget.setVerticalHeaderItem(n_row, QtWidgets.QTableWidgetItem(f'{interval.title} {param.split(" ")[1]}'))
+            ui_cit.tableWidget.setItem(n_row, 0, QtWidgets.QTableWidgetItem(param))
+            stat_dict['Парам.'] = param
+            ui_cit.tableWidget.setItem(n_row, 1, QtWidgets.QTableWidgetItem(interval.title))
+            stat_dict['Инт-л'] = interval.id
             if len(values) == 0:
-                ui_cit.tableWidget.setItem(n_row, 0, QtWidgets.QTableWidgetItem(param.split(' ')[1]))
-                ui_cit.tableWidget.setItem(n_row, 1, QtWidgets.QTableWidgetItem(interval.title))
-                for col in range(2, 12):
+                ui_cit.tableWidget.setItem(n_row, 2, QtWidgets.QTableWidgetItem('0'))
+                for col in range(3, 12):
                     ui_cit.tableWidget.setItem(n_row, col, QtWidgets.QTableWidgetItem('empty'))
+                for p in header_list[2:]:
+                    stat_dict[p] = 0
                 set_row_background_color(ui_cit.tableWidget, n_row, interval.color)
+                pd_stat = pd.concat([pd_stat, pd.DataFrame([stat_dict])], ignore_index=True)
                 continue
             stats = describe(values)
             nskew = abs(stats.skewness / (6 / stats.nobs) ** 0.5)
             nkurt = abs(stats.kurtosis / (24 / stats.nobs) ** 0.5)
-            ui_cit.tableWidget.setItem(n_row, 0, QtWidgets.QTableWidgetItem(param.split(' ')[1]))
-            ui_cit.tableWidget.setItem(n_row, 1, QtWidgets.QTableWidgetItem(interval.title))
             ui_cit.tableWidget.setItem(n_row, 2, QtWidgets.QTableWidgetItem(str(stats.nobs)))
+            stat_dict['Кол-во'] = stats.nobs
             ui_cit.tableWidget.setItem(n_row, 3, QtWidgets.QTableWidgetItem(str(stats.minmax[0])))
+            stat_dict['Мин'] = stats.minmax[0]
             ui_cit.tableWidget.setItem(n_row, 4, QtWidgets.QTableWidgetItem(str(stats.minmax[1])))
+            stat_dict['Макс'] = stats.minmax[1]
             ui_cit.tableWidget.setItem(n_row, 5, QtWidgets.QTableWidgetItem(str(round(stats.mean, 5))))
+            stat_dict['Ср.арифм.'] = round(stats.mean, 5)
             ui_cit.tableWidget.setItem(n_row, 6, QtWidgets.QTableWidgetItem(str(round(gmean(values), 5))))
+            stat_dict['Ср.геом'] = round(gmean(values), 5)
             ui_cit.tableWidget.setItem(n_row, 7, QtWidgets.QTableWidgetItem(str(round(median(values), 5))))
+            stat_dict['Медиана'] = round(median(values), 5)
             ui_cit.tableWidget.setItem(n_row, 8, QtWidgets.QTableWidgetItem(str(round(stats.skewness, 5))))
+            stat_dict['Ассим.'] = round(stats.skewness, 5)
             ui_cit.tableWidget.setItem(n_row, 9, QtWidgets.QTableWidgetItem(str(round(stats.kurtosis, 5))))
+            stat_dict['Эксцесс'] = round(stats.kurtosis, 5)
             ui_cit.tableWidget.setItem(n_row, 10, QtWidgets.QTableWidgetItem(str(round(nskew, 5))))
+            stat_dict['Норм.ассим'] = round(nskew, 5)
             ui_cit.tableWidget.setItem(n_row, 11, QtWidgets.QTableWidgetItem(str(round(nkurt, 5))))
+            stat_dict['Норм.эксцесс'] = round(nkurt, 5)
             set_row_background_color(ui_cit.tableWidget, n_row, interval.color)
+            pd_stat = pd.concat([pd_stat, pd.DataFrame([stat_dict])], ignore_index=True)
     alignment_table(ui_cit.tableWidget)
     ui.label_info.setText('Таблица сравнения интервалов построена.')
     ui.label_info.setStyleSheet('color: green')
+
+    def click_compare_table():
+        """ При клике по таблице выделение построение столбчатой диаграммы """
+        cell = ui_cit.tableWidget.currentItem()
+        table_param = ui_cit.tableWidget.item(cell.row(), 0).text()
+        stat_param = ui_cit.tableWidget.horizontalHeaderItem(cell.column()).text()
+        if table_param in ['Парам.', 'Инт-л']:
+            return
+        int_ids = pd_stat['Инт-л'].loc[pd_stat['Парам.'] == table_param]
+        x, color = [], []
+        for int_id in int_ids:
+            intl = session.query(CompareInterval).filter(CompareInterval.id == int_id).first()
+            x.append(intl.title)
+            color.append(intl.color)
+        y = pd_stat[stat_param].loc[pd_stat['Парам.'] == table_param]
+        fig = plt.figure(figsize=(10, 10), dpi=80)
+        ax = plt.subplot()
+        ax.bar(x, y, color=color)
+        ax.grid(True)
+        plt.title(stat_param)
+        fig.tight_layout()
+        fig.show()
+
+    ui_cit.tableWidget.clicked.connect(click_compare_table)
+
     Compare_Table.exec_()
 
 
