@@ -12,6 +12,7 @@ from numpy import median, float64
 from collections import Counter
 from statistics import mean
 import pandas as pd
+import math
 
 import traceback
 import matplotlib.pyplot as plt
@@ -819,6 +820,10 @@ def del_none_from_list(values):
     return [value for value in values if value]
 
 
+def remove_nan(lst):
+    return list(filter(lambda x: not math.isnan(x), lst))
+
+
 def set_info(text, color):
     ui.textEdit_resourse.append(f'<span style =\"color:{color};\" >{text}</span>')
 
@@ -856,5 +861,12 @@ def change_color():
     ui.pushButton_color.setText(color.name())
     table, table_text, widget = check_tabWidjet()
     draw_param_graph(widget, table, table_text)
+
+
+def set_row_background_color(table_widget, row_index, color):
+    """ Устанавливаем цвет фона для строки таблицы с индексом row_index """
+    for j in range(table_widget.columnCount()):
+        item = table_widget.item(row_index, j)
+        item.setBackground(QColor(color))
 
 

@@ -134,13 +134,30 @@ def table_compare_interval():
             ui.tableWidget.insertRow(n_row)
             interval = session.query(CompareInterval).filter(CompareInterval.id == int_id).first()
             values = pd_compare[param].loc[pd_compare['int_id'] == int_id]
-            stats = values.describe()
+            values = remove_nan(values.tolist())
+            if len(values) == 0:
+                ui.tableWidget.setItem(n_row, 0, QtWidgets.QTableWidgetItem(param.split(' ')[1]))
+                ui.tableWidget.setItem(n_row, 1, QtWidgets.QTableWidgetItem(interval.title))
+                for col in range(2, 12):
+                    ui.tableWidget.setItem(n_row, col, QtWidgets.QTableWidgetItem('empty'))
+                set_row_background_color(ui.tableWidget, n_row, interval.color)
+                continue
+            stats = describe(values)
+            nskew = abs(stats.skewness / (6 / stats.nobs) ** 0.5)
+            nkurt = abs(stats.kurtosis / (24 / stats.nobs) ** 0.5)
             ui.tableWidget.setItem(n_row, 0, QtWidgets.QTableWidgetItem(param.split(' ')[1]))
             ui.tableWidget.setItem(n_row, 1, QtWidgets.QTableWidgetItem(interval.title))
-            ui.tableWidget.setItem(n_row, 2, QtWidgets.QTableWidgetItem(str(stats['count'])))
-            ui.tableWidget.setItem(n_row, 3, QtWidgets.QTableWidgetItem(str(stats['min'])))
-            ui.tableWidget.setItem(n_row, 4, QtWidgets.QTableWidgetItem(str(stats['max'])))
-
+            ui.tableWidget.setItem(n_row, 2, QtWidgets.QTableWidgetItem(str(stats.nobs)))
+            ui.tableWidget.setItem(n_row, 3, QtWidgets.QTableWidgetItem(str(stats.minmax[0])))
+            ui.tableWidget.setItem(n_row, 4, QtWidgets.QTableWidgetItem(str(stats.minmax[1])))
+            ui.tableWidget.setItem(n_row, 5, QtWidgets.QTableWidgetItem(str(round(stats.mean, 5))))
+            ui.tableWidget.setItem(n_row, 6, QtWidgets.QTableWidgetItem(str(round(gmean(values), 5))))
+            ui.tableWidget.setItem(n_row, 7, QtWidgets.QTableWidgetItem(str(round(median(values), 5))))
+            ui.tableWidget.setItem(n_row, 8, QtWidgets.QTableWidgetItem(str(round(stats.skewness, 5))))
+            ui.tableWidget.setItem(n_row, 9, QtWidgets.QTableWidgetItem(str(round(stats.kurtosis, 5))))
+            ui.tableWidget.setItem(n_row, 10, QtWidgets.QTableWidgetItem(str(round(nskew, 5))))
+            ui.tableWidget.setItem(n_row, 11, QtWidgets.QTableWidgetItem(str(round(nkurt, 5))))
+            set_row_background_color(ui.tableWidget, n_row, interval.color)
 
 
 def get_table_compare_interval():
