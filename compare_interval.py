@@ -158,6 +158,9 @@ def table_compare_interval():
             ui.tableWidget.setItem(n_row, 10, QtWidgets.QTableWidgetItem(str(round(nskew, 5))))
             ui.tableWidget.setItem(n_row, 11, QtWidgets.QTableWidgetItem(str(round(nkurt, 5))))
             set_row_background_color(ui.tableWidget, n_row, interval.color)
+    alignment_table(ui.tableWidget)
+    ui.label_info.setText('Таблица сравнения интервалов построена.')
+    ui.label_info.setStyleSheet('color: green')
 
 
 def get_table_compare_interval():
@@ -199,10 +202,15 @@ def get_pamameters_for_interval(int_id, list_param):
 
 def get_param_for_int(w_id, int_from, int_to, tab_param):
     """ Получение списка значений параметра для интервала """
-    d, list_value = int_from, []
+    ui.label_info.setText(f'Получение параметра {tab_param} для интервала {int_from} - {int_to}')
+    ui.label_info.setStyleSheet('color: blue')
+    ui.progressBar.setMaximum(int((int_to - int_from) * 10))
+    progres, d, list_value = 0, int_from, []
     table, param = tab_param.split(' ')[0], tab_param.split(' ')[1]
     tab = get_table(table)
     while d <= int_to:
+        progres += 1
+        ui.progressBar.setValue(progres)
         value = session.query(literal_column(f'{table}.{param}')).filter(
             tab.depth >= d, tab.depth <= d + 0.1, tab.well_id == w_id
         ).first()

@@ -870,3 +870,9 @@ def set_row_background_color(table_widget, row_index, color):
         item.setBackground(QColor(color))
 
 
+def alignment_table(table):
+    for i in range(table.columnCount()):
+        table.resizeColumnToContents(i)
+
+
+
