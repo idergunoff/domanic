@@ -14,7 +14,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_CompareTableInt(object):
     def setupUi(self, CompareTableInt):
         CompareTableInt.setObjectName("CompareTableInt")
-        CompareTableInt.resize(770, 528)
+        CompareTableInt.resize(974, 528)
         self.gridLayout = QtWidgets.QGridLayout(CompareTableInt)
         self.gridLayout.setObjectName("gridLayout")
         self.label = QtWidgets.QLabel(CompareTableInt)

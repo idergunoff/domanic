@@ -189,7 +189,7 @@ def table_compare_interval():
         cell = ui_cit.tableWidget.currentItem()
         table_param = ui_cit.tableWidget.item(cell.row(), 0).text()
         stat_param = ui_cit.tableWidget.horizontalHeaderItem(cell.column()).text()
-        if table_param in ['Парам.', 'Инт-л']:
+        if stat_param in ['Парам.', 'Инт-л']:
             return
         int_ids = pd_stat['Инт-л'].loc[pd_stat['Парам.'] == table_param]
         x, color = [], []
@@ -202,7 +202,7 @@ def table_compare_interval():
         ax = plt.subplot()
         ax.bar(x, y, color=color)
         ax.grid(True)
-        plt.title(stat_param)
+        plt.title(f'{table_param} - {stat_param}')
         fig.tight_layout()
         fig.show()
 
