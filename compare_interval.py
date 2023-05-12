@@ -154,6 +154,7 @@ def table_compare_interval():
                     stat_dict[p] = 0
                 set_row_background_color(ui_cit.tableWidget, n_row, interval.color)
                 pd_stat = pd.concat([pd_stat, pd.DataFrame([stat_dict])], ignore_index=True)
+                n_row += 1
                 continue
             stats = describe(values)
             nskew = abs(stats.skewness / (6 / stats.nobs) ** 0.5)
@@ -180,6 +181,7 @@ def table_compare_interval():
             stat_dict['Норм.эксцесс'] = round(nkurt, 5)
             set_row_background_color(ui_cit.tableWidget, n_row, interval.color)
             pd_stat = pd.concat([pd_stat, pd.DataFrame([stat_dict])], ignore_index=True)
+            n_row += 1
     alignment_table(ui_cit.tableWidget)
     ui.label_info.setText('Таблица сравнения интервалов построена.')
     ui.label_info.setStyleSheet('color: green')
@@ -226,7 +228,7 @@ def table_compare_interval():
 def get_table_compare_interval():
     """ Рассчёт параметров для интервалов сравнения и отображение в таблице """
     list_param = [ui.listWidget_compare_param.item(i).text() for i in range(ui.listWidget_compare_param.count())]
-    pd_compare = pd.DataFrame(columns=['int_id']+list_param)
+    pd_compare = pd.DataFrame(columns=['int_id', 'title', 'color']+list_param)
     list_int_id = []
     for i in range(ui.listWidget_compare_int.count()):
         int_id = ui.listWidget_compare_int.itemWidget(ui.listWidget_compare_int.item(i)).property('interval_id')
@@ -241,13 +243,17 @@ def draw_compare_interval():
 
 
 def matrix_compare_interval():
-   """ Отрисовка матрицы интервалов сравнения """
-   pass
-
+    """ Отрисовка матрицы интервалов сравнения """
+    pd_compare, list_int_id, list_param = get_table_compare_interval()
+    del pd_compare['int_id']
+    sns_plot = sns.pairplot(pd_compare, hue='title', palette=sns.color_palette(pd_compare['color'].unique()))
+    sns_plot.fig.suptitle('Матрица интервалов сравнения')
+    sns_plot.tight_layout()
+    plt.show()
 
 def save_compare_interval():
-   """ Сохранение таблицы параметров интервалов сравнения """
-   pass
+    """ Сохранение таблицы параметров интервалов сравнения """
+    pass
 
 
 def get_pamameters_for_interval(int_id, list_param):
@@ -257,6 +263,9 @@ def get_pamameters_for_interval(int_id, list_param):
     for param in list_param:
         pd_interval[param] = get_param_for_int(interval.well_id, interval.int_from, interval.int_to, param)
     pd_interval['int_id'] = [int_id] * len(pd_interval.index)
+    intl = session.query(CompareInterval).filter_by(id=int_id).first()
+    pd_interval['title'] = [intl.title] * len(pd_interval.index)
+    pd_interval['color'] = [intl.color] * len(pd_interval.index)
     return pd_interval
 
 
