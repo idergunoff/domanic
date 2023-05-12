@@ -1244,6 +1244,8 @@ class Ui_MainWindow(object):
         self.pushButton_compare_draw.setObjectName("pushButton_compare_draw")
         self.gridLayout_79.addWidget(self.pushButton_compare_draw, 1, 0, 1, 1)
         self.gridLayout_59.addLayout(self.gridLayout_79, 0, 1, 1, 1)
+        self.gridLayout_59.setColumnStretch(0, 3)
+        self.gridLayout_59.setColumnStretch(1, 2)
         self.gridLayout_58.addLayout(self.gridLayout_59, 1, 0, 1, 1)
         self.gridLayout_80 = QtWidgets.QGridLayout()
         self.gridLayout_80.setObjectName("gridLayout_80")

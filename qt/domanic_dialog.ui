@@ -2543,7 +2543,7 @@ selection-color: rgb(85, 0, 0);</string>
                       </widget>
                      </item>
                      <item row="1" column="0">
-                      <layout class="QGridLayout" name="gridLayout_59">
+                      <layout class="QGridLayout" name="gridLayout_59" columnstretch="3,2">
                        <item row="0" column="0">
                         <layout class="QGridLayout" name="gridLayout_60">
                          <item row="0" column="0">
