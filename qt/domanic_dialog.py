@@ -1762,7 +1762,7 @@ class Ui_MainWindow(object):
         MainWindow.setStatusBar(self.statusbar)
 
         self.retranslateUi(MainWindow)
-        self.tabWidget_2.setCurrentIndex(4)
+        self.tabWidget_2.setCurrentIndex(0)
         self.tabWidget_resource.setCurrentIndex(0)
         self.tabWidget.setCurrentIndex(0)
         self.toolBox_pir.setCurrentIndex(0)
