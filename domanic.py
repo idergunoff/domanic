@@ -156,6 +156,7 @@ for button in [ui.pushButton_color, ui.pushButton_color_tablet, ui.pushButton_re
     set_random_color(button)
 user_interval_list_update()
 update_list_compare_interval()
+add_stat_checkbox()
 
 
 sys.excepthook = log_uncaught_exceptions

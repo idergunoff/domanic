@@ -238,9 +238,62 @@ def get_table_compare_interval():
 
 
 def draw_compare_interval():
-   """ Отрисовка интервалов сравнения """
-   pass
-
+    """ Отрисовка интервалов сравнения """
+    pd_compare, list_int_id, list_param = get_table_compare_interval()
+    list_stat_param = get_list_stat_checkbox()
+    pd_stat = pd.DataFrame(columns=['Парам.', 'Инт-л', 'title', 'color'] + list_stat_param)
+    for param in list_param:
+        for int_id in list_int_id:
+            stat_dict = {}
+            interval = session.query(CompareInterval).filter(CompareInterval.id == int_id).first()
+            values = pd_compare[param].loc[pd_compare['int_id'] == int_id]
+            values = remove_nan(values.tolist())
+            stat_dict['Парам.'] = param
+            stat_dict['Инт-л'] = interval.id
+            stat_dict['title'] = interval.title
+            stat_dict['color'] = interval.color
+            if len(values) == 0:
+                for p in list_stat_param:
+                    stat_dict[p] = 0
+                pd_stat = pd.concat([pd_stat, pd.DataFrame([stat_dict])], ignore_index=True)
+                continue
+            stats = describe(values)
+            if 'Кол-во' in list_stat_param:
+                stat_dict['Кол-во'] = stats.nobs
+            if 'Мин' in list_stat_param:
+                stat_dict['Мин'] = stats.minmax[0]
+            if 'Макс' in list_stat_param:
+                stat_dict['Макс'] = stats.minmax[1]
+            if 'Ср.арифм.' in list_stat_param:
+                stat_dict['Ср.арифм.'] = round(stats.mean, 5)
+            if 'Ср.геом.' in list_stat_param:
+                stat_dict['Ср.геом'] = round(gmean(values), 5)
+            if 'Медиана' in list_stat_param:
+                stat_dict['Медиана'] = round(median(values), 5)
+            if 'Ассим.' in list_stat_param:
+                stat_dict['Ассим.'] = round(stats.skewness, 5)
+            if 'Эксцесс' in list_stat_param:
+                stat_dict['Эксцесс'] = round(stats.kurtosis, 5)
+            if 'Норм.ассим' in list_stat_param:
+                nskew = abs(stats.skewness / (6 / stats.nobs) ** 0.5)
+                stat_dict['Норм.ассим'] = round(nskew, 5)
+            if 'Норм.эксцесс' in list_stat_param:
+                nkurt = abs(stats.kurtosis / (24 / stats.nobs) ** 0.5)
+                stat_dict['Норм.эксцесс'] = round(nkurt, 5)
+            pd_stat = pd.concat([pd_stat, pd.DataFrame([stat_dict])], ignore_index=True)
+    print(pd_stat)
+    # создание фигуры и основного контейнера для графиков
+    fig = plt.figure(figsize=(10, 8))
+    grid = fig.add_gridspec(nrows=len(list_param), ncols=len(list_stat_param))
+    for i in range(len(list_param)):
+        for j in range(len(list_stat_param)):
+            ax = fig.add_subplot(grid[i, j])
+            ax.bar(pd_stat['title'].loc[pd_stat['Парам.'] == list_param[i]],
+                   pd_stat[list_stat_param[j]].loc[pd_stat['Парам.'] == list_param[i]],
+                   color=pd_stat['color'].loc[pd_stat['Парам.'] == list_param[i]])
+            ax.set_title(list_param[i] + ' ' + list_stat_param[j])
+    plt.tight_layout()
+    plt.show()
 
 def matrix_compare_interval():
     """ Отрисовка матрицы интервалов сравнения """
@@ -289,3 +342,23 @@ def get_param_for_int(w_id, int_from, int_to, tab_param):
             list_value.append(None)
         d += 0.1
     return list_value
+
+
+def add_stat_checkbox():
+    """ Добавление чекбокса для статистики """
+    ui.listWidget_compare_stat.clear()
+    stat_list = ['Кол-во', 'Мин', 'Макс', 'Ср.арифм.', 'Ср.геом', 'Медиана', 'Ассим.', 'Эксцесс', 'Норм.ассим', 'Норм.эксцесс']
+    for stat in stat_list:
+        check_box_widget = QCheckBox(stat)
+        list_item = QListWidgetItem()
+        ui.listWidget_compare_stat.addItem(list_item)
+        ui.listWidget_compare_stat.setItemWidget(list_item, check_box_widget)
+
+
+def get_list_stat_checkbox():
+    """ Получение списка чекбоксов для статистики """
+    list_stat = []
+    for i in range(ui.listWidget_compare_stat.count()):
+        if ui.listWidget_compare_stat.itemWidget(ui.listWidget_compare_stat.item(i)).isChecked():
+            list_stat.append(ui.listWidget_compare_stat.itemWidget(ui.listWidget_compare_stat.item(i)).text())
+    return list_stat
