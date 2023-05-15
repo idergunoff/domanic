@@ -281,7 +281,6 @@ def draw_compare_interval():
                 nkurt = abs(stats.kurtosis / (24 / stats.nobs) ** 0.5)
                 stat_dict['Норм.эксцесс'] = round(nkurt, 5)
             pd_stat = pd.concat([pd_stat, pd.DataFrame([stat_dict])], ignore_index=True)
-    print(pd_stat)
     # создание фигуры и основного контейнера для графиков
     fig = plt.figure(figsize=(10, 8))
     grid = fig.add_gridspec(nrows=len(list_param), ncols=len(list_stat_param))
@@ -291,7 +290,7 @@ def draw_compare_interval():
             ax.bar(pd_stat['title'].loc[pd_stat['Парам.'] == list_param[i]],
                    pd_stat[list_stat_param[j]].loc[pd_stat['Парам.'] == list_param[i]],
                    color=pd_stat['color'].loc[pd_stat['Парам.'] == list_param[i]])
-            ax.set_title(list_param[i] + ' ' + list_stat_param[j])
+            ax.set_title(list_param[i].split(' ')[1] + ' ' + list_stat_param[j])
     plt.tight_layout()
     plt.show()
 
@@ -299,6 +298,10 @@ def matrix_compare_interval():
     """ Отрисовка матрицы интервалов сравнения """
     pd_compare, list_int_id, list_param = get_table_compare_interval()
     del pd_compare['int_id']
+    new_list_param = [i.split(' ')[1] for i in list_param]
+    for i in range(len(list_param)):
+        pd_compare = pd_compare.rename(columns={list_param[i]: new_list_param[i]})
+    print(pd_compare)
     sns_plot = sns.pairplot(pd_compare, hue='title', palette=sns.color_palette(pd_compare['color'].unique()))
     sns_plot.fig.suptitle('Матрица интервалов сравнения')
     sns_plot.tight_layout()
@@ -306,7 +309,12 @@ def matrix_compare_interval():
 
 def save_compare_interval():
     """ Сохранение таблицы параметров интервалов сравнения """
-    pass
+    pd_compare, list_int_id, list_param = get_table_compare_interval()
+    file_name = QFileDialog.getSaveFileName(None, 'Сохранить таблицу исходных данных сравнения интервалов', '', '*.xlsx')[0]
+    if file_name:
+        pd_compare.to_excel(file_name, index=False)
+        ui.label_info.setText(f'Таблица данных сравнения интервалов сохранена в файл: {file_name}.')
+        ui.label_info.setStyleSheet('color: green')
 
 
 def get_pamameters_for_interval(int_id, list_param):
