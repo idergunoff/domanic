@@ -301,7 +301,6 @@ def matrix_compare_interval():
     new_list_param = [i.split(' ')[1] for i in list_param]
     for i in range(len(list_param)):
         pd_compare = pd_compare.rename(columns={list_param[i]: new_list_param[i]})
-    print(pd_compare)
     sns_plot = sns.pairplot(pd_compare, hue='title', palette=sns.color_palette(pd_compare['color'].unique()))
     sns_plot.fig.suptitle('Матрица интервалов сравнения')
     sns_plot.tight_layout()

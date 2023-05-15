@@ -34,7 +34,7 @@ def add_user_interval_from_category():
                                          int_from=int.int_from,
                                          int_to=int.int_to,
                                          color=get_random_color(),
-                                         title='int_from_cat_' + str(n + 1)
+                                         title='cat_' + str(n + 1)
                                          )
         session.add(new_user_interval)
     session.commit()
