@@ -7,7 +7,7 @@ from PyQt5.QtCore import Qt
 from sqlalchemy import text, desc, literal_column
 from pandas import read_excel
 import pyqtgraph as pg
-from scipy.stats import describe, gmean
+from scipy.stats import describe, gmean, gaussian_kde
 from numpy import median, float64
 from collections import Counter
 from statistics import mean
@@ -602,7 +602,12 @@ def check_value_in_limits(val, lim):
             n += 1
         else:
             break
-    return n - 1
+    try:
+        n10 = (val - lim[n - 1]) / (lim[n] - lim[n - 1]) if ui.checkBox_pdf_class.isChecked() else 0
+    except IndexError:
+        n10 = (val - lim[n - 1]) / (lim[n - 1] - lim[n - 2]) if ui.checkBox_pdf_class.isChecked() else 0
+        n10 = 0.99 if n10 >= 1 else n10
+    return (n - 1) + n10
 
 
 def arithmetic_round(x):
@@ -617,15 +622,28 @@ def arithmetic_round(x):
 
 def choice_category(list_cat):
     """ Выбор результирующей категории """
-    a = Counter(list_cat).most_common(2)    # максимальное количество вхождений значений в список (первые два)
-    try:
-        if a[0][1] != a[1][1]:  # если количество первых двух макс. вхождений не совпадает
-            res_cat = a[0][0]   # берём первый
-        else:   # если количество первых двух макс. вхождений совпадает
-            res_cat = arithmetic_round(mean(list_cat))  # берём среднее арифметическое
+    if ui.checkBox_pdf_class.isChecked():
+        try:
+            interval = np.linspace(0, len(list_cat), 100)
+            pdf = gaussian_kde(list_cat)
+            res_cat = int(interval[pdf.evaluate(interval).argmax()])
+            res_cat = res_cat - 1 if res_cat == len(list_cat) else res_cat
+        except np.linalg.LinAlgError:
+            print('LinalgError')
+            res_cat = int(list_cat[0])
+        except ValueError:
+            res_cat = int(list_cat[0])
         return res_cat
-    except IndexError:    # если в списке одно значение
-        return a[0][0]
+    else:
+        a = Counter(list_cat).most_common(2)    # максимальное количество вхождений значений в список (первые два)
+        try:
+            if a[0][1] != a[1][1]:  # если количество первых двух макс. вхождений не совпадает
+                res_cat = a[0][0]   # берём первый
+            else:   # если количество первых двух макс. вхождений совпадает
+                res_cat = arithmetic_round(mean(list_cat))  # берём среднее арифметическое
+            return res_cat
+        except IndexError:    # если в списке одно значение
+            return a[0][0]
 
 
 def comboBox_class_lda_update():

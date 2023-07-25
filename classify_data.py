@@ -152,9 +152,7 @@ def calc_class_lim():
         list_param.append(i.param)
         list_limits.append([float(j) for j in i.limits.split(';')])     # список списков интервалов для каждого параметра
     data_lim = []   # список списков все результирующие данные по классификации
-    d = start
-    n = 0
-    k = 0
+    d, n, k = start, 0, 0
     ui.progressBar.setMaximum(int((stop - start) / 0.1))
     clear_table(ui.tableWidget)
     ui.tableWidget.setColumnCount(len(list_param) + (3 if list_tab[0] != 'data_las' else 2))    # количество колонок сназваниями образцов или без них
@@ -189,8 +187,10 @@ def calc_class_lim():
                 QtGui.QColor(color_list[list_name_cat.index(list_class[-2 if list_tab[0] != 'data_las' else -1])]))     # цвет ячейки по категории
             list_cat = list_class[1:-2] if list_tab[0] != 'data_las' else list_class[1:-1]  # список резульирующих категорий по параметрам
             for m, j in enumerate(list_cat):
+                if ui.checkBox_pdf_class.isChecked():
+                    j = round(j, 2)
                 ui.tableWidget.setItem(k, m + (3 if list_tab[0] != 'data_las' else 2), QTableWidgetItem(str(j)))    # категории по каждому параметру в виджет
-                ui.tableWidget.item(k, m + (3 if list_tab[0] != 'data_las' else 2)).setBackground(QtGui.QColor(color_list[j]))  # цвет ячейки по категории
+                ui.tableWidget.item(k, m + (3 if list_tab[0] != 'data_las' else 2)).setBackground(QtGui.QColor(color_list[int(j)]))  # цвет ячейки по категории
             k += 1
         d += 0.1
         n += 1
@@ -828,11 +828,12 @@ def calc_constr():
                                 list_class[-2 if list_tab[0] != 'data_las' else -1])]))  # цвет ячейки по категории
                         list_cat = list_class[1:-2] if list_tab[0] != 'data_las' else list_class[1:-1]  # список резульирующих категорий по параметрам
                         for m, j in enumerate(list_cat):
+                            j = round(j, 2) if ui.checkBox_pdf_class.isChecked() else j
                             ui.tableWidget.setItem(k, m + (3 if list_tab[0] != 'data_las' else 2),
                                                    QTableWidgetItem(str(j)))  # категории по каждому параметру в виджет
                             if d in int_to_calc:
                                 ui.tableWidget.item(k, m + (3 if list_tab[0] != 'data_las' else 2)).setBackground(
-                                    QtGui.QColor(color_list[j]))  # цвет ячейки по категории
+                                    QtGui.QColor(color_list[int(j)]))  # цвет ячейки по категории
                         k += 1
                     d += 0.1
                     n += 1

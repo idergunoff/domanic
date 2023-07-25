@@ -12,6 +12,25 @@ def click_table():
     depth_line = pg.InfiniteLine(angle=0, pen=pg.mkPen(color='b', width=0.7, dash=[2, 2]))
     ui.graphicsView.addItem(depth_line)
     depth_line.setPos(depth_table)
+    if ui.label_table_name.text().startswith('Класс-ия'):
+        try:
+            count_col = ui.tableWidget.columnCount()
+            col_start = 3 if ui.tableWidget.horizontalHeaderItem(1).text() == 'name' else 2
+            list_val = [float(ui.tableWidget.item(row, i).text()) for i in range(col_start, count_col)]
+            interval = np.linspace(0, len(list_val), 100)
+            pdf = gaussian_kde(list_val)
+            fig = plt.figure(figsize=(14, 10))
+            plt.plot(interval, pdf.evaluate(interval))
+            for i in list_val:
+                plt.axvline(x=i, color='g')
+            plt.axvline(x=interval[pdf.evaluate(interval).argmax()], color='r')
+
+            plt.show()
+        except ValueError:
+            pass
+        except np.linalg.LinAlgError:
+            pass
+
 
 
 def draw_current_graph_by_style():
