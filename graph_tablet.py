@@ -85,7 +85,8 @@ def draw_graph_tablet():
     n, n_graph = 0, 1
     for i in params_graph_tablet:
         if i.param:
-            add_graph_tablet(i, min_Y, max_Y, count_graph, n_graph, fig, n)
+            interval = True if n == 0 and ui.checkBox_tablet_interval.isChecked() else False
+            add_graph_tablet(i, min_Y, max_Y, count_graph, n_graph, fig, n, interval)
             n += 1
         else:
             n_graph += 1
@@ -96,7 +97,7 @@ def draw_graph_tablet():
     fig.show()
 
 
-def add_graph_tablet(param_row, min_Y, max_Y, count_graph, n_graph, fig, n):
+def add_graph_tablet(param_row, min_Y, max_Y, count_graph, n_graph, fig, n, interval):
     """ Добавляем график на планшет """
     table = get_table(param_row.table)
     X = sum(list(map(list, session.query(literal_column(f'{param_row.table}.{param_row.param}')).filter(table.well_id == param_row.well_id,
@@ -144,6 +145,20 @@ def add_graph_tablet(param_row, min_Y, max_Y, count_graph, n_graph, fig, n):
         ax.axes.yaxis.tick_right()
     ax.invert_yaxis()
 
+    if interval:
+        for i in range(ui.listWidget_user_int.count()):
+            item = ui.listWidget_user_int.item(i)
+            if isinstance(item, QListWidgetItem):
+                checkbox = ui.listWidget_user_int.itemWidget(item)
+                if isinstance(checkbox, QCheckBox) and checkbox.isChecked():
+                    user_int = session.query(UserInterval).filter_by(id=checkbox.property('interval_id')).first()
+
+                    x = [min(X), max(X)]  # Пример значений x
+                    y1 = user_int.int_from  # Значение y1, начало заливки
+                    y2 = user_int.int_to  # Значение y2, конец заливки
+
+                    # Задаем прямоугольную область для заливки
+                    ax.fill_betweenx([y1, y2], min(x), max(x), alpha=0.5, color=user_int.color)
 
 # def draw_total_cement(device, n_izm, n_graph, fig, count_sig):
 #     """ функция отрисовки цементограммы по всей длине """
