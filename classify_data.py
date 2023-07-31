@@ -173,7 +173,7 @@ def calc_class_lim():
                 list_class.append(lim)
         if len(list_class) == len(class_params) + 1:    # если определены все параметры
             ui.tableWidget.insertRow(k)     # создаем новую строку в виджете таблицы
-            list_class.append(list_name_cat[choice_category(list_class[1:])])   # вычисление результирующей производной
+            list_class.append(list_name_cat[choice_category(list_class[1:], len(list_param))])   # вычисление результирующей производной
             if list_tab[0] != 'data_las':   # если первый параметр не LAS получаем номер образца
                 tab = get_table(list_tab[0])
                 name_obr = session.query(tab.name).filter(tab.well_id == w_id, tab.depth >= d, tab.depth < d + 0.1).first()[0]
@@ -773,7 +773,7 @@ def calc_constr():
                             lim = check_value_in_limits(val[0], list_limits[i])
                             list_class.append(lim)
                     if len(list_class) == len(class_params):  # если определены все параметры
-                        if list_name_cat[choice_category(list_class)] in list_check:
+                        if list_name_cat[choice_category(list_class, len(list_param))] in list_check:
                             new_int_to_calc.append(d)
                     ui.progressBar.setValue(n + 1)
                 int_to_calc = new_int_to_calc
@@ -808,7 +808,7 @@ def calc_constr():
                         ui.tableWidget.insertRow(k)  # создаем новую строку в виджете таблицы
                         if d in int_to_calc:
                             list_class.append(
-                                list_name_cat[choice_category(list_class[1:])])  # вычисление результирующей производной
+                                list_name_cat[choice_category(list_class[1:], len(list_param))])  # вычисление результирующей производной
                         else:
                             list_class.append('Не вошёл')
                         if list_tab[0] != 'data_las':  # если первый параметр не LAS получаем номер образца

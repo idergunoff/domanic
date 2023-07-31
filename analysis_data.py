@@ -17,13 +17,13 @@ def click_table():
             count_col = ui.tableWidget.columnCount()
             col_start = 3 if ui.tableWidget.horizontalHeaderItem(1).text() == 'name' else 2
             list_val = [float(ui.tableWidget.item(row, i).text()) for i in range(col_start, count_col)]
-            interval = np.linspace(0, len(list_val), 100)
+            interval = np.linspace(0, int(max(list_val)) + 2, 1000)
             pdf = gaussian_kde(list_val)
             fig = plt.figure(figsize=(14, 10))
             plt.plot(interval, pdf.evaluate(interval))
             for i in list_val:
                 plt.axvline(x=i, color='g')
-            plt.axvline(x=interval[pdf.evaluate(interval).argmax()], color='r')
+            plt.axvline(x=interval[pdf.evaluate(interval).argmax()], color='r', linestyle='--', linewidth=3)
 
             plt.show()
         except ValueError:

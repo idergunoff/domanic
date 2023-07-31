@@ -620,14 +620,13 @@ def arithmetic_round(x):
         return round(x + 0.01)
 
 
-def choice_category(list_cat):
+def choice_category(list_cat, count_param):
     """ Выбор результирующей категории """
     if ui.checkBox_pdf_class.isChecked():
         try:
-            interval = np.linspace(0, len(list_cat), 100)
+            interval = np.linspace(0, count_param + 1, 1000)
             pdf = gaussian_kde(list_cat)
             res_cat = int(interval[pdf.evaluate(interval).argmax()])
-            res_cat = res_cat - 1 if res_cat == len(list_cat) else res_cat
         except np.linalg.LinAlgError:
             print('LinalgError')
             res_cat = int(list_cat[0])
