@@ -173,27 +173,42 @@ def load_data_from_las():
     """Загрузка данных из las-файлов"""
     try:
         file_name = QFileDialog.getOpenFileName(filter='*.las')[0]
-        version, start_depth, stop_depth, null_value, param, data_row = read_las_info(file_name)
+        # version, start_depth, stop_depth, null_value, param, data_row = read_las_info(file_name)
+        las = ls.read(file_name)
     except FileNotFoundError:
         return
-    add_slots(start_depth, stop_depth)
+    add_slots(las.well['STRT'].value, las.well['STOP'].value)
     well_interval()
     w_id = get_well_id()
     param_result = ''
     no_param = ''
-    if type(param) is list:
-        for n, p in enumerate(param):
-            result = load_param_from_las(p, null_value, file_name, data_row, n, w_id)
-            if result:
-                param_result += ' ' + p
+
+    # print(las.well['WELL'].value, las.well['STRT'].value, las.well['STOP'].value, las.well['NULL'].value)
+
+    param_las = [curve.mnemonic for curve in las.curves]
+    list_columns = DataLas.__table__.columns.keys()
+    for i in param_las:
+        if i != 'DEPT':
+            if i in list_columns:
+                load_param_from_lasio(i, list(las['DEPT']), list(las[i]), w_id)
+                param_result += f' {i}'
             else:
-                no_param += ' ' + p
-    else:
-        result = load_param_from_las(param, null_value, file_name, data_row, 0, w_id)
-        if result:
-            param_result += ' ' + param
-        else:
-            no_param += ' ' + param
+                no_param += f' {i}'
+    #
+    #
+    # if type(param) is list:
+    #     for n, p in enumerate(param):
+    #         result = load_param_from_las(p, null_value, file_name, data_row, n, w_id)
+    #         if result:
+    #             param_result += ' ' + p
+    #         else:
+    #             no_param += ' ' + p
+    # else:
+    #     result = load_param_from_las(param, null_value, file_name, data_row, 0, w_id)
+    #     if result:
+    #         param_result += ' ' + param
+    #     else:
+    #         no_param += ' ' + param
     ui.label_info.setText('Обновление базы данных. Это может занять некоторое время...')
     ui.label_info.setStyleSheet('color: blue')
     session.commit()
@@ -204,6 +219,14 @@ def load_data_from_las():
                               f'отсутствуют в базе данных. Проверьте LAS-файл.')
     ui.label_info.setStyleSheet('color: green')
     well_interval()
+
+
+def load_param_from_lasio(param, depth, data, well_id):
+    """Загрузка параметров из ласио"""
+    for i in range(len(depth)):
+        session.query(DataLas).filter(DataLas.well_id == well_id, DataLas.depth == depth[i]).update(
+                            {param: data[i]}, synchronize_session="fetch")
+    return True
 
 
 def load_data_pir():

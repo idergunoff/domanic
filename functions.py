@@ -12,6 +12,7 @@ from numpy import median, float64
 from collections import Counter
 from statistics import mean
 import pandas as pd
+import lasio as ls
 import math
 
 import traceback
@@ -66,42 +67,42 @@ def check_start_stop():
     return start, stop
 
 
-def read_las_info(file_name):
-    """Считывает информацию из las-файла"""
-    with open(file_name) as f:
-        n = 0
-        while n < 1000:
-            n += 1
-            line = f.readline()
-            if line.strip().startswith('VERS.'):
-                version = line.split(':')[0].split()[1]
-            if line.strip().startswith('STRT.M'):
-                start_depth = float(line.split(':')[0].split()[1])
-            if line.strip().startswith('STOP.M'):
-                stop_depth = float(line.split(':')[0].split()[1])
-            if line.strip().startswith('NULL.'):
-                null_value = line.split(':')[0].split()[1]
-            if line.strip().startswith('~A'):
-                param = line.split()
-                data_row = n
-                break
-        if version == '2.0':
-            with open(file_name) as f:
-                n = 0
-                while n < 1000:
-                    n += 1
-                    line = f.readline()
-                    if line.strip().startswith('#CURVE'):
-                        param = line.split(':')[0].split()[1]
-        if type(param) is list:
-            if '~A' in param:
-                # todo убрать костыль, не везде есть Log
-                try:
-                    param.remove('~A')
-                    param.remove('Log')
-                except:
-                    pass
-        return version, start_depth, stop_depth, null_value, param, data_row
+# def read_las_info(file_name):
+#     """Считывает информацию из las-файла"""
+#     with open(file_name) as f:
+#         n = 0
+#         while n < 1000:
+#             n += 1
+#             line = f.readline()
+#             if line.strip().startswith('VERS.'):
+#                 version = line.split(':')[0].split()[1]
+#             if line.strip().startswith('STRT.M'):
+#                 start_depth = float(line.split(':')[0].split()[1])
+#             if line.strip().startswith('STOP.M'):
+#                 stop_depth = float(line.split(':')[0].split()[1])
+#             if line.strip().startswith('NULL.'):
+#                 null_value = line.split(':')[0].split()[1]
+#             if line.strip().startswith('~A'):
+#                 param = line.split()
+#                 data_row = n
+#                 break
+#         if version == '2.0':
+#             with open(file_name) as f:
+#                 n = 0
+#                 while n < 1000:
+#                     n += 1
+#                     line = f.readline()
+#                     if line.strip().startswith('#CURVE'):
+#                         param = line.split(':')[0].split()[1]
+#         if type(param) is list:
+#             if '~A' in param:
+#                 # todo убрать костыль, не везде есть Log
+#                 try:
+#                     param.remove('~A')
+#                     param.remove('Log')
+#                 except:
+#                     pass
+#         return version, start_depth, stop_depth, null_value, param, data_row
 
 
 def get_well_id():
@@ -146,7 +147,9 @@ def load_param_from_las(param, null, file_name, row, index_list, well_id):
     :return: True - если входит в список параметров БД, False - если не входит
     """
     list_columns = DataLas.__table__.columns.keys()
+
     if param in list_columns:
+        print(f'Загрузка параметра "{param}".')
         ui.label_info.setText(f'Загрузка параметра "{param}".')
         ui.label_info.setStyleSheet('color: blue')
         with open(file_name) as f:
