@@ -115,7 +115,7 @@ def get_well_id():
 def add_slots(start, stop):
     """Добавить ряды в таблицу DataLas"""
     w_id = get_well_id()
-    ui.progressBar.setMaximum(10 * (stop - start))
+    ui.progressBar.setMaximum(int((stop - start)*10))
     ui.label_info.setText('Обновление базы данных. Это может занять некоторое время...')
     ui.label_info.setStyleSheet('color: blue')
     add_rows = 0
