@@ -90,6 +90,8 @@ ui.pushButton_add_param_res.clicked.connect(add_param_resource)
 ui.pushButton_add_tab_res.clicked.connect(add_all_param_resource)
 ui.pushButton_clear_param_res.clicked.connect(clear_param_resource)
 ui.pushButton_del_param_res.clicked.connect(del_param_resource)
+
+# graph tablet
 ui.pushButton_add_param_tablet.clicked.connect(add_param_tablet)
 ui.pushButton_edit_param_tablet.clicked.connect(edit_param_tablet)
 ui.pushButton_clear_param_tablet.clicked.connect(clear_param_tablet)
@@ -97,6 +99,11 @@ ui.pushButton_del_param_tablet.clicked.connect(del_param_tablet)
 ui.pushButton_draw_param_tablet.clicked.connect(draw_graph_tablet)
 ui.pushButton_next_graph_tablet.clicked.connect(add_next_graph)
 ui.pushButton_color_tablet.clicked.connect(change_color_tablet)
+ui.pushButton_add_temp_graph_tab.clicked.connect(add_template_graph_tablet)
+ui.pushButton_del_temp_graph_tab.clicked.connect(delete_template_graph_tablet)
+ui.pushButton_use_temp_graph_tab.clicked.connect(use_template_graph_tablet)
+
+
 ui.pushButton_rel_color.clicked.connect(set_style_pushbutton_color)
 
 ui.comboBox_region.activated.connect(comboBox_area_update)
@@ -157,6 +164,7 @@ for button in [ui.pushButton_color, ui.pushButton_color_tablet, ui.pushButton_re
 user_interval_list_update()
 update_list_compare_interval()
 add_stat_checkbox()
+update_template_graph_tablet()
 
 
 sys.excepthook = log_uncaught_exceptions

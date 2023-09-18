@@ -411,6 +411,19 @@ class DrawGraphTablet(Base):
     type_graph = Column(String)
 
 
+class TemplateGraphTablet(Base):
+    __tablename__ = 'template_graph_tablet'
+
+    id = Column(Integer, primary_key=True)
+    title = Column(String)
+    table = Column(String)
+    param = Column(String)
+    color = Column(String)
+    dash = Column(String)
+    width = Column(String)
+    type_graph = Column(String)
+
+
 class ClassByLimits(Base):
     __tablename__ = 'class_by_limits'
 

@@ -14,6 +14,7 @@ from statistics import mean
 import pandas as pd
 import lasio as ls
 import math
+import json
 
 import traceback
 import matplotlib.pyplot as plt

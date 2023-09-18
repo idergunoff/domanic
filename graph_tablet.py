@@ -307,3 +307,52 @@ def extract_intervals(data):
     # Возвращаем список интервалов
     return result
 
+
+def update_template_graph_tablet():
+    ui.comboBox_temp_graph_tab.clear()
+    for i in session.query(TemplateGraphTablet).all():
+        ui.comboBox_temp_graph_tab.addItem(f'{i.title} id{i.id}')
+
+
+def add_template_graph_tablet():
+    params_graph_tablet = session.query(DrawGraphTablet).all()
+    title = ui.lineEdit_string.text()
+    if title != '':
+        session.add(TemplateGraphTablet(
+            title=title,
+            table=json.dumps([i.table for i in params_graph_tablet]),
+            param=json.dumps([i.param for i in params_graph_tablet]),
+            color=json.dumps([i.color for i in params_graph_tablet]),
+            dash=json.dumps([i.dash for i in params_graph_tablet]),
+            width=json.dumps([i.width for i in params_graph_tablet]),
+            type_graph=json.dumps([i.type_graph for i in params_graph_tablet])
+        ))
+        session.commit()
+        update_template_graph_tablet()
+    else:
+        ui.label_info.setText('Введите название шаблона')
+        ui.label_info.setStyleSheet('color: red')
+
+
+def delete_template_graph_tablet():
+    session.query(TemplateGraphTablet).filter_by(id=ui.comboBox_temp_graph_tab.currentText().split(' id')[-1]).delete()
+    session.commit()
+    update_template_graph_tablet()
+
+
+def use_template_graph_tablet():
+    clear_param_tablet()
+    temp_graph_tab = session.query(TemplateGraphTablet).filter_by(id=ui.comboBox_temp_graph_tab.currentText().split(' id')[-1]).first()
+    table = json.loads(temp_graph_tab.table)
+    param = json.loads(temp_graph_tab.param)
+    color = json.loads(temp_graph_tab.color)
+    dash = json.loads(temp_graph_tab.dash)
+    width = json.loads(temp_graph_tab.width)
+    type_graph = json.loads(temp_graph_tab.type_graph)
+    for i in range(len(table)):
+        new_param_tablet = DrawGraphTablet(well_id=get_well_id(), table=table[i], param=param[i], color=color[i],
+                                           dash=dash[i], width=width[i], type_graph=type_graph[i])
+        session.add(new_param_tablet)  # параметр добавляется в отдельную таблицу + параметры графика
+        session.commit()
+    show_list_tablet()
+
