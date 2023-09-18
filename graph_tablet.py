@@ -79,7 +79,12 @@ def draw_graph_tablet():
     gs = GridSpec(1, count_graph + 1, width_ratios=[1] + [3] * count_graph)
 
     min_Y, max_Y = check_start_stop()
-    min_depth, max_depth = get_min_max_tablet_graph()
+    try:
+        min_depth, max_depth = get_min_max_tablet_graph()
+    except TypeError:
+        QMessageBox.critical(MainWindow, 'Ошибка', 'Для выбранной скважины отсутствуют выбранные для планшета параметры')
+        return
+
     min_Y = min_Y if min_Y > min_depth else min_depth
     max_Y = max_Y if max_Y < max_depth else max_depth
 
