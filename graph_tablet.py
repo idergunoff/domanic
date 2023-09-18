@@ -191,6 +191,7 @@ def add_graph_tablet(gs, param_row, min_Y, max_Y, count_graph, n_graph, fig, n, 
     ax.invert_yaxis()
 
     if interval:
+        xlim_ax = ax.get_xlim()
         for i in range(ui.listWidget_user_int.count()):
             item = ui.listWidget_user_int.item(i)
             if isinstance(item, QListWidgetItem):
@@ -198,12 +199,11 @@ def add_graph_tablet(gs, param_row, min_Y, max_Y, count_graph, n_graph, fig, n, 
                 if isinstance(checkbox, QCheckBox) and checkbox.isChecked():
                     user_int = session.query(UserInterval).filter_by(id=checkbox.property('interval_id')).first()
 
-                    x = [min(X), max(X)]  # Пример значений x
                     y1 = user_int.int_from  # Значение y1, начало заливки
                     y2 = user_int.int_to  # Значение y2, конец заливки
 
                     # Задаем прямоугольную область для заливки
-                    ax.fill_betweenx([y1, y2], min(x), max(x), alpha=0.5, color=user_int.color)
+                    ax.fill_betweenx([y1, y2], xlim_ax[0], xlim_ax[1], alpha=0.5, color=user_int.color)
 
 # def draw_total_cement(device, n_izm, n_graph, fig, count_sig):
 #     """ функция отрисовки цементограммы по всей длине """
