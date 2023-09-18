@@ -92,8 +92,10 @@ def draw_graph_tablet():
     ).order_by(DataAge.depth).all()
     list_data_age = extract_intervals(age)
     for i in list_data_age:
-        ax0.axhline(i['start'], color='black', linewidth=1.5)
-        ax0.axhline(i['stop'], color='black', linewidth=1.5)
+        if i['start'] != min_Y:
+            ax0.axhline(i['start'], color='black', linewidth=1.5)
+        if i['stop'] != max_Y:
+            ax0.axhline(i['stop'], color='black', linewidth=1.5)
         ax0.text(0.5, (i['start'] + i['stop']) / 2, i['age_name'], ha='center', va='center', rotation=90)
     height_grapf = max_Y - min_Y # высота графика
     plt.ylim(min_Y - height_grapf / 100, max_Y + height_grapf / 100) # установка границ графика
