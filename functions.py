@@ -18,6 +18,7 @@ import math
 import traceback
 import matplotlib.pyplot as plt
 from matplotlib.backends import backend_ps
+from matplotlib.gridspec import GridSpec
 import seaborn as sns
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 
