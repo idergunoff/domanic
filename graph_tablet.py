@@ -75,7 +75,7 @@ def draw_graph_tablet():
 
     params_graph_tablet = session.query(DrawGraphTablet).all()
     count_graph = session.query(DrawGraphTablet).filter(DrawGraphTablet.param == '').count() + 1
-    fig = plt.figure(figsize=(2 * count_graph, 9))
+    fig = plt.figure(figsize=(2 * count_graph, 9), dpi=300)
     gs = GridSpec(1, count_graph + 1, width_ratios=[1] + [3] * count_graph)
 
     min_Y, max_Y = check_start_stop()
