@@ -614,45 +614,6 @@ selection-color: rgb(85, 0, 0);</string>
                        </item>
                        <item row="1" column="0">
                         <layout class="QGridLayout" name="gridLayout_50">
-                         <item row="1" column="0">
-                          <widget class="QPushButton" name="pushButton_add_param_tablet">
-                           <property name="font">
-                            <font>
-                             <pointsize>10</pointsize>
-                            </font>
-                           </property>
-                           <property name="toolTip">
-                            <string>Добавить параметр для построения в планшете</string>
-                           </property>
-                           <property name="autoFillBackground">
-                            <bool>false</bool>
-                           </property>
-                           <property name="styleSheet">
-                            <string notr="true">background-color: rgb(191, 255, 191);</string>
-                           </property>
-                           <property name="text">
-                            <string>ADD</string>
-                           </property>
-                          </widget>
-                         </item>
-                         <item row="2" column="1">
-                          <widget class="QPushButton" name="pushButton_clear_param_tablet">
-                           <property name="font">
-                            <font>
-                             <pointsize>10</pointsize>
-                            </font>
-                           </property>
-                           <property name="toolTip">
-                            <string>Очистить список параметров</string>
-                           </property>
-                           <property name="styleSheet">
-                            <string notr="true">background-color: rgb(255, 185, 185);</string>
-                           </property>
-                           <property name="text">
-                            <string>CLEAR</string>
-                           </property>
-                          </widget>
-                         </item>
                          <item row="2" column="0">
                           <widget class="QPushButton" name="pushButton_del_param_tablet">
                            <property name="font">
@@ -689,6 +650,24 @@ selection-color: rgb(85, 0, 0);</string>
                            </property>
                           </widget>
                          </item>
+                         <item row="2" column="1">
+                          <widget class="QPushButton" name="pushButton_clear_param_tablet">
+                           <property name="font">
+                            <font>
+                             <pointsize>10</pointsize>
+                            </font>
+                           </property>
+                           <property name="toolTip">
+                            <string>Очистить список параметров</string>
+                           </property>
+                           <property name="styleSheet">
+                            <string notr="true">background-color: rgb(255, 185, 185);</string>
+                           </property>
+                           <property name="text">
+                            <string>CLEAR</string>
+                           </property>
+                          </widget>
+                         </item>
                          <item row="2" column="2">
                           <widget class="QPushButton" name="pushButton_draw_param_tablet">
                            <property name="font">
@@ -722,6 +701,43 @@ selection-color: rgb(85, 0, 0);</string>
                            </property>
                            <property name="text">
                             <string>EDIT</string>
+                           </property>
+                          </widget>
+                         </item>
+                         <item row="1" column="0">
+                          <widget class="QPushButton" name="pushButton_add_param_tablet">
+                           <property name="font">
+                            <font>
+                             <pointsize>10</pointsize>
+                            </font>
+                           </property>
+                           <property name="toolTip">
+                            <string>Добавить параметр для построения в планшете</string>
+                           </property>
+                           <property name="autoFillBackground">
+                            <bool>false</bool>
+                           </property>
+                           <property name="styleSheet">
+                            <string notr="true">background-color: rgb(191, 255, 191);</string>
+                           </property>
+                           <property name="text">
+                            <string>ADD</string>
+                           </property>
+                          </widget>
+                         </item>
+                         <item row="2" column="3">
+                          <widget class="QSpinBox" name="spinBox_dpi">
+                           <property name="minimum">
+                            <number>10</number>
+                           </property>
+                           <property name="maximum">
+                            <number>1000</number>
+                           </property>
+                           <property name="singleStep">
+                            <number>5</number>
+                           </property>
+                           <property name="value">
+                            <number>80</number>
                            </property>
                           </widget>
                          </item>
@@ -1905,8 +1921,8 @@ selection-color: rgb(85, 0, 0);</string>
                          <rect>
                           <x>0</x>
                           <y>0</y>
-                          <width>98</width>
-                          <height>38</height>
+                          <width>415</width>
+                          <height>279</height>
                          </rect>
                         </property>
                         <layout class="QGridLayout" name="gridLayout_75">
@@ -3642,8 +3658,8 @@ selection-color: rgb(85, 0, 0);</string>
                     <rect>
                      <x>0</x>
                      <y>0</y>
-                     <width>98</width>
-                     <height>88</height>
+                     <width>225</width>
+                     <height>234</height>
                     </rect>
                    </property>
                    <attribute name="label">
@@ -3721,8 +3737,8 @@ selection-color: rgb(85, 0, 0);</string>
                     <rect>
                      <x>0</x>
                      <y>0</y>
-                     <width>98</width>
-                     <height>88</height>
+                     <width>225</width>
+                     <height>234</height>
                     </rect>
                    </property>
                    <attribute name="label">
