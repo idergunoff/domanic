@@ -852,7 +852,14 @@ selection-color: rgb(85, 0, 0);</string>
                           <string>отобразить на планшете пользовательские интервалы, выбранные на 5й вкладке </string>
                          </property>
                          <property name="text">
-                          <string>отобразить интервалы</string>
+                          <string>интервалы</string>
+                         </property>
+                        </widget>
+                       </item>
+                       <item row="0" column="2">
+                        <widget class="QCheckBox" name="checkBox_one_color">
+                         <property name="text">
+                          <string>один цвет</string>
                          </property>
                         </widget>
                        </item>
@@ -1898,8 +1905,8 @@ selection-color: rgb(85, 0, 0);</string>
                          <rect>
                           <x>0</x>
                           <y>0</y>
-                          <width>408</width>
-                          <height>279</height>
+                          <width>98</width>
+                          <height>38</height>
                          </rect>
                         </property>
                         <layout class="QGridLayout" name="gridLayout_75">
@@ -3635,8 +3642,8 @@ selection-color: rgb(85, 0, 0);</string>
                     <rect>
                      <x>0</x>
                      <y>0</y>
-                     <width>225</width>
-                     <height>234</height>
+                     <width>98</width>
+                     <height>88</height>
                     </rect>
                    </property>
                    <attribute name="label">
@@ -3686,7 +3693,7 @@ selection-color: rgb(85, 0, 0);</string>
                     <rect>
                      <x>0</x>
                      <y>0</y>
-                     <width>88</width>
+                     <width>98</width>
                      <height>88</height>
                     </rect>
                    </property>
@@ -3714,8 +3721,8 @@ selection-color: rgb(85, 0, 0);</string>
                     <rect>
                      <x>0</x>
                      <y>0</y>
-                     <width>225</width>
-                     <height>234</height>
+                     <width>98</width>
+                     <height>88</height>
                     </rect>
                    </property>
                    <attribute name="label">

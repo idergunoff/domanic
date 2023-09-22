@@ -207,8 +207,10 @@ def add_graph_tablet(gs, param_row, min_Y, max_Y, count_graph, n_graph, fig, n, 
                     y1 = user_int.int_from  # Значение y1, начало заливки
                     y2 = user_int.int_to  # Значение y2, конец заливки
 
+                    fill_color = ui.pushButton_color.text() if ui.checkBox_one_color.isChecked() else user_int.color
+
                     # Задаем прямоугольную область для заливки
-                    ax.fill_betweenx([y1, y2], xlim_ax[0], xlim_ax[1], alpha=0.5, color=user_int.color)
+                    ax.fill_betweenx([y1, y2], xlim_ax[0], xlim_ax[1], alpha=0.5, color=fill_color)
 
 # def draw_total_cement(device, n_izm, n_graph, fig, count_sig):
 #     """ функция отрисовки цементограммы по всей длине """
