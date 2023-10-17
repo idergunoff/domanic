@@ -4,6 +4,7 @@ from classify_data import *
 from graph_tablet import *
 from user_interval import *
 from compare_interval import *
+from regression import *
 
 MainWindow.show()
 
@@ -149,6 +150,21 @@ ui.pushButton_compare_matrix.clicked.connect(matrix_compare_interval)
 ui.pushButton_compare_table.clicked.connect(table_compare_interval)
 ui.pushButton_compare_save.clicked.connect(save_compare_interval)
 
+# regression analysis
+ui.toolButton_add_reg_an.clicked.connect(add_regression_analysis)
+ui.toolButton_del_reg_an.clicked.connect(remove_regression_analysis)
+ui.comboBox_reg_analysis.activated.connect(update_list_regression_well)
+ui.toolButton_update_target_param.clicked.connect(update_new_target_param)
+ui.toolButton_add_reg_well.clicked.connect(add_regression_well)
+ui.toolButton_del_reg_well.clicked.connect(remove_regression_well)
+ui.pushButton_add_reg_param.clicked.connect(add_feature_regression)
+ui.pushButton_del_reg_param.clicked.connect(remove_feature_regression)
+ui.pushButton_add_reg_all_param.clicked.connect(add_all_table_to_features_regression)
+ui.pushButton_clear_reg_param.clicked.connect(clear_list_features_regression)
+ui.pushButton_model_reg.clicked.connect(train_regression_model)
+ui.pushButton_del_reg_model.clicked.connect(remove_trained_regression_model)
+ui.pushButton_calc_reg_model.clicked.connect(calc_regression_model)
+
 reset_fake_lda()
 comboBox_region_update()
 draw_current_graph_by_style()
@@ -165,6 +181,7 @@ user_interval_list_update()
 update_list_compare_interval()
 add_stat_checkbox()
 update_template_graph_tablet()
+update_list_regression_analysis()
 
 
 sys.excepthook = log_uncaught_exceptions

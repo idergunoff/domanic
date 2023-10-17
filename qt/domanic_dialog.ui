@@ -2758,6 +2758,385 @@ selection-color: rgb(85, 0, 0);</string>
                  </item>
                 </layout>
                </widget>
+               <widget class="QWidget" name="tab_6">
+                <attribute name="title">
+                 <string>6</string>
+                </attribute>
+                <attribute name="toolTip">
+                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Регрессионный анализ&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                </attribute>
+                <layout class="QGridLayout" name="gridLayout_98">
+                 <item row="0" column="0">
+                  <widget class="QLabel" name="label_param_9">
+                   <property name="font">
+                    <font>
+                     <pointsize>11</pointsize>
+                     <weight>75</weight>
+                     <italic>true</italic>
+                     <bold>true</bold>
+                     <underline>true</underline>
+                    </font>
+                   </property>
+                   <property name="text">
+                    <string>Регрессионный анализ</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="1" column="0">
+                  <layout class="QGridLayout" name="gridLayout_97" rowstretch="0,1,5,3">
+                   <item row="0" column="0">
+                    <layout class="QGridLayout" name="gridLayout_88" columnstretch="7,1">
+                     <property name="spacing">
+                      <number>0</number>
+                     </property>
+                     <item row="0" column="0">
+                      <widget class="QComboBox" name="comboBox_reg_analysis">
+                       <property name="font">
+                        <font>
+                         <pointsize>11</pointsize>
+                        </font>
+                       </property>
+                       <property name="toolTip">
+                        <string>Выбора модели классификации дискриминантного анализа</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item row="0" column="1">
+                      <layout class="QGridLayout" name="gridLayout_86">
+                       <item row="0" column="0">
+                        <widget class="QToolButton" name="toolButton_add_reg_an">
+                         <property name="font">
+                          <font>
+                           <pointsize>11</pointsize>
+                          </font>
+                         </property>
+                         <property name="toolTip">
+                          <string>Добавить регрессионный анализ</string>
+                         </property>
+                         <property name="styleSheet">
+                          <string notr="true">background-color: rgb(191, 255, 191);</string>
+                         </property>
+                         <property name="text">
+                          <string>+</string>
+                         </property>
+                        </widget>
+                       </item>
+                       <item row="0" column="1">
+                        <widget class="QToolButton" name="toolButton_del_reg_an">
+                         <property name="font">
+                          <font>
+                           <pointsize>11</pointsize>
+                          </font>
+                         </property>
+                         <property name="toolTip">
+                          <string/>
+                         </property>
+                         <property name="styleSheet">
+                          <string notr="true">background-color: rgb(255, 185, 185);</string>
+                         </property>
+                         <property name="text">
+                          <string>-</string>
+                         </property>
+                        </widget>
+                       </item>
+                      </layout>
+                     </item>
+                    </layout>
+                   </item>
+                   <item row="1" column="0">
+                    <layout class="QGridLayout" name="gridLayout_96" columnstretch="3,2">
+                     <item row="0" column="0">
+                      <widget class="QGroupBox" name="groupBox_4">
+                       <property name="title">
+                        <string>Целевой параметр</string>
+                       </property>
+                       <layout class="QGridLayout" name="gridLayout_90">
+                        <item row="0" column="0">
+                         <layout class="QGridLayout" name="gridLayout_89" columnstretch="0,1,0" columnminimumwidth="0,0,0">
+                          <item row="0" column="0">
+                           <widget class="QLabel" name="label_32">
+                            <property name="font">
+                             <font>
+                              <pointsize>10</pointsize>
+                              <italic>true</italic>
+                             </font>
+                            </property>
+                            <property name="text">
+                             <string>table:</string>
+                            </property>
+                           </widget>
+                          </item>
+                          <item row="0" column="2">
+                           <widget class="QToolButton" name="toolButton_update_target_param">
+                            <property name="toolTip">
+                             <string>Изменить целевой параметр</string>
+                            </property>
+                            <property name="styleSheet">
+                             <string notr="true">background-color: rgb(255, 255, 222);</string>
+                            </property>
+                            <property name="text">
+                             <string>V</string>
+                            </property>
+                           </widget>
+                          </item>
+                          <item row="1" column="0">
+                           <widget class="QLabel" name="label_33">
+                            <property name="font">
+                             <font>
+                              <pointsize>10</pointsize>
+                              <italic>true</italic>
+                             </font>
+                            </property>
+                            <property name="text">
+                             <string>param:</string>
+                            </property>
+                           </widget>
+                          </item>
+                          <item row="0" column="1">
+                           <widget class="QLabel" name="label_target_table">
+                            <property name="font">
+                             <font>
+                              <weight>75</weight>
+                              <bold>true</bold>
+                             </font>
+                            </property>
+                            <property name="text">
+                             <string>TextLabel</string>
+                            </property>
+                           </widget>
+                          </item>
+                          <item row="1" column="1">
+                           <widget class="QLabel" name="label_target_param">
+                            <property name="font">
+                             <font>
+                              <weight>75</weight>
+                              <bold>true</bold>
+                             </font>
+                            </property>
+                            <property name="text">
+                             <string>TextLabel</string>
+                            </property>
+                           </widget>
+                          </item>
+                         </layout>
+                        </item>
+                       </layout>
+                      </widget>
+                     </item>
+                     <item row="0" column="1">
+                      <layout class="QGridLayout" name="gridLayout_95">
+                       <item row="1" column="0">
+                        <widget class="QListWidget" name="listWidget_reg_well"/>
+                       </item>
+                       <item row="0" column="0">
+                        <layout class="QGridLayout" name="gridLayout_99" columnstretch="3,1">
+                         <item row="0" column="0">
+                          <widget class="QLabel" name="label_10">
+                           <property name="text">
+                            <string>Скважины:</string>
+                           </property>
+                          </widget>
+                         </item>
+                         <item row="0" column="1">
+                          <layout class="QGridLayout" name="gridLayout_100">
+                           <item row="0" column="0">
+                            <widget class="QToolButton" name="toolButton_add_reg_well">
+                             <property name="font">
+                              <font>
+                               <pointsize>11</pointsize>
+                              </font>
+                             </property>
+                             <property name="toolTip">
+                              <string>Добавить скважину для обучения регрессионного анализа</string>
+                             </property>
+                             <property name="styleSheet">
+                              <string notr="true">background-color: rgb(191, 255, 191);</string>
+                             </property>
+                             <property name="text">
+                              <string>+</string>
+                             </property>
+                            </widget>
+                           </item>
+                           <item row="0" column="1">
+                            <widget class="QToolButton" name="toolButton_del_reg_well">
+                             <property name="font">
+                              <font>
+                               <pointsize>11</pointsize>
+                              </font>
+                             </property>
+                             <property name="toolTip">
+                              <string>Удалить модель классификации дискриминантного анализа</string>
+                             </property>
+                             <property name="styleSheet">
+                              <string notr="true">background-color: rgb(255, 185, 185);</string>
+                             </property>
+                             <property name="text">
+                              <string>-</string>
+                             </property>
+                            </widget>
+                           </item>
+                          </layout>
+                         </item>
+                        </layout>
+                       </item>
+                      </layout>
+                     </item>
+                    </layout>
+                   </item>
+                   <item row="2" column="0">
+                    <layout class="QGridLayout" name="gridLayout_93">
+                     <item row="0" column="0">
+                      <layout class="QGridLayout" name="gridLayout_91">
+                       <item row="0" column="0">
+                        <widget class="QLabel" name="label_24">
+                         <property name="text">
+                          <string>Параметры:</string>
+                         </property>
+                        </widget>
+                       </item>
+                       <item row="1" column="0">
+                        <widget class="QListWidget" name="listWidget_reg_param"/>
+                       </item>
+                      </layout>
+                     </item>
+                     <item row="1" column="0">
+                      <layout class="QGridLayout" name="gridLayout_82">
+                       <item row="0" column="1">
+                        <widget class="QPushButton" name="pushButton_add_reg_all_param">
+                         <property name="font">
+                          <font>
+                           <pointsize>10</pointsize>
+                          </font>
+                         </property>
+                         <property name="styleSheet">
+                          <string notr="true">background-color: rgb(191, 255, 191);</string>
+                         </property>
+                         <property name="text">
+                          <string>ADD ALL</string>
+                         </property>
+                        </widget>
+                       </item>
+                       <item row="1" column="1">
+                        <widget class="QPushButton" name="pushButton_clear_reg_param">
+                         <property name="font">
+                          <font>
+                           <pointsize>10</pointsize>
+                          </font>
+                         </property>
+                         <property name="toolTip">
+                          <string>Очистить список параметров</string>
+                         </property>
+                         <property name="styleSheet">
+                          <string notr="true">background-color: rgb(255, 185, 185);</string>
+                         </property>
+                         <property name="text">
+                          <string>CLEAR</string>
+                         </property>
+                        </widget>
+                       </item>
+                       <item row="1" column="0">
+                        <widget class="QPushButton" name="pushButton_del_reg_param">
+                         <property name="font">
+                          <font>
+                           <pointsize>10</pointsize>
+                          </font>
+                         </property>
+                         <property name="toolTip">
+                          <string>Удалить выбранный параметр</string>
+                         </property>
+                         <property name="styleSheet">
+                          <string notr="true">background-color: rgb(255, 185, 185);</string>
+                         </property>
+                         <property name="text">
+                          <string>DEL</string>
+                         </property>
+                        </widget>
+                       </item>
+                       <item row="0" column="0">
+                        <widget class="QPushButton" name="pushButton_add_reg_param">
+                         <property name="font">
+                          <font>
+                           <pointsize>10</pointsize>
+                          </font>
+                         </property>
+                         <property name="toolTip">
+                          <string>Добавить параметр</string>
+                         </property>
+                         <property name="autoFillBackground">
+                          <bool>false</bool>
+                         </property>
+                         <property name="styleSheet">
+                          <string notr="true">background-color: rgb(191, 255, 191);</string>
+                         </property>
+                         <property name="text">
+                          <string>ADD</string>
+                         </property>
+                        </widget>
+                       </item>
+                       <item row="0" column="2">
+                        <widget class="QPushButton" name="pushButton_model_reg">
+                         <property name="styleSheet">
+                          <string notr="true">background-color: rgb(255, 255, 222);</string>
+                         </property>
+                         <property name="text">
+                          <string>MODEL</string>
+                         </property>
+                        </widget>
+                       </item>
+                      </layout>
+                     </item>
+                    </layout>
+                   </item>
+                   <item row="3" column="0">
+                    <layout class="QGridLayout" name="gridLayout_94">
+                     <item row="0" column="0">
+                      <layout class="QGridLayout" name="gridLayout_92" columnstretch="3,1,1">
+                       <item row="0" column="0">
+                        <widget class="QLabel" name="label_31">
+                         <property name="text">
+                          <string>Обученные модели:</string>
+                         </property>
+                        </widget>
+                       </item>
+                       <item row="0" column="2">
+                        <widget class="QPushButton" name="pushButton_del_reg_model">
+                         <property name="font">
+                          <font>
+                           <pointsize>10</pointsize>
+                          </font>
+                         </property>
+                         <property name="toolTip">
+                          <string>Удалить выбранный параметр</string>
+                         </property>
+                         <property name="styleSheet">
+                          <string notr="true">background-color: rgb(255, 185, 185);</string>
+                         </property>
+                         <property name="text">
+                          <string>DEL</string>
+                         </property>
+                        </widget>
+                       </item>
+                       <item row="0" column="1">
+                        <widget class="QPushButton" name="pushButton_calc_reg_model">
+                         <property name="styleSheet">
+                          <string notr="true">background-color: rgb(255, 255, 222);</string>
+                         </property>
+                         <property name="text">
+                          <string>CALC</string>
+                         </property>
+                        </widget>
+                       </item>
+                      </layout>
+                     </item>
+                     <item row="1" column="0">
+                      <widget class="QListWidget" name="listWidget_trained_reg_model"/>
+                     </item>
+                    </layout>
+                   </item>
+                  </layout>
+                 </item>
+                </layout>
+               </widget>
               </widget>
              </item>
             </layout>
@@ -3623,7 +4002,7 @@ selection-color: rgb(85, 0, 0);</string>
                    </font>
                   </property>
                   <property name="currentIndex">
-                   <number>0</number>
+                   <number>1</number>
                   </property>
                   <widget class="QWidget" name="tab_pir_kern">
                    <property name="geometry">
@@ -3709,7 +4088,7 @@ selection-color: rgb(85, 0, 0);</string>
                     <rect>
                      <x>0</x>
                      <y>0</y>
-                     <width>98</width>
+                     <width>88</width>
                      <height>88</height>
                     </rect>
                    </property>
@@ -3806,21 +4185,7 @@ selection-color: rgb(85, 0, 0);</string>
        </layout>
       </item>
       <item row="0" column="0">
-       <layout class="QGridLayout" name="gridLayout_25" columnstretch="0,0,0,4,0,1">
-        <item row="0" column="0">
-         <widget class="QLabel" name="label_9">
-          <property name="font">
-           <font>
-            <pointsize>11</pointsize>
-            <italic>true</italic>
-            <underline>true</underline>
-           </font>
-          </property>
-          <property name="text">
-           <string>Интервал исследований:</string>
-          </property>
-         </widget>
-        </item>
+       <layout class="QGridLayout" name="gridLayout_25" columnstretch="0,0,0,4,0,0,1">
         <item row="0" column="2">
          <layout class="QGridLayout" name="gridLayout_24" columnstretch="3,0,3">
           <item row="0" column="0">
@@ -3874,13 +4239,6 @@ selection-color: rgb(85, 0, 0);</string>
           </item>
          </layout>
         </item>
-        <item row="0" column="3">
-         <widget class="QLabel" name="label_int">
-          <property name="text">
-           <string>Выбраны интервалы:</string>
-          </property>
-         </widget>
-        </item>
         <item row="0" column="4">
          <widget class="QPushButton" name="pushButton_color">
           <property name="text">
@@ -3888,8 +4246,15 @@ selection-color: rgb(85, 0, 0);</string>
           </property>
          </widget>
         </item>
-        <item row="0" column="5">
+        <item row="0" column="6">
          <widget class="QLineEdit" name="lineEdit_string"/>
+        </item>
+        <item row="0" column="3">
+         <widget class="QLabel" name="label_int">
+          <property name="text">
+           <string>Выбраны интервалы:</string>
+          </property>
+         </widget>
         </item>
         <item row="0" column="1">
          <widget class="QToolButton" name="toolButton_int_reset">
@@ -3898,6 +4263,27 @@ selection-color: rgb(85, 0, 0);</string>
           </property>
           <property name="text">
            <string>reset</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="0">
+         <widget class="QLabel" name="label_9">
+          <property name="font">
+           <font>
+            <pointsize>11</pointsize>
+            <italic>true</italic>
+            <underline>true</underline>
+           </font>
+          </property>
+          <property name="text">
+           <string>Интервал исследований:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="5">
+         <widget class="QLabel" name="label_34">
+          <property name="text">
+           <string>Поле ввода:</string>
           </property>
          </widget>
         </item>

@@ -851,7 +851,13 @@ def set_info(text, color):
     ui.textEdit_resourse.append(f'<span style =\"color:{color};\" >{text}</span>')
 
 
+def set_label_info(text, color):
+    ui.label_info.setText(text)
+    ui.label_info.setStyleSheet(f'color: {color}')
+
+
 def show_list_tablet():
+    """ Очищает виджет списка `listWidget_param_tablet` и заполняет его элементами на основе записей в таблице `DrawGraphTablet`. """
     ui.listWidget_param_tablet.clear()
     for i in session.query(DrawGraphTablet).all():
         if i.param:

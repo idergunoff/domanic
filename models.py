@@ -1,4 +1,4 @@
-from sqlalchemy import create_engine, Column, Integer, String, Float, Boolean, ForeignKey
+from sqlalchemy import create_engine, Column, Integer, String, Float, Boolean, ForeignKey, Text
 from sqlalchemy.orm import declarative_base, sessionmaker, relationship
 
 DATABASE_NAME = 'domanic_db.sqlite'
@@ -36,6 +36,7 @@ class Well(Base):
     area = relationship("Area", backref='wells')
     user_interval = relationship("UserInterval", back_populates='well')
     compare_interval = relationship("CompareInterval", back_populates='well')
+    regression_analysis = relationship("RegressionWell", back_populates='well')
 
 
 class DataAge(Base):
@@ -502,6 +503,58 @@ class CompareInterval(Base):
     color = Column(String)
 
     well = relationship("Well", back_populates='compare_interval')
+
+
+###########################################################################
+############################### Regression ################################
+###########################################################################
+
+
+class RegressionAnalysis(Base):
+    __tablename__ = 'regression_analysis'
+
+    id = Column(Integer, primary_key=True)
+    title = Column(String)
+    target_param = Column(String)
+
+    regression_features = relationship('RegressionFeature', back_populates='regression_analysis')
+    wells = relationship('RegressionWell', back_populates='regression_analysis')
+
+
+class RegressionFeature(Base):
+    __tablename__ = 'regression_feature'
+
+    id = Column(Integer, primary_key=True)
+    analysis_id = Column(Integer, ForeignKey('regression_analysis.id'))
+    table_features = Column(String)
+    param_features = Column(String)
+
+    regression_analysis = relationship('RegressionAnalysis', back_populates='regression_features')
+
+
+class RegressionWell(Base):
+    __tablename__ = 'regression_well'
+
+    id = Column(Integer, primary_key=True)
+    analysis_id = Column(Integer, ForeignKey('regression_analysis.id'))
+    well_id = Column(Integer, ForeignKey('wells.id'))
+    int_from = Column(Float)
+    int_to = Column(Float)
+
+    regression_analysis = relationship('RegressionAnalysis', back_populates='wells')
+    well = relationship('Well', back_populates='regression_analysis')
+
+
+class TrainedRegModel(Base):
+    __tablename__ = 'trained_reg_model'
+
+    id = Column(Integer, primary_key=True)
+    title = Column(String)
+    path_model = Column(String)
+    path_scaler = Column(String)
+    target_param = Column(String)
+    list_params = Column(Text)
+    list_wells = Column(Text)
 
 
 Base.metadata.create_all(engine)

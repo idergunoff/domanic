@@ -204,7 +204,6 @@ def calc_class_lim():
         ['name'] if list_tab[0] != 'data_las' else []))
     if list_tab[0] != 'data_las':
         pd_data = pd_data[['depth', 'name'] + list_param + ['category']]
-
     ui.graphicsView.clear()
     for n, i in enumerate(list_name_cat):
         Y = pd_data['depth'].loc[pd_data['category'] == i].values
