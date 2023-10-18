@@ -900,7 +900,7 @@ class Ui_MainWindow(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName("scrollArea")
         self.scrollAreaWidgetContents_6 = QtWidgets.QWidget()
-        self.scrollAreaWidgetContents_6.setGeometry(QtCore.QRect(0, 0, 415, 279))
+        self.scrollAreaWidgetContents_6.setGeometry(QtCore.QRect(0, 0, 98, 38))
         self.scrollAreaWidgetContents_6.setObjectName("scrollAreaWidgetContents_6")
         self.gridLayout_75 = QtWidgets.QGridLayout(self.scrollAreaWidgetContents_6)
         self.gridLayout_75.setObjectName("gridLayout_75")
@@ -1909,7 +1909,7 @@ class Ui_MainWindow(object):
         self.toolBox_chrom.setFont(font)
         self.toolBox_chrom.setObjectName("toolBox_chrom")
         self.tab_chrom_kern = QtWidgets.QWidget()
-        self.tab_chrom_kern.setGeometry(QtCore.QRect(0, 0, 88, 88))
+        self.tab_chrom_kern.setGeometry(QtCore.QRect(0, 0, 225, 234))
         self.tab_chrom_kern.setObjectName("tab_chrom_kern")
         self.gridLayout_16 = QtWidgets.QGridLayout(self.tab_chrom_kern)
         self.gridLayout_16.setObjectName("gridLayout_16")
@@ -2039,8 +2039,8 @@ class Ui_MainWindow(object):
         self.tabWidget_2.setCurrentIndex(0)
         self.tabWidget_resource.setCurrentIndex(0)
         self.tabWidget.setCurrentIndex(0)
-        self.toolBox_pir.setCurrentIndex(1)
-        self.toolBox_chrom.setCurrentIndex(1)
+        self.toolBox_pir.setCurrentIndex(0)
+        self.toolBox_chrom.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):

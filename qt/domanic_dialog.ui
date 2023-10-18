@@ -1921,8 +1921,8 @@ selection-color: rgb(85, 0, 0);</string>
                          <rect>
                           <x>0</x>
                           <y>0</y>
-                          <width>415</width>
-                          <height>279</height>
+                          <width>98</width>
+                          <height>38</height>
                          </rect>
                         </property>
                         <layout class="QGridLayout" name="gridLayout_75">
@@ -4002,7 +4002,7 @@ selection-color: rgb(85, 0, 0);</string>
                    </font>
                   </property>
                   <property name="currentIndex">
-                   <number>1</number>
+                   <number>0</number>
                   </property>
                   <widget class="QWidget" name="tab_pir_kern">
                    <property name="geometry">
@@ -4081,15 +4081,15 @@ selection-color: rgb(85, 0, 0);</string>
                    </font>
                   </property>
                   <property name="currentIndex">
-                   <number>1</number>
+                   <number>0</number>
                   </property>
                   <widget class="QWidget" name="tab_chrom_kern">
                    <property name="geometry">
                     <rect>
                      <x>0</x>
                      <y>0</y>
-                     <width>88</width>
-                     <height>88</height>
+                     <width>225</width>
+                     <height>234</height>
                     </rect>
                    </property>
                    <attribute name="label">

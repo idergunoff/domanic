@@ -30,6 +30,7 @@ from qt.add_class_limit import *
 from qt.add_class_lda import *
 from qt.edit_user_interval import *
 from qt.compare_table_dialog import *
+from qt.regression_form import *
 
 from objects import *
 
