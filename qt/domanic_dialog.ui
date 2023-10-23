@@ -2936,7 +2936,7 @@ selection-color: rgb(85, 0, 0);</string>
                         <widget class="QListWidget" name="listWidget_reg_well"/>
                        </item>
                        <item row="0" column="0">
-                        <layout class="QGridLayout" name="gridLayout_99" columnstretch="3,1">
+                        <layout class="QGridLayout" name="gridLayout_99" columnstretch="3,1,0">
                          <item row="0" column="0">
                           <widget class="QLabel" name="label_10">
                            <property name="text">
@@ -2944,7 +2944,7 @@ selection-color: rgb(85, 0, 0);</string>
                            </property>
                           </widget>
                          </item>
-                         <item row="0" column="1">
+                         <item row="0" column="2">
                           <layout class="QGridLayout" name="gridLayout_100">
                            <item row="0" column="0">
                             <widget class="QToolButton" name="toolButton_add_reg_well">
@@ -2983,6 +2983,16 @@ selection-color: rgb(85, 0, 0);</string>
                             </widget>
                            </item>
                           </layout>
+                         </item>
+                         <item row="0" column="1">
+                          <widget class="QCheckBox" name="checkBox_reg_well_user_int">
+                           <property name="toolTip">
+                            <string>Если включено, добавляются пользовательские интервалы</string>
+                           </property>
+                           <property name="text">
+                            <string>int</string>
+                           </property>
+                          </widget>
                          </item>
                         </layout>
                        </item>

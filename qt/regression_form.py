@@ -237,6 +237,10 @@ class Ui_Form_regression(object):
         self.spinBox_n_estimators.setObjectName("spinBox_n_estimators")
         self.gridLayout_6.addWidget(self.spinBox_n_estimators, 1, 1, 1, 1)
         self.gridLayout_10.addWidget(self.groupBox_6, 2, 4, 1, 1)
+        self.label_info = QtWidgets.QLabel(Form_regression)
+        self.label_info.setText("")
+        self.label_info.setObjectName("label_info")
+        self.gridLayout_10.addWidget(self.label_info, 4, 4, 1, 1)
 
         self.retranslateUi(Form_regression)
         self.comboBox_solvar_mlp.setCurrentIndex(1)

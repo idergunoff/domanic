@@ -79,15 +79,30 @@ def update_new_target_param():
 def add_regression_well():
     """ Добавление скважины в регрессионный анализ """
     start, stop = check_start_stop()
-    if session.query(RegressionWell).filter_by(analysis_id=get_reg_analysis_id(), well_id=get_well_id()).count() == 0:
+
+    ### вариант с возможностью добавления только одного интервала для скважины. не подходит если использовать пользовательские интервалы
+    # if session.query(RegressionWell).filter_by(analysis_id=get_reg_analysis_id(), well_id=get_well_id()).count() == 0:
+    #     new_reg_well = RegressionWell(analysis_id=get_reg_analysis_id(), well_id=get_well_id(), int_from=start, int_to=stop)
+    #     session.add(new_reg_well)
+    #     set_label_info(f'Скважина "{ui.comboBox_well.currentText()}" ({str(start)}-{str(stop)}) добавлена в регрессионный анализ.', 'green')
+    # else:
+    #     session.query(RegressionWell).filter_by(analysis_id=get_reg_analysis_id(), well_id=get_well_id()).update(
+    #         {'int_from': start, 'int_to': stop}, synchronize_session="fetch"
+    #     )
+    #     set_label_info(f'Для скважины "{ui.comboBox_well.currentText()}" изменён интервал ({str(start)}-{str(stop)}).', 'green')
+    if ui.checkBox_reg_well_user_int.isChecked():
+        for i in range(ui.listWidget_user_int.count()):
+            item = ui.listWidget_user_int.item(i)
+            if isinstance(item, QListWidgetItem):
+                checkbox = ui.listWidget_user_int.itemWidget(item)
+                if isinstance(checkbox, QCheckBox) and checkbox.isChecked():
+                    int = session.query(UserInterval).filter_by(id=checkbox.property('interval_id')).first()
+                    new_reg_well = RegressionWell(analysis_id=get_reg_analysis_id(), well_id=int.well_id, int_from=int.int_from, int_to=int.int_to)
+                    session.add(new_reg_well)
+    else:
         new_reg_well = RegressionWell(analysis_id=get_reg_analysis_id(), well_id=get_well_id(), int_from=start, int_to=stop)
         session.add(new_reg_well)
         set_label_info(f'Скважина "{ui.comboBox_well.currentText()}" ({str(start)}-{str(stop)}) добавлена в регрессионный анализ.', 'green')
-    else:
-        session.query(RegressionWell).filter_by(analysis_id=get_reg_analysis_id(), well_id=get_well_id()).update(
-            {'int_from': start, 'int_to': stop}, synchronize_session="fetch"
-        )
-        set_label_info(f'Для скважины "{ui.comboBox_well.currentText()}" изменён интервал ({str(start)}-{str(stop)}).', 'green')
     session.commit()
     update_list_regression_well()
 
@@ -132,6 +147,8 @@ def check_regression_count_target():
         tab = get_table(an.target_param.split('.')[0])
         n_target += session.query(literal_column(an.target_param)).filter(
             tab.well_id == w.well.id,
+            tab.depth >= w.int_from,
+            tab.depth <= w.int_to,
             literal_column(an.target_param) != None
         ).count()
     return n_target
@@ -266,6 +283,8 @@ def train_regression_model():
     ui_frm.spinBox_pca.setMaximum(len(list_param))
     ui_frm.spinBox_pca.setValue(len(list_param)//2)
 
+    ui_frm.label_info.setText(f'Обучение модели на {len(data_train.index)} образцах')
+
     def calc_regression_model():
         start_time = datetime.datetime.now()
         model = ui_frm.comboBox_model_ai.currentText()
@@ -367,9 +386,9 @@ def train_regression_model():
             kf = KFold(n_splits=ui_frm.spinBox_n_cross_val.value(), shuffle=True, random_state=0)
             scores_cv = cross_val_score(model_regression, training_sample, target, cv=kf)
 
-            print("Оценки на каждом разбиении:", scores_cv)
-            print("Средняя оценка:", scores_cv.mean())
-            print("Стандартное отклонение оценок:", scores_cv.std())
+            # print("Оценки на каждом разбиении:", scores_cv)
+            # print("Средняя оценка:", scores_cv.mean())
+            # print("Стандартное отклонение оценок:", scores_cv.std())
 
         cv_text = (f'\nКРОСС-ВАЛИДАЦИЯ\nОценки на каждом разбиении:\n {" / ".join(str(round(val, 2)) for val in scores_cv)}'
                    f'\nСредн.: {round(scores_cv.mean(), 2)} '
@@ -407,8 +426,13 @@ def train_regression_model():
             sns.regplot(data=data_graph, x='y_test', y='y_pred', ax=axes[0, 0])
             sns.scatterplot(data=data_graph, x='y_test', y='y_remain', ax=axes[1, 0])
             sns.regplot(data=data_graph, x='y_test', y='y_remain', ax=axes[1, 0])
-            axes[0, 1].bar(ipm_name_params, imp_params)
-            axes[0, 1].set_xticklabels(ipm_name_params, rotation=90)
+            if ui_frm.checkBox_cross_val.isChecked():
+                axes[0, 1].bar(range(len(scores_cv)), scores_cv)
+                axes[0, 1].set_title('Кросс-валидация')
+
+            else:
+                axes[0, 1].bar(ipm_name_params, imp_params)
+                axes[0, 1].set_xticklabels(ipm_name_params, rotation=90)
             sns.histplot(data=data_graph, x='y_remain', kde=True, ax=axes[1, 1])
             fig.tight_layout()
             fig.show()
@@ -421,6 +445,9 @@ def train_regression_model():
             sns.regplot(data=data_graph, x='y_test', y='y_pred', ax=axes[0, 0])
             sns.scatterplot(data=data_graph, x='y_test', y='y_remain', ax=axes[1, 0])
             sns.regplot(data=data_graph, x='y_test', y='y_remain', ax=axes[1, 0])
+            if ui_frm.checkBox_cross_val.isChecked():
+                axes[0, 1].bar(range(len(scores_cv)), scores_cv)
+                axes[0, 1].set_title('Кросс-валидация')
             sns.histplot(data=data_graph, x='y_remain', kde=True, ax=axes[1, 1])
             fig.tight_layout()
             fig.show()

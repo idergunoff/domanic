@@ -283,7 +283,12 @@ def draw_compare_interval():
             pd_stat = pd.concat([pd_stat, pd.DataFrame([stat_dict])], ignore_index=True)
     # создание фигуры и основного контейнера для графиков
     fig = plt.figure(figsize=(10, 8))
-    grid = fig.add_gridspec(nrows=len(list_param), ncols=len(list_stat_param))
+    try:
+        grid = fig.add_gridspec(nrows=len(list_param), ncols=len(list_stat_param))
+    except ValueError:
+        QMessageBox.critical(MainWindow, 'Ошибка', 'Не выбраны параметры.')
+        set_label_info('Не выбраны параметры.', 'red')
+        return
     for i in range(len(list_param)):
         for j in range(len(list_stat_param)):
             ax = fig.add_subplot(grid[i, j])
