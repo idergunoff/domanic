@@ -1921,8 +1921,8 @@ selection-color: rgb(85, 0, 0);</string>
                          <rect>
                           <x>0</x>
                           <y>0</y>
-                          <width>98</width>
-                          <height>38</height>
+                          <width>415</width>
+                          <height>279</height>
                          </rect>
                         </property>
                         <layout class="QGridLayout" name="gridLayout_75">
@@ -2918,6 +2918,13 @@ selection-color: rgb(85, 0, 0);</string>
                             </property>
                            </widget>
                           </item>
+                          <item row="1" column="2">
+                           <widget class="QLabel" name="label_reg_n_target">
+                            <property name="text">
+                             <string>n</string>
+                            </property>
+                           </widget>
+                          </item>
                          </layout>
                         </item>
                        </layout>
@@ -2987,15 +2994,26 @@ selection-color: rgb(85, 0, 0);</string>
                     <layout class="QGridLayout" name="gridLayout_93">
                      <item row="0" column="0">
                       <layout class="QGridLayout" name="gridLayout_91">
-                       <item row="0" column="0">
-                        <widget class="QLabel" name="label_24">
-                         <property name="text">
-                          <string>Параметры:</string>
-                         </property>
-                        </widget>
-                       </item>
                        <item row="1" column="0">
                         <widget class="QListWidget" name="listWidget_reg_param"/>
+                       </item>
+                       <item row="0" column="0">
+                        <layout class="QGridLayout" name="gridLayout_101" columnstretch="1,0">
+                         <item row="0" column="0">
+                          <widget class="QLabel" name="label_24">
+                           <property name="text">
+                            <string>Параметры:</string>
+                           </property>
+                          </widget>
+                         </item>
+                         <item row="0" column="1">
+                          <widget class="QLabel" name="label_reg_n_features">
+                           <property name="text">
+                            <string>n</string>
+                           </property>
+                          </widget>
+                         </item>
+                        </layout>
                        </item>
                       </layout>
                      </item>
@@ -3080,6 +3098,16 @@ selection-color: rgb(85, 0, 0);</string>
                          </property>
                          <property name="text">
                           <string>MODEL</string>
+                         </property>
+                        </widget>
+                       </item>
+                       <item row="1" column="2">
+                        <widget class="QPushButton" name="pushButton_reg_check_param">
+                         <property name="styleSheet">
+                          <string notr="true">background-color: rgb(250, 221, 255);</string>
+                         </property>
+                         <property name="text">
+                          <string>CHECK</string>
                          </property>
                         </widget>
                        </item>
@@ -4116,8 +4144,8 @@ selection-color: rgb(85, 0, 0);</string>
                     <rect>
                      <x>0</x>
                      <y>0</y>
-                     <width>225</width>
-                     <height>234</height>
+                     <width>88</width>
+                     <height>88</height>
                     </rect>
                    </property>
                    <attribute name="label">

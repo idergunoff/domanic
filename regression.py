@@ -1,9 +1,11 @@
 import datetime
 
+from sklearn.decomposition import PCA
 from sklearn.ensemble import GradientBoostingRegressor
 from sklearn.linear_model import ElasticNet, Lasso, LinearRegression
+from sklearn.manifold import TSNE
 from sklearn.metrics import mean_squared_error
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import train_test_split, KFold, cross_val_score
 from sklearn.neighbors import KNeighborsRegressor
 from sklearn.neural_network import MLPRegressor
 from sklearn.preprocessing import StandardScaler
@@ -71,6 +73,7 @@ def update_new_target_param():
     session.commit()
     set_label_info('Параметр целевой переменной обновлен.', 'green')
     set_target_param()
+    ui.label_reg_n_target.setText(str(check_regression_count_target()))
 
 
 def add_regression_well():
@@ -109,6 +112,8 @@ def update_list_regression_well():
     for n, well in enumerate(session.query(RegressionWell).filter_by(analysis_id=get_reg_analysis_id())):
         ui.listWidget_reg_well.addItem(f'скв.{well.well.title} ({well.int_from}-{well.int_to}) id{well.id}')
         ui.listWidget_reg_well.item(n).setToolTip(well.well.area.title)
+    ui.label_reg_n_target.setText(str(check_regression_count_target()))
+    ui.listWidget_reg_well.setCurrentRow(0)
 
 
 def update_list_features_regression():
@@ -116,22 +121,41 @@ def update_list_features_regression():
     ui.listWidget_reg_param.clear()
     for f in session.query(RegressionFeature).filter_by(analysis_id=get_reg_analysis_id()).all():
         ui.listWidget_reg_param.addItem(f'{f.table_features}.{f.param_features} id{f.id}')
+    ui.label_reg_n_features.setText(str(ui.listWidget_reg_param.count()))
+
+
+def check_regression_count_target():
+    """ Проверка количества образцов целевой переменной """
+    an = session.query(RegressionAnalysis).filter_by(id=get_reg_analysis_id()).first()
+    n_target = 0
+    for w in session.query(RegressionWell).filter_by(analysis_id=get_reg_analysis_id()).all():
+        tab = get_table(an.target_param.split('.')[0])
+        n_target += session.query(literal_column(an.target_param)).filter(
+            tab.well_id == w.well.id,
+            literal_column(an.target_param) != None
+        ).count()
+    return n_target
+
+
+def add_features_regression_to_db(table_text, param):
+    """ Добавление признаков в регрессионный анализ """
+    if session.query(RegressionFeature).filter_by(analysis_id=get_reg_analysis_id(),
+                                                  table_features=table_text,
+                                                  param_features=param).count() == 0:
+        new_reg_feature = RegressionFeature(analysis_id=get_reg_analysis_id(),
+                                            table_features=table_text,
+                                            param_features=param)
+        session.add(new_reg_feature)
+        session.commit()
+        set_label_info(f'Признак "{param} ({table_text})" добавлен в регрессионный анализ.', 'green')
+    else:
+        set_label_info(f'Признак "{param} ({table_text})" уже добавлен в регрессионный анализ.', 'red')
 
 
 def add_feature_regression():
     """ Добавление признака в регрессионный анализ """
     table, table_text, widget = check_tabWidjet()
-    if session.query(RegressionFeature).filter_by(analysis_id=get_reg_analysis_id(),
-                                                  table_features=table_text,
-                                                  param_features=widget.currentItem().text()).count() == 0:
-        new_reg_feature = RegressionFeature(analysis_id=get_reg_analysis_id(),
-                                            table_features=table_text,
-                                            param_features=widget.currentItem().text())
-        session.add(new_reg_feature)
-        session.commit()
-        set_label_info(f'Признак "{widget.currentItem().text()} ({table_text})" добавлен в регрессионный анализ.', 'green')
-    else:
-        set_label_info(f'Признак "{widget.currentItem().text()} ({table_text})" уже добавлен в регрессионный анализ.', 'red')
+    add_features_regression_to_db(table_text, widget.currentItem().text())
     update_list_features_regression()
 
 
@@ -151,8 +175,8 @@ def add_all_table_to_features_regression():
     """ Добавление всей таблицы в признаки регрессионного анализа """
     table, table_text, widget = check_tabWidjet()
     for i in range(widget.count()):
-        widget.setCurrentItem(widget.item(i))
-        add_feature_regression()
+        add_features_regression_to_db(table_text, widget.item(i).text())
+    update_list_features_regression()
 
 
 def clear_list_features_regression():
@@ -160,6 +184,15 @@ def clear_list_features_regression():
     session.query(RegressionFeature).filter_by(analysis_id=get_reg_analysis_id()).delete()
     session.commit()
     update_list_features_regression()
+
+
+def show_features_regression():
+    """ Отображение признака регрессионного анализа """
+    r_well = session.query(RegressionWell).filter_by(id=ui.listWidget_reg_well.currentItem().text().split(' id')[-1]).first()
+    ui.comboBox_region.setCurrentText(r_well.well.area.region.title)
+    ui.comboBox_area.setCurrentText(r_well.well.area.title)
+    ui.comboBox_well.setCurrentText(r_well.well.title)
+
 
 
 def build_train_table():
@@ -212,14 +245,7 @@ def train_regression_model():
     training_sample = data_train[list_param].values.tolist()
     target = sum(data_train[['target']].values.tolist(), [])
 
-    scaler = StandardScaler()
-    training_sample = scaler.fit_transform(training_sample)
-
-    # Сохранить параметры масштабирования
-    scaler_params = {
-        'mean': scaler.mean_,
-        'std': scaler.scale_
-    }
+    training_sample_copy = training_sample.copy()
 
     Form_Regmod = QtWidgets.QDialog()
     ui_frm = Ui_Form_regression()
@@ -227,13 +253,32 @@ def train_regression_model():
     Form_Regmod.show()
     Form_Regmod.setAttribute(QtCore.Qt.WA_DeleteOnClose)
 
+    ui_frm.spinBox_pca.setMaximum(len(list_param))
+    ui_frm.spinBox_pca.setValue(len(list_param)//2)
+
     def calc_regression_model():
         start_time = datetime.datetime.now()
         model = ui_frm.comboBox_model_ai.currentText()
 
+        scaler = StandardScaler()
+        training_sample = scaler.fit_transform(training_sample_copy)
+
+        # Сохранить параметры масштабирования
+        scaler_params = {
+            'mean': scaler.mean_,
+            'std': scaler.scale_
+        }
+
         x_train, x_test, y_train, y_test = train_test_split(
             training_sample, target, test_size=0.2, random_state=42
         )
+
+        if ui_frm.checkBox_pca.isChecked():
+            n_comp = 'mle' if ui_frm.checkBox_pca_mle.isChecked() else ui_frm.spinBox_pca.value()
+            pca = PCA(n_components=n_comp)
+            # pca = TSNE(n_components=4)
+            x_train = pca.fit_transform(x_train)
+            x_test = pca.transform(x_test)
 
         if model == 'LinearRegression':
             model_regression = LinearRegression(fit_intercept=ui_frm.checkBox_fit_intercept.isChecked())
@@ -303,6 +348,18 @@ def train_regression_model():
             # selector = RFE(model_regression, n_features_to_select=0.5, step=1)
             # selector = selector.fit(training_sample, target)
             # print(selector.support_)
+
+        if ui_frm.checkBox_pca.isChecked():
+            n_comp = 'mle' if ui_frm.checkBox_pca_mle.isChecked() else ui_frm.spinBox_pca.value()
+            pca = PCA(n_components=n_comp)
+            training_sample = pca.fit_transform(training_sample)
+
+        kf = KFold(n_splits=5, shuffle=True, random_state=0)
+        scores = cross_val_score(model_regression, training_sample, target, cv=kf)
+
+        print("Оценки на каждом разбиении:", scores)
+        print("Средняя оценка:", scores.mean())
+        print("Стандартное отклонение оценок:", scores.std())
 
         model_regression.fit(x_train, y_train)
 
