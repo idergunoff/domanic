@@ -905,4 +905,16 @@ def alignment_table(table):
         table.resizeColumnToContents(i)
 
 
-
+def get_listwidget_by_table(table):
+    if table == 'data_las':
+        return ui.listWidget_las
+    if table == 'data_chrom_extr':
+        return ui.listWidget_chrom_extr
+    if table == 'data_chrom_kern':
+        return ui.listWidget_chrom_kern
+    if table == 'data_piroliz_extr':
+        return ui.listWidget_pir_extr
+    if table == 'data_piroliz_kern':
+        return ui.listWidget_pir_kern
+    if table == 'data_lit':
+        return ui.listWidget_lit

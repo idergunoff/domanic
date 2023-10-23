@@ -192,6 +192,16 @@ def show_features_regression():
     ui.comboBox_region.setCurrentText(r_well.well.area.region.title)
     ui.comboBox_area.setCurrentText(r_well.well.area.title)
     ui.comboBox_well.setCurrentText(r_well.well.title)
+    param = session.query(RegressionFeature).filter_by(id=ui.listWidget_reg_param.currentItem().text().split(' id')[-1]).first()
+    try:
+        widget = get_listwidget_by_table(param.table_features)
+    except AttributeError:
+        return
+    try:
+        widget.setCurrentItem(widget.findItems(param.param_features, Qt.MatchExactly)[0])
+    except IndexError:
+        QMessageBox.critical(MainWindow, 'Ошибка!', f'В скважине {r_well.well.title} нет параметра {param.param_features}.')
+        set_label_info(f'В скважине {r_well.well.title} нет параметра {param.param_features}.', 'red')
 
 
 
@@ -353,13 +363,17 @@ def train_regression_model():
             n_comp = 'mle' if ui_frm.checkBox_pca_mle.isChecked() else ui_frm.spinBox_pca.value()
             pca = PCA(n_components=n_comp)
             training_sample = pca.fit_transform(training_sample)
+        if ui_frm.checkBox_cross_val.isChecked():
+            kf = KFold(n_splits=ui_frm.spinBox_n_cross_val.value(), shuffle=True, random_state=0)
+            scores_cv = cross_val_score(model_regression, training_sample, target, cv=kf)
 
-        kf = KFold(n_splits=5, shuffle=True, random_state=0)
-        scores = cross_val_score(model_regression, training_sample, target, cv=kf)
+            print("Оценки на каждом разбиении:", scores_cv)
+            print("Средняя оценка:", scores_cv.mean())
+            print("Стандартное отклонение оценок:", scores_cv.std())
 
-        print("Оценки на каждом разбиении:", scores)
-        print("Средняя оценка:", scores.mean())
-        print("Стандартное отклонение оценок:", scores.std())
+        cv_text = (f'\nКРОСС-ВАЛИДАЦИЯ\nОценки на каждом разбиении:\n {" / ".join(str(round(val, 2)) for val in scores_cv)}'
+                   f'\nСредн.: {round(scores_cv.mean(), 2)} '
+                   f'Станд. откл.: {round(scores_cv.std(), 2)}') if ui_frm.checkBox_cross_val.isChecked() else ''
 
         model_regression.fit(x_train, y_train)
 
@@ -388,7 +402,7 @@ def train_regression_model():
             fig, axes = plt.subplots(nrows=2, ncols=2)
             fig.set_size_inches(15, 10)
             fig.suptitle(f'Модель {model}:\n точность: {accuracy} '
-                         f' Mean Squared Error:\n {mse}, \n время обучения: {train_time}')
+                         f' Mean Squared Error:\n {mse}, \n время обучения: {train_time}'+cv_text)
             sns.scatterplot(data=data_graph, x='y_test', y='y_pred', ax=axes[0, 0])
             sns.regplot(data=data_graph, x='y_test', y='y_pred', ax=axes[0, 0])
             sns.scatterplot(data=data_graph, x='y_test', y='y_remain', ax=axes[1, 0])
@@ -402,7 +416,7 @@ def train_regression_model():
             fig, axes = plt.subplots(nrows=2, ncols=2)
             fig.set_size_inches(15, 10)
             fig.suptitle(f'Модель {model}:\n точность: {accuracy} '
-                         f' Mean Squared Error:\n {mse}, \n время обучения: {train_time}')
+                         f' Mean Squared Error:\n {mse}, \n время обучения: {train_time}'+cv_text)
             sns.scatterplot(data=data_graph, x='y_test', y='y_pred', ax=axes[0, 0])
             sns.regplot(data=data_graph, x='y_test', y='y_pred', ax=axes[0, 0])
             sns.scatterplot(data=data_graph, x='y_test', y='y_remain', ax=axes[1, 0])
