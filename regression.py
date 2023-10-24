@@ -374,11 +374,15 @@ def train_regression_model():
             training_sample = pca.fit_transform(training_sample)
 
         if ui_frm.checkBox_cross_val.isChecked():
+            data_train_cross = data_train.copy()
             kf = KFold(n_splits=ui_frm.spinBox_n_cross_val.value(), shuffle=True, random_state=0)
-            list_train, list_test = [], []
+            list_train, list_test, n_cross = [], [], 1
             for train_index, test_index in kf.split(training_sample):
                 list_train.append(train_index.tolist())
                 list_test.append(test_index.tolist())
+                list_test_to_table = ['x' if i in test_index.tolist() else 'o' for i in range(len(data_train.index))]
+                data_train_cross[f'sample {n_cross}'] = list_test_to_table
+                n_cross += 1
             scores_cv = cross_val_score(model_regression, training_sample, target, cv=kf)
             n_max = np.argmax(scores_cv)
             print(n_max)
@@ -386,6 +390,10 @@ def train_regression_model():
             x_train, x_test = training_sample[train_index], training_sample[test_index]
             y_train = [target[i] for i in train_index]
             y_test = [target[i] for i in test_index]
+            if ui_frm.checkBox_cross_val_save.isChecked():
+                fn = QFileDialog.getSaveFileName(caption="Сохранить выборку в таблицу", directory='table_cross_val.xlsx',
+                                                 filter="Excel Files (*.xlsx)")
+                data_train_cross.to_excel(fn[0])
 
             # print("Оценки на каждом разбиении:", scores_cv)
             # print("Средняя оценка:", scores_cv.mean())
