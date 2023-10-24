@@ -185,7 +185,7 @@ update_list_compare_interval()
 add_stat_checkbox()
 update_template_graph_tablet()
 update_list_regression_analysis()
-
+update_list_trained_regression_models()
 
 sys.excepthook = log_uncaught_exceptions
 

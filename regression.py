@@ -1,17 +1,3 @@
-import datetime
-
-from sklearn.decomposition import PCA
-from sklearn.ensemble import GradientBoostingRegressor
-from sklearn.linear_model import ElasticNet, Lasso, LinearRegression
-from sklearn.manifold import TSNE
-from sklearn.metrics import mean_squared_error
-from sklearn.model_selection import train_test_split, KFold, cross_val_score
-from sklearn.neighbors import KNeighborsRegressor
-from sklearn.neural_network import MLPRegressor
-from sklearn.preprocessing import StandardScaler
-from sklearn.svm import SVR
-from sklearn.tree import DecisionTreeRegressor
-
 from functions import *
 
 
@@ -269,6 +255,7 @@ def train_regression_model():
     """ Обучение модели регрессионного анализа """
     data_train, list_param = build_train_table()
     print(data_train)
+    print(list_param)
     training_sample = data_train[list_param].values.tolist()
     target = sum(data_train[['target']].values.tolist(), [])
 
@@ -319,7 +306,7 @@ def train_regression_model():
 
         if model == 'DecisionTreeRegressor':
             spl = 'random' if ui_frm.checkBox_splitter_rnd.isChecked() else 'best'
-            model_regression = DecisionTreeRegressor(splitter=spl)
+            model_regression = DecisionTreeRegressor(splitter=spl, random_state=0)
             model_name = 'DTR'
             # selector = RFE(model_regression, n_features_to_select=0.5, step=1)
             # selector = selector.fit(training_sample, target)
@@ -347,7 +334,8 @@ def train_regression_model():
                 alpha=ui_frm.doubleSpinBox_alpha_mlp.value(),
                 max_iter=5000,
                 early_stopping=ui_frm.checkBox_e_stop_mlp.isChecked(),
-                validation_fraction=ui_frm.doubleSpinBox_valid_mlp.value()
+                validation_fraction=ui_frm.doubleSpinBox_valid_mlp.value(),
+                random_state=0
             )
             model_name = 'MLPR'
 
@@ -355,6 +343,7 @@ def train_regression_model():
             model_regression = GradientBoostingRegressor(
                 n_estimators=ui_frm.spinBox_n_estimators.value(),
                 learning_rate=ui_frm.doubleSpinBox_learning_rate.value(),
+                random_state=0
             )
             # selector = RFE(model_regression, n_features_to_select=0.5, step=1)
             # selector = selector.fit(training_sample, target)
@@ -364,7 +353,8 @@ def train_regression_model():
         if model == 'ElasticNet':
             model_regression = ElasticNet(
                 alpha=ui_frm.doubleSpinBox_alpha.value(),
-                l1_ratio=ui_frm.doubleSpinBox_l1_ratio.value()
+                l1_ratio=ui_frm.doubleSpinBox_l1_ratio.value(),
+                random_state=0
             )
             model_name = 'EN'
             # selector = RFE(model_regression, n_features_to_select=0.5, step=1)
@@ -382,9 +372,20 @@ def train_regression_model():
             n_comp = 'mle' if ui_frm.checkBox_pca_mle.isChecked() else ui_frm.spinBox_pca.value()
             pca = PCA(n_components=n_comp)
             training_sample = pca.fit_transform(training_sample)
+
         if ui_frm.checkBox_cross_val.isChecked():
             kf = KFold(n_splits=ui_frm.spinBox_n_cross_val.value(), shuffle=True, random_state=0)
+            list_train, list_test = [], []
+            for train_index, test_index in kf.split(training_sample):
+                list_train.append(train_index.tolist())
+                list_test.append(test_index.tolist())
             scores_cv = cross_val_score(model_regression, training_sample, target, cv=kf)
+            n_max = np.argmax(scores_cv)
+            print(n_max)
+            train_index, test_index = list_train[n_max], list_test[n_max]
+            x_train, x_test = training_sample[train_index], training_sample[test_index]
+            y_train = [target[i] for i in train_index]
+            y_test = [target[i] for i in test_index]
 
             # print("Оценки на каждом разбиении:", scores_cv)
             # print("Средняя оценка:", scores_cv.mean())
@@ -451,36 +452,50 @@ def train_regression_model():
             sns.histplot(data=data_graph, x='y_remain', kde=True, ax=axes[1, 1])
             fig.tight_layout()
             fig.show()
-        # result = QtWidgets.QMessageBox.question(
-        #     MainWindow,
-        #     'Сохранение модели',
-        #     f'Сохранить модель {model}?',
-        #     QtWidgets.QMessageBox.Yes,
-        #     QtWidgets.QMessageBox.No)
-        # if result == QtWidgets.QMessageBox.Yes:
-        #     # Сохранение модели в файл с помощью pickle
-        #     path_model = f'models/regression/{model_name}_{round(accuracy, 3)}_{datetime.datetime.now().strftime("%d%m%y")}.pkl'
-        #     path_scaler = f'models/regression/{model_name}_{round(accuracy, 3)}_{datetime.datetime.now().strftime("%d%m%y")}_scaler.pkl'
-        #     with open(path_model, 'wb') as f:
-        #         pickle.dump(model_regression, f)
-        #     with open(path_scaler, 'wb') as f:
-        #         pickle.dump(scaler_params, f)
-        #
-        #     new_trained_model = TrainedModelReg(
-        #         analysis_id=get_regmod_id(),
-        #         title=f'{model_name}_{round(accuracy, 3)}_{datetime.datetime.now().strftime("%d%m%y")}',
-        #         path_model=path_model,
-        #         path_scaler=path_scaler,
-        #         list_params=json.dumps(list_param),
-        #     )
-        #     session.add(new_trained_model)
-        #     session.commit()
-        #     update_list_trained_models_regmod()
-        # else:
-        #     pass
+        if not ui_frm.checkBox_save.isChecked():
+            return
+        result = QtWidgets.QMessageBox.question(
+            MainWindow,
+            'Сохранение модели',
+            f'Сохранить модель {model}?',
+            QtWidgets.QMessageBox.Yes,
+            QtWidgets.QMessageBox.No)
+        if result == QtWidgets.QMessageBox.Yes:
+            # Сохранение модели в файл с помощью pickle
+            path_model = f'models/regression/{model_name}_{round(accuracy, 3)}_{datetime.datetime.now().strftime("%d%m%y")}.pkl'
+            path_scaler = f'models/regression/{model_name}_{round(accuracy, 3)}_{datetime.datetime.now().strftime("%d%m%y")}_scaler.pkl'
+            with open(path_model, 'wb') as f:
+                pickle.dump(model_regression, f)
+            with open(path_scaler, 'wb') as f:
+                pickle.dump(scaler_params, f)
+
+            an = session.query(RegressionAnalysis).filter_by(id=get_reg_analysis_id()).first()
+            list_well = [{'id': well.well_id, 'area': well.well.area.title, 'well': well.well.title,
+                          'from': well.int_from, 'to': well.int_to} for well in an.wells]
+
+
+            new_trained_model = TrainedRegModel(
+                title=f'{model_name}_{round(accuracy, 3)}_{datetime.datetime.now().strftime("%d%m%y")}',
+                path_model=path_model,
+                path_scaler=path_scaler,
+                target_param=an.target_param,
+                list_params=json.dumps(list_param),
+                list_wells=json.dumps(list_well)
+            )
+            session.add(new_trained_model)
+            session.commit()
+            update_list_trained_regression_models()
+        else:
+            pass
 
     ui_frm.pushButton_calc_model.clicked.connect(calc_regression_model)
     Form_Regmod.exec_()
+
+
+def update_list_trained_regression_models():
+    ui.listWidget_trained_reg_model.clear()
+    for reg_model in session.query(TrainedRegModel).all():
+        ui.listWidget_trained_reg_model.addItem(f'{reg_model.title} id{reg_model.id}')
 
 
 def remove_trained_regression_model():

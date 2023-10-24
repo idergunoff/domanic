@@ -15,13 +15,27 @@ import pandas as pd
 import lasio as ls
 import math
 import json
+import datetime
+import pickle
 
 import traceback
 import matplotlib.pyplot as plt
 from matplotlib.backends import backend_ps
 from matplotlib.gridspec import GridSpec
 import seaborn as sns
+
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
+from sklearn.decomposition import PCA
+from sklearn.ensemble import GradientBoostingRegressor
+from sklearn.linear_model import ElasticNet, Lasso, LinearRegression
+from sklearn.manifold import TSNE
+from sklearn.metrics import mean_squared_error
+from sklearn.model_selection import train_test_split, KFold, cross_val_score
+from sklearn.neighbors import KNeighborsRegressor
+from sklearn.neural_network import MLPRegressor
+from sklearn.preprocessing import StandardScaler
+from sklearn.svm import SVR
+from sklearn.tree import DecisionTreeRegressor
 
 from qt.add_area_dialog import *
 from qt.add_region_dialog import *

@@ -241,6 +241,9 @@ class Ui_Form_regression(object):
         self.label_info.setText("")
         self.label_info.setObjectName("label_info")
         self.gridLayout_10.addWidget(self.label_info, 4, 4, 1, 1)
+        self.checkBox_save = QtWidgets.QCheckBox(Form_regression)
+        self.checkBox_save.setObjectName("checkBox_save")
+        self.gridLayout_10.addWidget(self.checkBox_save, 4, 2, 1, 1)
 
         self.retranslateUi(Form_regression)
         self.comboBox_solvar_mlp.setCurrentIndex(1)
@@ -334,6 +337,7 @@ class Ui_Form_regression(object):
         self.label_6.setText(_translate("Form_regression", "n_estimators:"))
         self.doubleSpinBox_learning_rate.setToolTip(_translate("Form_regression", "Этот параметр контролирует величину шага при обновлении весов моделей на каждой итерации бустинга. Меньшие значения learning_rate требуют большего числа деревьев для достижения хорошей точности, но могут улучшить устойчивость модели."))
         self.spinBox_n_estimators.setToolTip(_translate("Form_regression", "Это количество базовых моделей (например, деревьев решений), которые будут объединены для создания финальной модели. Большее количество деревьев может улучшить точность модели, но также увеличит время обучения. "))
+        self.checkBox_save.setText(_translate("Form_regression", "SAVE"))
 
 
 if __name__ == "__main__":
