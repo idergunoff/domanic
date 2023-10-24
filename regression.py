@@ -254,8 +254,7 @@ def build_train_table():
 def train_regression_model():
     """ Обучение модели регрессионного анализа """
     data_train, list_param = build_train_table()
-    print(data_train)
-    print(list_param)
+
     training_sample = data_train[list_param].values.tolist()
     target = sum(data_train[['target']].values.tolist(), [])
 
