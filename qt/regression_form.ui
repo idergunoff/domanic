@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>704</width>
+    <width>729</width>
     <height>416</height>
    </rect>
   </property>
@@ -14,13 +14,6 @@
    <string>Regression</string>
   </property>
   <layout class="QGridLayout" name="gridLayout_10">
-   <item row="4" column="3">
-    <widget class="QPushButton" name="pushButton_calc_model">
-     <property name="text">
-      <string>Calc model</string>
-     </property>
-    </widget>
-   </item>
    <item row="0" column="0">
     <widget class="QGroupBox" name="groupBox_8">
      <property name="title">
@@ -41,6 +34,247 @@
        <widget class="QCheckBox" name="checkBox_pca_mle">
         <property name="text">
          <string>mle</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="0" column="1">
+    <widget class="QGroupBox" name="groupBox_9">
+     <property name="title">
+      <string>Cross Validate</string>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_9">
+      <item row="0" column="1">
+       <widget class="QSpinBox" name="spinBox_n_cross_val">
+        <property name="minimum">
+         <number>2</number>
+        </property>
+        <property name="value">
+         <number>5</number>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0">
+       <widget class="QCheckBox" name="checkBox_cross_val">
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="2">
+       <widget class="QCheckBox" name="checkBox_cross_val_save">
+        <property name="text">
+         <string>save</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="0" column="2" colspan="2">
+    <widget class="QGroupBox" name="groupBox_10">
+     <property name="title">
+      <string>Выбросы</string>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_7">
+      <item row="0" column="0">
+       <widget class="QSpinBox" name="spinBox_lof_neighbor">
+        <property name="minimum">
+         <number>1</number>
+        </property>
+        <property name="value">
+         <number>20</number>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QPushButton" name="pushButton_knn">
+        <property name="text">
+         <string>KNN</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="2">
+       <widget class="QPushButton" name="pushButton_lof">
+        <property name="text">
+         <string>LOF</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="0" column="4">
+    <widget class="QGroupBox" name="groupBox">
+     <property name="title">
+      <string>LinearRegression</string>
+     </property>
+     <layout class="QGridLayout" name="gridLayout">
+      <item row="0" column="0">
+       <widget class="QCheckBox" name="checkBox_fit_intercept">
+        <property name="toolTip">
+         <string>Определяет, нужно ли добавлять свободный член (пересечение) в модель. Если fit_intercept включен, то модель будет иметь угол наклона и свободный член (смещение). Если fit_intercept отключен, то угол наклона будет определен без свободного члена.</string>
+        </property>
+        <property name="text">
+         <string>fit_intercept</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="1" column="0" colspan="2">
+    <widget class="QGroupBox" name="groupBox_4">
+     <property name="title">
+      <string>KNeighborsRegressor</string>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_4">
+      <item row="0" column="0">
+       <widget class="QLabel" name="label_39">
+        <property name="accessibleName">
+         <string>Количество ближайших соседей, которые будут использованы для прогнозирования значения.</string>
+        </property>
+        <property name="text">
+         <string>N neighbors:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QLabel" name="label_41">
+        <property name="toolTip">
+         <string>Если выключено, все ближайшие соседи вносят одинаковый вклад в прогноз, если включено вклад каждого соседа зависит от его расстояния до целевой точки.</string>
+        </property>
+        <property name="text">
+         <string>weights:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="2">
+       <widget class="QLabel" name="label_36">
+        <property name="toolTip">
+         <string>Выбор определенного алгоритма может ускорить вычисления для больших данных</string>
+        </property>
+        <property name="text">
+         <string>algorithm:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QSpinBox" name="spinBox_neighbors">
+        <property name="accessibleName">
+         <string>Количество ближайших соседей, которые будут использованы для прогнозирования значения.</string>
+        </property>
+        <property name="minimum">
+         <number>1</number>
+        </property>
+        <property name="maximum">
+         <number>1000</number>
+        </property>
+        <property name="value">
+         <number>5</number>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QCheckBox" name="checkBox_knn_weights">
+        <property name="toolTip">
+         <string>Если выключено, все ближайшие соседи вносят одинаковый вклад в прогноз, если включено вклад каждого соседа зависит от его расстояния до целевой точки.</string>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="2">
+       <widget class="QComboBox" name="comboBox_knn_algorithm">
+        <property name="toolTip">
+         <string>Выбор определенного алгоритма может ускорить вычисления для больших данных</string>
+        </property>
+        <item>
+         <property name="text">
+          <string>auto</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>ball_tree</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>kd_tree</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>brute</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="1" column="4">
+    <widget class="QGroupBox" name="groupBox_2">
+     <property name="title">
+      <string>ElasticNet, Lasso</string>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_3">
+      <item row="0" column="0">
+       <widget class="QLabel" name="label">
+        <property name="toolTip">
+         <string>Этот параметр контролирует общую силу регуляризации.</string>
+        </property>
+        <property name="text">
+         <string>alpha:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QLabel" name="label_2">
+        <property name="toolTip">
+         <string>Этот параметр определяет смешивание регрессии L1 и L2 в ElasticNet. Значение l1_ratio находится в диапазоне от 0 до 1. Когда l1_ratio = 0, это эквивалентно регрессии L2 (Ridge). Когда l1_ratio = 1, это эквивалентно регрессии L1 (Lasso). При значениях между 0 и 1, это комбинация обеих регрессий.</string>
+        </property>
+        <property name="text">
+         <string>l1_ratio:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QDoubleSpinBox" name="doubleSpinBox_alpha">
+        <property name="toolTip">
+         <string>Этот параметр контролирует общую силу регуляризации.</string>
+        </property>
+        <property name="decimals">
+         <number>1</number>
+        </property>
+        <property name="value">
+         <double>0.500000000000000</double>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QDoubleSpinBox" name="doubleSpinBox_l1_ratio">
+        <property name="toolTip">
+         <string>Этот параметр определяет смешивание регрессии L1 и L2 в ElasticNet. Значение l1_ratio находится в диапазоне от 0 до 1. Когда l1_ratio = 0, это эквивалентно регрессии L2 (Ridge). Когда l1_ratio = 1, это эквивалентно регрессии L1 (Lasso). При значениях между 0 и 1, это комбинация обеих регрессий.</string>
+        </property>
+        <property name="decimals">
+         <number>2</number>
+        </property>
+        <property name="maximum">
+         <double>1.000000000000000</double>
+        </property>
+        <property name="value">
+         <double>0.500000000000000</double>
         </property>
        </widget>
       </item>
@@ -121,39 +355,61 @@
      </layout>
     </widget>
    </item>
-   <item row="1" column="4">
-    <widget class="QGroupBox" name="groupBox_2">
+   <item row="2" column="2" colspan="2">
+    <widget class="QGroupBox" name="groupBox_3">
      <property name="title">
-      <string>ElasticNet, Lasso</string>
+      <string>DecisionTreeRegressor</string>
      </property>
-     <layout class="QGridLayout" name="gridLayout_3">
+     <layout class="QGridLayout" name="gridLayout_2">
       <item row="0" column="0">
-       <widget class="QLabel" name="label">
+       <widget class="QCheckBox" name="checkBox_splitter_rnd">
         <property name="toolTip">
-         <string>Этот параметр контролирует общую силу регуляризации.</string>
+         <string>Стратегия, используемая для выбора разделения в узлах. Возможные значения - &quot;best&quot; (выбирается лучшее разделение) или &quot;random&quot; (выбирается случайное разделение)</string>
         </property>
         <property name="text">
-         <string>alpha:</string>
+         <string>splitter random</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="2" column="4">
+    <widget class="QGroupBox" name="groupBox_6">
+     <property name="title">
+      <string>GradientBoostingRegressor</string>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_6">
+      <item row="0" column="0">
+       <widget class="QLabel" name="label_5">
+        <property name="toolTip">
+         <string>Этот параметр контролирует величину шага при обновлении весов моделей на каждой итерации бустинга. Меньшие значения learning_rate требуют большего числа деревьев для достижения хорошей точности, но могут улучшить устойчивость модели.</string>
+        </property>
+        <property name="text">
+         <string>learning_rate:</string>
         </property>
        </widget>
       </item>
       <item row="0" column="1">
-       <widget class="QLabel" name="label_2">
+       <widget class="QLabel" name="label_6">
         <property name="toolTip">
-         <string>Этот параметр определяет смешивание регрессии L1 и L2 в ElasticNet. Значение l1_ratio находится в диапазоне от 0 до 1. Когда l1_ratio = 0, это эквивалентно регрессии L2 (Ridge). Когда l1_ratio = 1, это эквивалентно регрессии L1 (Lasso). При значениях между 0 и 1, это комбинация обеих регрессий.</string>
+         <string>Это количество базовых моделей (например, деревьев решений), которые будут объединены для создания финальной модели. Большее количество деревьев может улучшить точность модели, но также увеличит время обучения. </string>
         </property>
         <property name="text">
-         <string>l1_ratio:</string>
+         <string>n_estimators:</string>
         </property>
        </widget>
       </item>
       <item row="1" column="0">
-       <widget class="QDoubleSpinBox" name="doubleSpinBox_alpha">
+       <widget class="QDoubleSpinBox" name="doubleSpinBox_learning_rate">
         <property name="toolTip">
-         <string>Этот параметр контролирует общую силу регуляризации.</string>
+         <string>Этот параметр контролирует величину шага при обновлении весов моделей на каждой итерации бустинга. Меньшие значения learning_rate требуют большего числа деревьев для достижения хорошей точности, но могут улучшить устойчивость модели.</string>
         </property>
-        <property name="decimals">
-         <number>1</number>
+        <property name="minimum">
+         <double>0.010000000000000</double>
+        </property>
+        <property name="singleStep">
+         <double>0.100000000000000</double>
         </property>
         <property name="value">
          <double>0.500000000000000</double>
@@ -161,18 +417,21 @@
        </widget>
       </item>
       <item row="1" column="1">
-       <widget class="QDoubleSpinBox" name="doubleSpinBox_l1_ratio">
+       <widget class="QSpinBox" name="spinBox_n_estimators">
         <property name="toolTip">
-         <string>Этот параметр определяет смешивание регрессии L1 и L2 в ElasticNet. Значение l1_ratio находится в диапазоне от 0 до 1. Когда l1_ratio = 0, это эквивалентно регрессии L2 (Ridge). Когда l1_ratio = 1, это эквивалентно регрессии L1 (Lasso). При значениях между 0 и 1, это комбинация обеих регрессий.</string>
+         <string>Это количество базовых моделей (например, деревьев решений), которые будут объединены для создания финальной модели. Большее количество деревьев может улучшить точность модели, но также увеличит время обучения. </string>
         </property>
-        <property name="decimals">
-         <number>2</number>
+        <property name="minimum">
+         <number>1</number>
         </property>
         <property name="maximum">
-         <double>1.000000000000000</double>
+         <number>1000</number>
+        </property>
+        <property name="singleStep">
+         <number>50</number>
         </property>
         <property name="value">
-         <double>0.500000000000000</double>
+         <number>200</number>
         </property>
        </widget>
       </item>
@@ -184,7 +443,7 @@
      <property name="title">
       <string>MLPRegressor</string>
      </property>
-     <layout class="QGridLayout" name="gridLayout_7">
+     <layout class="QGridLayout" name="gridLayout_11">
       <item row="0" column="0">
        <widget class="QLabel" name="label_31">
         <property name="toolTip">
@@ -405,250 +664,24 @@
      </item>
     </widget>
    </item>
-   <item row="0" column="4">
-    <widget class="QGroupBox" name="groupBox">
-     <property name="title">
-      <string>LinearRegression</string>
+   <item row="4" column="2">
+    <widget class="QCheckBox" name="checkBox_save">
+     <property name="text">
+      <string>SAVE</string>
      </property>
-     <layout class="QGridLayout" name="gridLayout">
-      <item row="0" column="0">
-       <widget class="QCheckBox" name="checkBox_fit_intercept">
-        <property name="toolTip">
-         <string>Определяет, нужно ли добавлять свободный член (пересечение) в модель. Если fit_intercept включен, то модель будет иметь угол наклона и свободный член (смещение). Если fit_intercept отключен, то угол наклона будет определен без свободного члена.</string>
-        </property>
-        <property name="text">
-         <string>fit_intercept</string>
-        </property>
-        <property name="checked">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-     </layout>
     </widget>
    </item>
-   <item row="0" column="1">
-    <widget class="QGroupBox" name="groupBox_9">
-     <property name="title">
-      <string>Cross Validate</string>
+   <item row="4" column="3">
+    <widget class="QPushButton" name="pushButton_calc_model">
+     <property name="text">
+      <string>Calc model</string>
      </property>
-     <layout class="QGridLayout" name="gridLayout_9">
-      <item row="0" column="1">
-       <widget class="QSpinBox" name="spinBox_n_cross_val">
-        <property name="minimum">
-         <number>2</number>
-        </property>
-        <property name="value">
-         <number>5</number>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="0">
-       <widget class="QCheckBox" name="checkBox_cross_val">
-        <property name="text">
-         <string/>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="2">
-       <widget class="QCheckBox" name="checkBox_cross_val_save">
-        <property name="text">
-         <string>save</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </widget>
-   </item>
-   <item row="1" column="0" colspan="3">
-    <widget class="QGroupBox" name="groupBox_4">
-     <property name="title">
-      <string>KNeighborsRegressor</string>
-     </property>
-     <layout class="QGridLayout" name="gridLayout_4">
-      <item row="0" column="1">
-       <widget class="QLabel" name="label_41">
-        <property name="toolTip">
-         <string>Если выключено, все ближайшие соседи вносят одинаковый вклад в прогноз, если включено вклад каждого соседа зависит от его расстояния до целевой точки.</string>
-        </property>
-        <property name="text">
-         <string>weights distanse:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="2">
-       <widget class="QLabel" name="label_36">
-        <property name="toolTip">
-         <string>Выбор определенного алгоритма может ускорить вычисления для больших данных</string>
-        </property>
-        <property name="text">
-         <string>algorithm:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="0">
-       <widget class="QLabel" name="label_39">
-        <property name="accessibleName">
-         <string>Количество ближайших соседей, которые будут использованы для прогнозирования значения.</string>
-        </property>
-        <property name="text">
-         <string>N neighbors:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="0">
-       <widget class="QSpinBox" name="spinBox_neighbors">
-        <property name="accessibleName">
-         <string>Количество ближайших соседей, которые будут использованы для прогнозирования значения.</string>
-        </property>
-        <property name="minimum">
-         <number>1</number>
-        </property>
-        <property name="maximum">
-         <number>1000</number>
-        </property>
-        <property name="value">
-         <number>5</number>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="2">
-       <widget class="QComboBox" name="comboBox_knn_algorithm">
-        <property name="toolTip">
-         <string>Выбор определенного алгоритма может ускорить вычисления для больших данных</string>
-        </property>
-        <item>
-         <property name="text">
-          <string>auto</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>ball_tree</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>kd_tree</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>brute</string>
-         </property>
-        </item>
-       </widget>
-      </item>
-      <item row="1" column="1">
-       <widget class="QCheckBox" name="checkBox_knn_weights">
-        <property name="toolTip">
-         <string>Если выключено, все ближайшие соседи вносят одинаковый вклад в прогноз, если включено вклад каждого соседа зависит от его расстояния до целевой точки.</string>
-        </property>
-        <property name="text">
-         <string/>
-        </property>
-        <property name="checked">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </widget>
-   </item>
-   <item row="2" column="2" colspan="2">
-    <widget class="QGroupBox" name="groupBox_3">
-     <property name="title">
-      <string>DecisionTreeRegressor</string>
-     </property>
-     <layout class="QGridLayout" name="gridLayout_2">
-      <item row="0" column="0">
-       <widget class="QCheckBox" name="checkBox_splitter_rnd">
-        <property name="toolTip">
-         <string>Стратегия, используемая для выбора разделения в узлах. Возможные значения - &quot;best&quot; (выбирается лучшее разделение) или &quot;random&quot; (выбирается случайное разделение)</string>
-        </property>
-        <property name="text">
-         <string>splitter random</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </widget>
-   </item>
-   <item row="2" column="4">
-    <widget class="QGroupBox" name="groupBox_6">
-     <property name="title">
-      <string>GradientBoostingRegressor</string>
-     </property>
-     <layout class="QGridLayout" name="gridLayout_6">
-      <item row="0" column="0">
-       <widget class="QLabel" name="label_5">
-        <property name="toolTip">
-         <string>Этот параметр контролирует величину шага при обновлении весов моделей на каждой итерации бустинга. Меньшие значения learning_rate требуют большего числа деревьев для достижения хорошей точности, но могут улучшить устойчивость модели.</string>
-        </property>
-        <property name="text">
-         <string>learning_rate:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="1">
-       <widget class="QLabel" name="label_6">
-        <property name="toolTip">
-         <string>Это количество базовых моделей (например, деревьев решений), которые будут объединены для создания финальной модели. Большее количество деревьев может улучшить точность модели, но также увеличит время обучения. </string>
-        </property>
-        <property name="text">
-         <string>n_estimators:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="0">
-       <widget class="QDoubleSpinBox" name="doubleSpinBox_learning_rate">
-        <property name="toolTip">
-         <string>Этот параметр контролирует величину шага при обновлении весов моделей на каждой итерации бустинга. Меньшие значения learning_rate требуют большего числа деревьев для достижения хорошей точности, но могут улучшить устойчивость модели.</string>
-        </property>
-        <property name="minimum">
-         <double>0.010000000000000</double>
-        </property>
-        <property name="singleStep">
-         <double>0.100000000000000</double>
-        </property>
-        <property name="value">
-         <double>0.500000000000000</double>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="1">
-       <widget class="QSpinBox" name="spinBox_n_estimators">
-        <property name="toolTip">
-         <string>Это количество базовых моделей (например, деревьев решений), которые будут объединены для создания финальной модели. Большее количество деревьев может улучшить точность модели, но также увеличит время обучения. </string>
-        </property>
-        <property name="minimum">
-         <number>1</number>
-        </property>
-        <property name="maximum">
-         <number>1000</number>
-        </property>
-        <property name="singleStep">
-         <number>50</number>
-        </property>
-        <property name="value">
-         <number>200</number>
-        </property>
-       </widget>
-      </item>
-     </layout>
     </widget>
    </item>
    <item row="4" column="4">
     <widget class="QLabel" name="label_info">
      <property name="text">
       <string/>
-     </property>
-    </widget>
-   </item>
-   <item row="4" column="2">
-    <widget class="QCheckBox" name="checkBox_save">
-     <property name="text">
-      <string>SAVE</string>
      </property>
     </widget>
    </item>

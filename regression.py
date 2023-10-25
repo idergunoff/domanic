@@ -271,12 +271,114 @@ def train_regression_model():
 
     ui_frm.label_info.setText(f'Обучение модели на {len(data_train.index)} образцах')
 
+
+    def calc_knn():
+        """ Расчет выбросов методом KNN """
+
+        data_knn = data_train.copy()
+        data_knn.drop(['well', 'depth'], axis=1, inplace=True)
+
+        scaler = StandardScaler()
+        training_sample = scaler.fit_transform(data_knn)
+
+        # Инициализация KNN модели
+        knn = NearestNeighbors(n_neighbors=ui_frm.spinBox_lof_neighbor.value())  # n_neighbors=2 потому что первым будет сама точка
+        knn.fit(training_sample)
+
+        # Расстояния и индексы k-ближайших соседей
+        distances, indices = knn.kneighbors(training_sample)
+
+        # Расстояния до k-того соседа
+        k_distances = distances[:, -1]
+
+        # Рассчитайте среднее и стандартное отклонение
+        mean_distance = np.mean(k_distances)
+        std_distance = np.std(k_distances)
+
+        # Установите порог
+        threshold = mean_distance + 2 * std_distance  # Например, среднее + 2 стандартных отклонения
+
+        label_knn = [-1 if x > threshold else 1 for x in k_distances]
+
+        tsne = TSNE(n_components=2, perplexity=30, learning_rate=200, random_state=42)
+        train_tsne = tsne.fit_transform(training_sample)
+        data_tsne = pd.DataFrame(train_tsne)
+        data_tsne['knn'] = label_knn
+        print(data_tsne)
+
+        pca = PCA(n_components=2)
+        data_pca = pca.fit_transform(training_sample)
+        data_pca = pd.DataFrame(data_pca)
+        data_pca['knn'] = label_knn
+        print(data_pca)
+        colors = ['red' if label == -1 else 'blue' for label in label_knn]
+        # Визуализация
+
+        fig, ax = plt.subplots(nrows=1, ncols=3)
+        fig.set_size_inches(25, 10)
+        sns.scatterplot(data=data_tsne, x=0, y=1, hue='knn', s=200, palette={-1: 'red', 1: 'blue'}, ax=ax[0])
+        sns.scatterplot(data=data_pca, x=0, y=1, hue='knn', s=200, palette={-1: 'red', 1: 'blue'}, ax=ax[1])
+        ax[2].bar(range(len(label_knn)), k_distances, color=colors)
+        # plt.scatter(data_tsne[0][labels == 1, 0], X[labels == 1, 1], color='blue', label='Normal')
+        # plt.scatter(X[labels == -1, 0], X[labels == -1, 1], color='red', label='Outlier')
+        plt.legend()
+        fig.tight_layout()
+        plt.show()
+
+
+
+
+    def calc_lof():
+        """ Расчет выбросов методом LOF """
+
+        data_lof = data_train.copy()
+        data_lof.drop(['well', 'depth'], axis=1, inplace=True)
+
+        scaler = StandardScaler()
+        training_sample = scaler.fit_transform(data_lof)
+
+        lof = LocalOutlierFactor(n_neighbors=ui_frm.spinBox_lof_neighbor.value())
+        label_lof = lof.fit_predict(training_sample)
+        print(lof.negative_outlier_factor_)
+
+        tsne = TSNE(n_components=2, perplexity=30, learning_rate=200, random_state=42)
+        train_tsne = tsne.fit_transform(training_sample)
+        data_tsne = pd.DataFrame(train_tsne)
+        data_tsne['lof'] = label_lof
+        print(data_tsne)
+
+        pca = PCA(n_components=2)
+        data_pca = pca.fit_transform(training_sample)
+        data_pca = pd.DataFrame(data_pca)
+        data_pca['lof'] = label_lof
+        print(data_pca)
+
+        colors = ['red' if label == -1 else 'blue' for label in label_lof]
+        # Визуализация
+
+        fig, ax = plt.subplots(nrows=1, ncols=3)
+        fig.set_size_inches(25, 10)
+        sns.scatterplot(data=data_tsne, x=0, y=1, hue='lof', s=200, palette={-1: 'red', 1: 'blue'}, ax=ax[0])
+        sns.scatterplot(data=data_pca, x=0, y=1, hue='lof', s=200, palette={-1: 'red', 1: 'blue'}, ax=ax[1])
+        ax[2].bar(range(len(label_lof)), -lof.negative_outlier_factor_, color=colors)
+        # plt.scatter(data_tsne[0][labels == 1, 0], X[labels == 1, 1], color='blue', label='Normal')
+        # plt.scatter(X[labels == -1, 0], X[labels == -1, 1], color='red', label='Outlier')
+        plt.legend()
+        fig.tight_layout()
+        plt.show()
+
+
+
     def calc_regression_model():
         start_time = datetime.datetime.now()
         model = ui_frm.comboBox_model_ai.currentText()
 
+        pipe_steps = []
+
         scaler = StandardScaler()
         training_sample = scaler.fit_transform(training_sample_copy)
+
+        pipe_steps.append(('scaler', scaler))
 
         # Сохранить параметры масштабирования
         scaler_params = {
@@ -295,21 +397,151 @@ def train_regression_model():
             x_train = pca.fit_transform(x_train)
             x_test = pca.transform(x_test)
 
+        model_name, model_regression = choose_regression_model(model)
+
+        if ui_frm.checkBox_pca.isChecked():
+            n_comp = 'mle' if ui_frm.checkBox_pca_mle.isChecked() else ui_frm.spinBox_pca.value()
+            pca = PCA(n_components=n_comp)
+            training_sample = pca.fit_transform(training_sample)
+
+            pipe_steps.append(('pca', pca))
+
+        pipe_steps.append(('model', model_regression))
+
+        pipe = Pipeline(pipe_steps)
+
+        if ui_frm.checkBox_cross_val.isChecked():
+            data_train_cross = data_train.copy()
+            kf = KFold(n_splits=ui_frm.spinBox_n_cross_val.value(), shuffle=True, random_state=0)
+            list_train, list_test, n_cross = [], [], 1
+            for train_index, test_index in kf.split(training_sample):
+                list_train.append(train_index.tolist())
+                list_test.append(test_index.tolist())
+                list_test_to_table = ['x' if i in test_index.tolist() else 'o' for i in range(len(data_train.index))]
+                data_train_cross[f'sample {n_cross}'] = list_test_to_table
+                n_cross += 1
+            scores_cv = cross_val_score(pipe, training_sample, target, cv=kf)
+            n_max = np.argmax(scores_cv)
+            print(n_max)
+            train_index, test_index = list_train[n_max], list_test[n_max]
+            x_train, x_test = training_sample[train_index], training_sample[test_index]
+            y_train = [target[i] for i in train_index]
+            y_test = [target[i] for i in test_index]
+            if ui_frm.checkBox_cross_val_save.isChecked():
+                fn = QFileDialog.getSaveFileName(caption="Сохранить выборку в таблицу", directory='table_cross_val.xlsx',
+                                                 filter="Excel Files (*.xlsx)")
+                data_train_cross.to_excel(fn[0])
+
+            # print("Оценки на каждом разбиении:", scores_cv)
+            # print("Средняя оценка:", scores_cv.mean())
+            # print("Стандартное отклонение оценок:", scores_cv.std())
+
+        cv_text = (f'\nКРОСС-ВАЛИДАЦИЯ\nОценки на каждом разбиении:\n {" / ".join(str(round(val, 2)) for val in scores_cv)}'
+                   f'\nСредн.: {round(scores_cv.mean(), 2)} '
+                   f'Станд. откл.: {round(scores_cv.std(), 2)}') if ui_frm.checkBox_cross_val.isChecked() else ''
+
+        pipe.fit(x_train, y_train)
+
+        y_pred = pipe.predict(x_test)
+
+        accuracy = round(pipe.score(x_test, y_test), 5)
+        mse = round(mean_squared_error(y_test, y_pred), 5)
+
+        train_time = datetime.datetime.now() - start_time
+        set_info(f'Модель {model}:\n точность: {accuracy} '
+                 f' Mean Squared Error:\n {mse}, \n время обучения: {train_time}', 'blue')
+        y_remain = [round(y_test[i] - y_pred[i], 5) for i in range(len(y_pred))]
+
+        data_graph = pd.DataFrame({
+            'y_test': y_test,
+            'y_pred': y_pred,
+            'y_remain': y_remain
+        })
+        try:
+            ipm_name_params, imp_params = [], []
+            for n, i in enumerate(model_regression.feature_importances_):
+                if i >= np.mean(model_regression.feature_importances_):
+                    ipm_name_params.append(list_param[n])
+                    imp_params.append(i)
+
+            fig, axes = plt.subplots(nrows=2, ncols=2)
+            fig.set_size_inches(15, 10)
+            fig.suptitle(f'Модель {model}:\n точность: {accuracy} '
+                         f' Mean Squared Error:\n {mse}, \n время обучения: {train_time}'+cv_text)
+            sns.scatterplot(data=data_graph, x='y_test', y='y_pred', ax=axes[0, 0])
+            sns.regplot(data=data_graph, x='y_test', y='y_pred', ax=axes[0, 0])
+            sns.scatterplot(data=data_graph, x='y_test', y='y_remain', ax=axes[1, 0])
+            sns.regplot(data=data_graph, x='y_test', y='y_remain', ax=axes[1, 0])
+            if ui_frm.checkBox_cross_val.isChecked():
+                axes[0, 1].bar(range(len(scores_cv)), scores_cv)
+                axes[0, 1].set_title('Кросс-валидация')
+            else:
+                axes[0, 1].bar(ipm_name_params, imp_params)
+                axes[0, 1].set_xticklabels(ipm_name_params, rotation=90)
+            sns.histplot(data=data_graph, x='y_remain', kde=True, ax=axes[1, 1])
+            fig.tight_layout()
+            fig.show()
+        except AttributeError:
+            fig, axes = plt.subplots(nrows=2, ncols=2)
+            fig.set_size_inches(15, 10)
+            fig.suptitle(f'Модель {model}:\n точность: {accuracy} '
+                         f' Mean Squared Error:\n {mse}, \n время обучения: {train_time}'+cv_text)
+            sns.scatterplot(data=data_graph, x='y_test', y='y_pred', ax=axes[0, 0])
+            sns.regplot(data=data_graph, x='y_test', y='y_pred', ax=axes[0, 0])
+            sns.scatterplot(data=data_graph, x='y_test', y='y_remain', ax=axes[1, 0])
+            sns.regplot(data=data_graph, x='y_test', y='y_remain', ax=axes[1, 0])
+            if ui_frm.checkBox_cross_val.isChecked():
+                axes[0, 1].bar(range(len(scores_cv)), scores_cv)
+                axes[0, 1].set_title('Кросс-валидация')
+            sns.histplot(data=data_graph, x='y_remain', kde=True, ax=axes[1, 1])
+            fig.tight_layout()
+            fig.show()
+
+        if not ui_frm.checkBox_save.isChecked():
+            return
+        result = QtWidgets.QMessageBox.question(
+            MainWindow,
+            'Сохранение модели',
+            f'Сохранить модель {model}?',
+            QtWidgets.QMessageBox.Yes,
+            QtWidgets.QMessageBox.No)
+        if result == QtWidgets.QMessageBox.Yes:
+            # Сохранение модели в файл с помощью pickle
+            path_model = f'models/regression/{model_name}_{round(accuracy, 3)}_{datetime.datetime.now().strftime("%d%m%y")}.pkl'
+            path_scaler = f'models/regression/{model_name}_{round(accuracy, 3)}_{datetime.datetime.now().strftime("%d%m%y")}_scaler.pkl'
+            with open(path_model, 'wb') as f:
+                pickle.dump(pipe, f)
+            with open(path_scaler, 'wb') as f:
+                pickle.dump(scaler_params, f)
+
+            an = session.query(RegressionAnalysis).filter_by(id=get_reg_analysis_id()).first()
+            list_well = [{'id': well.well_id, 'area': well.well.area.title, 'well': well.well.title,
+                          'from': well.int_from, 'to': well.int_to} for well in an.wells]
+
+
+            new_trained_model = TrainedRegModel(
+                title=f'{model_name}_{round(accuracy, 3)}_{datetime.datetime.now().strftime("%d%m%y")}',
+                path_model=path_model,
+                path_scaler=path_scaler,
+                target_param=an.target_param,
+                list_params=json.dumps(list_param),
+                list_wells=json.dumps(list_well)
+            )
+            session.add(new_trained_model)
+            session.commit()
+            update_list_trained_regression_models()
+        else:
+            pass
+
+    def choose_regression_model(model):
         if model == 'LinearRegression':
             model_regression = LinearRegression(fit_intercept=ui_frm.checkBox_fit_intercept.isChecked())
             model_name = 'LR'
-            # selector = RFE(model_regression, n_features_to_select=0.5, step=1)
-            # selector = selector.fit(x_train, y_train)
-            # print(selector.support_)
-            # print(len(selector.ranking_))
 
         if model == 'DecisionTreeRegressor':
             spl = 'random' if ui_frm.checkBox_splitter_rnd.isChecked() else 'best'
             model_regression = DecisionTreeRegressor(splitter=spl, random_state=0)
             model_name = 'DTR'
-            # selector = RFE(model_regression, n_features_to_select=0.5, step=1)
-            # selector = selector.fit(training_sample, target)
-            # print(selector.support_)
 
         if model == 'KNeighborsRegressor':
             model_regression = KNeighborsRegressor(
@@ -344,9 +576,6 @@ def train_regression_model():
                 learning_rate=ui_frm.doubleSpinBox_learning_rate.value(),
                 random_state=0
             )
-            # selector = RFE(model_regression, n_features_to_select=0.5, step=1)
-            # selector = selector.fit(training_sample, target)
-            # print(selector.support_)
             model_name = 'GBR'
 
         if model == 'ElasticNet':
@@ -356,158 +585,39 @@ def train_regression_model():
                 random_state=0
             )
             model_name = 'EN'
-            # selector = RFE(model_regression, n_features_to_select=0.5, step=1)
-            # selector = selector.fit(training_sample, target)
-            # print(selector.support_)
 
         if model == 'Lasso':
             model_regression = Lasso(alpha=ui_frm.doubleSpinBox_alpha.value())
             model_name = 'Lss'
-            # selector = RFE(model_regression, n_features_to_select=0.5, step=1)
-            # selector = selector.fit(training_sample, target)
-            # print(selector.support_)
 
-        if ui_frm.checkBox_pca.isChecked():
-            n_comp = 'mle' if ui_frm.checkBox_pca_mle.isChecked() else ui_frm.spinBox_pca.value()
-            pca = PCA(n_components=n_comp)
-            training_sample = pca.fit_transform(training_sample)
-
-        if ui_frm.checkBox_cross_val.isChecked():
-            data_train_cross = data_train.copy()
-            kf = KFold(n_splits=ui_frm.spinBox_n_cross_val.value(), shuffle=True, random_state=0)
-            list_train, list_test, n_cross = [], [], 1
-            for train_index, test_index in kf.split(training_sample):
-                list_train.append(train_index.tolist())
-                list_test.append(test_index.tolist())
-                list_test_to_table = ['x' if i in test_index.tolist() else 'o' for i in range(len(data_train.index))]
-                data_train_cross[f'sample {n_cross}'] = list_test_to_table
-                n_cross += 1
-            scores_cv = cross_val_score(model_regression, training_sample, target, cv=kf)
-            n_max = np.argmax(scores_cv)
-            print(n_max)
-            train_index, test_index = list_train[n_max], list_test[n_max]
-            x_train, x_test = training_sample[train_index], training_sample[test_index]
-            y_train = [target[i] for i in train_index]
-            y_test = [target[i] for i in test_index]
-            if ui_frm.checkBox_cross_val_save.isChecked():
-                fn = QFileDialog.getSaveFileName(caption="Сохранить выборку в таблицу", directory='table_cross_val.xlsx',
-                                                 filter="Excel Files (*.xlsx)")
-                data_train_cross.to_excel(fn[0])
-
-            # print("Оценки на каждом разбиении:", scores_cv)
-            # print("Средняя оценка:", scores_cv.mean())
-            # print("Стандартное отклонение оценок:", scores_cv.std())
-
-        cv_text = (f'\nКРОСС-ВАЛИДАЦИЯ\nОценки на каждом разбиении:\n {" / ".join(str(round(val, 2)) for val in scores_cv)}'
-                   f'\nСредн.: {round(scores_cv.mean(), 2)} '
-                   f'Станд. откл.: {round(scores_cv.std(), 2)}') if ui_frm.checkBox_cross_val.isChecked() else ''
-
-        model_regression.fit(x_train, y_train)
-
-        y_pred = model_regression.predict(x_test)
-
-        accuracy = round(model_regression.score(x_test, y_test), 5)
-        mse = round(mean_squared_error(y_test, y_pred), 5)
-
-        train_time = datetime.datetime.now() - start_time
-        set_info(f'Модель {model}:\n точность: {accuracy} '
-                 f' Mean Squared Error:\n {mse}, \n время обучения: {train_time}', 'blue')
-        y_remain = [round(y_test[i] - y_pred[i], 5) for i in range(len(y_pred))]
-
-        data_graph = pd.DataFrame({
-            'y_test': y_test,
-            'y_pred': y_pred,
-            'y_remain': y_remain
-        })
-        try:
-            ipm_name_params, imp_params = [], []
-            for n, i in enumerate(model_regression.feature_importances_):
-                if i >= np.mean(model_regression.feature_importances_):
-                    ipm_name_params.append(list_param[n])
-                    imp_params.append(i)
-
-            fig, axes = plt.subplots(nrows=2, ncols=2)
-            fig.set_size_inches(15, 10)
-            fig.suptitle(f'Модель {model}:\n точность: {accuracy} '
-                         f' Mean Squared Error:\n {mse}, \n время обучения: {train_time}'+cv_text)
-            sns.scatterplot(data=data_graph, x='y_test', y='y_pred', ax=axes[0, 0])
-            sns.regplot(data=data_graph, x='y_test', y='y_pred', ax=axes[0, 0])
-            sns.scatterplot(data=data_graph, x='y_test', y='y_remain', ax=axes[1, 0])
-            sns.regplot(data=data_graph, x='y_test', y='y_remain', ax=axes[1, 0])
-            if ui_frm.checkBox_cross_val.isChecked():
-                axes[0, 1].bar(range(len(scores_cv)), scores_cv)
-                axes[0, 1].set_title('Кросс-валидация')
-
-            else:
-                axes[0, 1].bar(ipm_name_params, imp_params)
-                axes[0, 1].set_xticklabels(ipm_name_params, rotation=90)
-            sns.histplot(data=data_graph, x='y_remain', kde=True, ax=axes[1, 1])
-            fig.tight_layout()
-            fig.show()
-        except AttributeError:
-            fig, axes = plt.subplots(nrows=2, ncols=2)
-            fig.set_size_inches(15, 10)
-            fig.suptitle(f'Модель {model}:\n точность: {accuracy} '
-                         f' Mean Squared Error:\n {mse}, \n время обучения: {train_time}'+cv_text)
-            sns.scatterplot(data=data_graph, x='y_test', y='y_pred', ax=axes[0, 0])
-            sns.regplot(data=data_graph, x='y_test', y='y_pred', ax=axes[0, 0])
-            sns.scatterplot(data=data_graph, x='y_test', y='y_remain', ax=axes[1, 0])
-            sns.regplot(data=data_graph, x='y_test', y='y_remain', ax=axes[1, 0])
-            if ui_frm.checkBox_cross_val.isChecked():
-                axes[0, 1].bar(range(len(scores_cv)), scores_cv)
-                axes[0, 1].set_title('Кросс-валидация')
-            sns.histplot(data=data_graph, x='y_remain', kde=True, ax=axes[1, 1])
-            fig.tight_layout()
-            fig.show()
-        if not ui_frm.checkBox_save.isChecked():
-            return
-        result = QtWidgets.QMessageBox.question(
-            MainWindow,
-            'Сохранение модели',
-            f'Сохранить модель {model}?',
-            QtWidgets.QMessageBox.Yes,
-            QtWidgets.QMessageBox.No)
-        if result == QtWidgets.QMessageBox.Yes:
-            # Сохранение модели в файл с помощью pickle
-            path_model = f'models/regression/{model_name}_{round(accuracy, 3)}_{datetime.datetime.now().strftime("%d%m%y")}.pkl'
-            path_scaler = f'models/regression/{model_name}_{round(accuracy, 3)}_{datetime.datetime.now().strftime("%d%m%y")}_scaler.pkl'
-            with open(path_model, 'wb') as f:
-                pickle.dump(model_regression, f)
-            with open(path_scaler, 'wb') as f:
-                pickle.dump(scaler_params, f)
-
-            an = session.query(RegressionAnalysis).filter_by(id=get_reg_analysis_id()).first()
-            list_well = [{'id': well.well_id, 'area': well.well.area.title, 'well': well.well.title,
-                          'from': well.int_from, 'to': well.int_to} for well in an.wells]
-
-
-            new_trained_model = TrainedRegModel(
-                title=f'{model_name}_{round(accuracy, 3)}_{datetime.datetime.now().strftime("%d%m%y")}',
-                path_model=path_model,
-                path_scaler=path_scaler,
-                target_param=an.target_param,
-                list_params=json.dumps(list_param),
-                list_wells=json.dumps(list_well)
-            )
-            session.add(new_trained_model)
-            session.commit()
-            update_list_trained_regression_models()
-        else:
-            pass
+        return model_name, model_regression
 
     ui_frm.pushButton_calc_model.clicked.connect(calc_regression_model)
+    ui_frm.pushButton_knn.clicked.connect(calc_knn)
+    ui_frm.pushButton_lof.clicked.connect(calc_lof)
     Form_Regmod.exec_()
 
 
 def update_list_trained_regression_models():
     ui.listWidget_trained_reg_model.clear()
     for reg_model in session.query(TrainedRegModel).all():
-        ui.listWidget_trained_reg_model.addItem(f'{reg_model.title} id{reg_model.id}')
+        ui.listWidget_trained_reg_model.addItem(f'{reg_model.target_param.split(".")[-1]} - {reg_model.title} id{reg_model.id}')
+        ui.listWidget_trained_reg_model.item(ui.listWidget_trained_reg_model.count() - 1).setToolTip(
+            f'Target param: {reg_model.target_param}\n '
+            f'Params: {", ".join([i.split(".")[-1] for i in json.loads(reg_model.list_params)])}\n '
+            f'Wells: {", ".join([i["well"] for i in json.loads(reg_model.list_wells)])}'
+        )
 
 
 def remove_trained_regression_model():
     """ Удаление обученной модели регрессионного анализа """
-    pass
+    model = session.query(TrainedRegModel).filter_by(id=ui.listWidget_trained_reg_model.currentItem().text().split(' id')[-1]).first()
+    os.remove(model.path_model)
+    os.remove(model.path_scaler)
+    session.delete(model)
+    session.commit()
+    update_list_trained_regression_models()
+    set_label_info(f'Модель {model.title} удалена', 'blue')
 
 
 def calc_regression_model():

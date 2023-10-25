@@ -1,4 +1,5 @@
 import random
+import os
 
 from PyQt5.QtWidgets import QTableWidgetItem, QFileDialog, QCheckBox, QColorDialog, QListWidgetItem, QLabel, QMessageBox
 from PyQt5.QtGui import QColor
@@ -31,11 +32,12 @@ from sklearn.linear_model import ElasticNet, Lasso, LinearRegression
 from sklearn.manifold import TSNE
 from sklearn.metrics import mean_squared_error
 from sklearn.model_selection import train_test_split, KFold, cross_val_score
-from sklearn.neighbors import KNeighborsRegressor
+from sklearn.neighbors import KNeighborsRegressor, LocalOutlierFactor, NearestNeighbors
 from sklearn.neural_network import MLPRegressor
 from sklearn.preprocessing import StandardScaler
 from sklearn.svm import SVR
 from sklearn.tree import DecisionTreeRegressor
+from sklearn.pipeline import Pipeline
 
 from qt.add_area_dialog import *
 from qt.add_region_dialog import *
