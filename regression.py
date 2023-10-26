@@ -255,12 +255,8 @@ def train_regression_model():
     """ Обучение модели регрессионного анализа """
     data_train, list_param = build_train_table()
 
-    Form_Regmod, calc_knn, calc_lof, calc_regression_model, ui_frm = show_regression_form(data_train, list_param)
+    show_regression_form(data_train, list_param)
 
-    ui_frm.pushButton_calc_model.clicked.connect(calc_regression_model)
-    ui_frm.pushButton_knn.clicked.connect(calc_knn)
-    ui_frm.pushButton_lof.clicked.connect(calc_lof)
-    Form_Regmod.exec_()
 
 
 def show_regression_form(data_train, list_param):
@@ -367,15 +363,18 @@ def show_regression_form(data_train, list_param):
         Form_LOF.show()
         Form_LOF.setAttribute(QtCore.Qt.WA_DeleteOnClose)
 
+        ui_lof.label_title_window.setText('Расчет выбросов. Метод LOF (Locally Outlier Factor)\n'
+                                           f'Выбросов: {label_lof.tolist().count(-1)} из {len(label_lof)}')
+
         # Визуализация
 
         figure_tsne = plt.figure()
         canvas_tsne = FigureCanvas(figure_tsne)
         ui_lof.horizontalLayout_tsne.addWidget(canvas_tsne)
 
-        sns.scatterplot(data=data_tsne, x=0, y=1, hue='lof', s=200, palette={-1: 'red', 1: 'blue'})
+        sns.scatterplot(data=data_tsne, x=0, y=1, hue='lof', s=100, palette={-1: 'red', 1: 'blue'})
         plt.grid()
-        # figure.suptitle(f'Коэффициент корреляции: {np.corrcoef(data_plot[param], data_plot["target_value"])[0, 1]}')
+        figure_tsne.suptitle(f't-SNE')
         figure_tsne.tight_layout()
         canvas_tsne.draw()
 
@@ -383,9 +382,9 @@ def show_regression_form(data_train, list_param):
         canvas_pca = FigureCanvas(figure_pca)
         ui_lof.horizontalLayout_pca.addWidget(canvas_pca)
 
-        sns.scatterplot(data=data_pca, x=0, y=1, hue='lof', s=200, palette={-1: 'red', 1: 'blue'})
+        sns.scatterplot(data=data_pca, x=0, y=1, hue='lof', s=100, palette={-1: 'red', 1: 'blue'})
         plt.grid()
-        # figure.suptitle(f'Коэффициент корреляции: {np.corrcoef(data_plot[param], data_plot["target_value"])[0, 1]}')
+        figure_pca.suptitle(f'PCA')
         figure_pca.tight_layout()
         canvas_pca.draw()
 
@@ -394,6 +393,7 @@ def show_regression_form(data_train, list_param):
         ui_lof.horizontalLayout_bar.addWidget(canvas_bar)
 
         plt.bar(range(len(label_lof)), -lof.negative_outlier_factor_, color=colors)
+        figure_bar.suptitle(f'коэффициенты LOF')
         figure_bar.tight_layout()
         canvas_bar.show()
 
@@ -432,6 +432,8 @@ def show_regression_form(data_train, list_param):
             # pca = TSNE(n_components=4)
             x_train = pca.fit_transform(x_train)
             x_test = pca.transform(x_test)
+            print('x_train', x_train)
+            print('x_test', x_test)
 
         model_name, model_regression = choose_regression_model(model, ui_frm)
 
@@ -570,7 +572,11 @@ def show_regression_form(data_train, list_param):
         else:
             pass
 
-    return Form_Regmod, calc_knn, calc_lof, calc_regression_model, ui_frm
+
+    ui_frm.pushButton_calc_model.clicked.connect(calc_regression_model)
+    ui_frm.pushButton_knn.clicked.connect(calc_knn)
+    ui_frm.pushButton_lof.clicked.connect(calc_lof)
+    Form_Regmod.exec_()
 
 
 def choose_regression_model(model, ui_frm):
