@@ -23,6 +23,9 @@ import traceback
 import matplotlib.pyplot as plt
 from matplotlib.backends import backend_ps
 from matplotlib.gridspec import GridSpec
+from matplotlib.figure import Figure
+from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
+
 import seaborn as sns
 
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
@@ -47,6 +50,7 @@ from qt.add_class_lda import *
 from qt.edit_user_interval import *
 from qt.compare_table_dialog import *
 from qt.regression_form import *
+from qt.lof_form import *
 
 from objects import *
 

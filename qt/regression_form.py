@@ -14,7 +14,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_Form_regression(object):
     def setupUi(self, Form_regression):
         Form_regression.setObjectName("Form_regression")
-        Form_regression.resize(729, 416)
+        Form_regression.resize(786, 416)
         self.gridLayout_10 = QtWidgets.QGridLayout(Form_regression)
         self.gridLayout_10.setObjectName("gridLayout_10")
         self.groupBox_8 = QtWidgets.QGroupBox(Form_regression)
@@ -118,12 +118,14 @@ class Ui_Form_regression(object):
         self.gridLayout_3.addWidget(self.label_2, 0, 1, 1, 1)
         self.doubleSpinBox_alpha = QtWidgets.QDoubleSpinBox(self.groupBox_2)
         self.doubleSpinBox_alpha.setDecimals(1)
+        self.doubleSpinBox_alpha.setSingleStep(0.1)
         self.doubleSpinBox_alpha.setProperty("value", 0.5)
         self.doubleSpinBox_alpha.setObjectName("doubleSpinBox_alpha")
         self.gridLayout_3.addWidget(self.doubleSpinBox_alpha, 1, 0, 1, 1)
         self.doubleSpinBox_l1_ratio = QtWidgets.QDoubleSpinBox(self.groupBox_2)
         self.doubleSpinBox_l1_ratio.setDecimals(2)
         self.doubleSpinBox_l1_ratio.setMaximum(1.0)
+        self.doubleSpinBox_l1_ratio.setSingleStep(0.01)
         self.doubleSpinBox_l1_ratio.setProperty("value", 0.5)
         self.doubleSpinBox_l1_ratio.setObjectName("doubleSpinBox_l1_ratio")
         self.gridLayout_3.addWidget(self.doubleSpinBox_l1_ratio, 1, 1, 1, 1)
