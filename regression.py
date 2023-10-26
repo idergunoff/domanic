@@ -426,14 +426,14 @@ def show_regression_form(data_train, list_param):
             training_sample, target, test_size=0.2, random_state=42
         )
 
-        if ui_frm.checkBox_pca.isChecked():
-            n_comp = 'mle' if ui_frm.checkBox_pca_mle.isChecked() else ui_frm.spinBox_pca.value()
-            pca = PCA(n_components=n_comp)
-            # pca = TSNE(n_components=4)
-            x_train = pca.fit_transform(x_train)
-            x_test = pca.transform(x_test)
-            print('x_train', x_train)
-            print('x_test', x_test)
+        # if ui_frm.checkBox_pca.isChecked():
+        #     n_comp = 'mle' if ui_frm.checkBox_pca_mle.isChecked() else ui_frm.spinBox_pca.value()
+        #     pca = PCA(n_components=n_comp)
+        #     # pca = TSNE(n_components=4)
+        #     x_train = pca.fit_transform(x_train)
+        #     x_test = pca.transform(x_test)
+        #     print('x_train', x_train)
+        #     print('x_test', x_test)
 
         model_name, model_regression = choose_regression_model(model, ui_frm)
 
@@ -441,6 +441,11 @@ def show_regression_form(data_train, list_param):
             n_comp = 'mle' if ui_frm.checkBox_pca_mle.isChecked() else ui_frm.spinBox_pca.value()
             pca = PCA(n_components=n_comp)
             training_sample = pca.fit_transform(training_sample)
+            if n_comp != 'mle':
+                training_sample_pca = pd.DataFrame(training_sample, columns=[f'pca_{i}' for i in range(n_comp)])
+                data_pca = data_train.copy()
+                data_pca = pd.concat([data_pca, training_sample_pca], axis=1)
+                data_pca.to_excel('table_pca.xlsx')
 
             pipe_steps.append(('pca', pca))
 
