@@ -338,17 +338,17 @@ def show_regression_form(data_train, list_param):
         data_lof.drop(['well', 'depth'], axis=1, inplace=True)
 
         scaler = StandardScaler()
-        training_sample = scaler.fit_transform(data_lof)
+        training_sample_lof = scaler.fit_transform(data_lof)
         n_LOF = ui_frm.spinBox_lof_neighbor.value()
 
         tsne = TSNE(n_components=2, perplexity=30, learning_rate=200, random_state=42)
-        train_tsne = tsne.fit_transform(training_sample)
+        train_tsne = tsne.fit_transform(training_sample_lof)
 
         pca = PCA(n_components=2)
-        data_pca = pca.fit_transform(training_sample)
+        data_pca = pca.fit_transform(training_sample_lof)
 
         colors, data_pca, data_tsne, factor_lof, label_lof = calc_lof_model(data_pca, n_LOF, train_tsne,
-                                                                            training_sample)
+                                                                            training_sample_lof)
 
         Form_LOF = QtWidgets.QDialog()
         ui_lof = Ui_LOF_form()
@@ -372,7 +372,7 @@ def show_regression_form(data_train, list_param):
 
         def calc_lof_in_window():
             colors, data_pca_pd, data_tsne_pd, factor_lof, label_lof = calc_lof_model(data_pca, ui_lof.spinBox_lof_n.value(), train_tsne,
-                                                                                training_sample)
+                                                                                training_sample_lof)
             draw_lof_tsne(data_tsne_pd, ui_lof)
             draw_lof_pca(data_pca_pd, ui_lof)
             draw_lof_bar(colors, factor_lof, label_lof, ui_lof)
@@ -380,12 +380,14 @@ def show_regression_form(data_train, list_param):
             set_title_lof_form(label_lof)
 
         def calc_clean_regression():
-            _, _, _, _, label_lof = calc_lof_model(data_pca, ui_lof.spinBox_lof_n.value(), train_tsne, training_sample)
+            _, _, _, _, label_lof = calc_lof_model(data_pca, ui_lof.spinBox_lof_n.value(), train_tsne, training_sample_lof)
             data_train_clean = data_train.copy()
             lof_index = [i for i, x in enumerate(label_lof) if x == -1]
             data_train_clean.drop(lof_index, axis=0, inplace=True)
+            data_train_clean.reset_index(drop=True, inplace=True)
             print(data_train_clean)
             Form_Regmod.close()
+            Form_LOF.close()
             show_regression_form(data_train_clean, list_param)
 
         ui_lof.spinBox_lof_n.valueChanged.connect(calc_lof_in_window)
@@ -485,6 +487,7 @@ def show_regression_form(data_train, list_param):
             n_comp = 'mle' if ui_frm.checkBox_pca_mle.isChecked() else ui_frm.spinBox_pca.value()
             pca = PCA(n_components=n_comp)
             training_sample = pca.fit_transform(training_sample)
+            print('len_pca', len(training_sample))
 
             ## Save PCA
             if n_comp == 'mle':
@@ -492,6 +495,7 @@ def show_regression_form(data_train, list_param):
             else:
                 training_sample_pca = pd.DataFrame(training_sample, columns=[f'pca_{i}' for i in range(n_comp)])
             data_pca = data_train.copy()
+            print('len data_pca', len(data_pca.index))
             data_pca = pd.concat([data_pca, training_sample_pca], axis=1)
             print(data_pca)
             data_pca.to_excel('table_pca.xlsx')
