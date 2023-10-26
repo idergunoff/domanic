@@ -277,57 +277,58 @@ def show_regression_form(data_train, list_param):
 
     def calc_knn():
         """ Расчет выбросов методом KNN """
+        pass
 
-        data_knn = data_train.copy()
-        data_knn.drop(['well', 'depth'], axis=1, inplace=True)
-
-        scaler = StandardScaler()
-        training_sample = scaler.fit_transform(data_knn)
-
-        # Инициализация KNN модели
-        knn = NearestNeighbors(
-            n_neighbors=ui_frm.spinBox_lof_neighbor.value())  # n_neighbors=2 потому что первым будет сама точка
-        knn.fit(training_sample)
-
-        # Расстояния и индексы k-ближайших соседей
-        distances, indices = knn.kneighbors(training_sample)
-
-        # Расстояния до k-того соседа
-        k_distances = distances[:, -1]
-
-        # Рассчитайте среднее и стандартное отклонение
-        mean_distance = np.mean(k_distances)
-        std_distance = np.std(k_distances)
-
-        # Установите порог
-        threshold = mean_distance + 2 * std_distance  # Например, среднее + 2 стандартных отклонения
-
-        label_knn = [-1 if x > threshold else 1 for x in k_distances]
-
-        tsne = TSNE(n_components=2, perplexity=30, learning_rate=200, random_state=42)
-        train_tsne = tsne.fit_transform(training_sample)
-        data_tsne = pd.DataFrame(train_tsne)
-        data_tsne['knn'] = label_knn
-        print(data_tsne)
-
-        pca = PCA(n_components=2)
-        data_pca = pca.fit_transform(training_sample)
-        data_pca = pd.DataFrame(data_pca)
-        data_pca['knn'] = label_knn
-        print(data_pca)
-        colors = ['red' if label == -1 else 'blue' for label in label_knn]
-        # Визуализация
-
-        fig, ax = plt.subplots(nrows=1, ncols=3)
-        fig.set_size_inches(25, 10)
-        sns.scatterplot(data=data_tsne, x=0, y=1, hue='knn', s=200, palette={-1: 'red', 1: 'blue'}, ax=ax[0])
-        sns.scatterplot(data=data_pca, x=0, y=1, hue='knn', s=200, palette={-1: 'red', 1: 'blue'}, ax=ax[1])
-        ax[2].bar(range(len(label_knn)), k_distances, color=colors)
-        # plt.scatter(data_tsne[0][labels == 1, 0], X[labels == 1, 1], color='blue', label='Normal')
-        # plt.scatter(X[labels == -1, 0], X[labels == -1, 1], color='red', label='Outlier')
-        plt.legend()
-        fig.tight_layout()
-        plt.show()
+        # data_knn = data_train.copy()
+        # data_knn.drop(['well', 'depth'], axis=1, inplace=True)
+        #
+        # scaler = StandardScaler()
+        # training_sample = scaler.fit_transform(data_knn)
+        #
+        # # Инициализация KNN модели
+        # knn = NearestNeighbors(
+        #     n_neighbors=ui_frm.spinBox_lof_neighbor.value())  # n_neighbors=2 потому что первым будет сама точка
+        # knn.fit(training_sample)
+        #
+        # # Расстояния и индексы k-ближайших соседей
+        # distances, indices = knn.kneighbors(training_sample)
+        #
+        # # Расстояния до k-того соседа
+        # k_distances = distances[:, -1]
+        #
+        # # Рассчитайте среднее и стандартное отклонение
+        # mean_distance = np.mean(k_distances)
+        # std_distance = np.std(k_distances)
+        #
+        # # Установите порог
+        # threshold = mean_distance + 2 * std_distance  # Например, среднее + 2 стандартных отклонения
+        #
+        # label_knn = [-1 if x > threshold else 1 for x in k_distances]
+        #
+        # tsne = TSNE(n_components=2, perplexity=30, learning_rate=200, random_state=42)
+        # train_tsne = tsne.fit_transform(training_sample)
+        # data_tsne = pd.DataFrame(train_tsne)
+        # data_tsne['knn'] = label_knn
+        # print(data_tsne)
+        #
+        # pca = PCA(n_components=2)
+        # data_pca = pca.fit_transform(training_sample)
+        # data_pca = pd.DataFrame(data_pca)
+        # data_pca['knn'] = label_knn
+        # print(data_pca)
+        # colors = ['red' if label == -1 else 'blue' for label in label_knn]
+        # # Визуализация
+        #
+        # fig, ax = plt.subplots(nrows=1, ncols=3)
+        # fig.set_size_inches(25, 10)
+        # sns.scatterplot(data=data_tsne, x=0, y=1, hue='knn', s=200, palette={-1: 'red', 1: 'blue'}, ax=ax[0])
+        # sns.scatterplot(data=data_pca, x=0, y=1, hue='knn', s=200, palette={-1: 'red', 1: 'blue'}, ax=ax[1])
+        # ax[2].bar(range(len(label_knn)), k_distances, color=colors)
+        # # plt.scatter(data_tsne[0][labels == 1, 0], X[labels == 1, 1], color='blue', label='Normal')
+        # # plt.scatter(X[labels == -1, 0], X[labels == -1, 1], color='red', label='Outlier')
+        # plt.legend()
+        # fig.tight_layout()
+        # plt.show()
 
 
     def calc_lof():
@@ -338,24 +339,16 @@ def show_regression_form(data_train, list_param):
 
         scaler = StandardScaler()
         training_sample = scaler.fit_transform(data_lof)
-
-        lof = LocalOutlierFactor(n_neighbors=ui_frm.spinBox_lof_neighbor.value())
-        label_lof = lof.fit_predict(training_sample)
-        print(lof.negative_outlier_factor_)
+        n_LOF = ui_frm.spinBox_lof_neighbor.value()
 
         tsne = TSNE(n_components=2, perplexity=30, learning_rate=200, random_state=42)
         train_tsne = tsne.fit_transform(training_sample)
-        data_tsne = pd.DataFrame(train_tsne)
-        data_tsne['lof'] = label_lof
-        print(data_tsne)
 
         pca = PCA(n_components=2)
         data_pca = pca.fit_transform(training_sample)
-        data_pca = pd.DataFrame(data_pca)
-        data_pca['lof'] = label_lof
-        print(data_pca)
 
-        colors = ['red' if label == -1 else 'blue' for label in label_lof]
+        colors, data_pca, data_tsne, factor_lof, label_lof = calc_lof_model(data_pca, n_LOF, train_tsne,
+                                                                            training_sample)
 
         Form_LOF = QtWidgets.QDialog()
         ui_lof = Ui_LOF_form()
@@ -363,46 +356,97 @@ def show_regression_form(data_train, list_param):
         Form_LOF.show()
         Form_LOF.setAttribute(QtCore.Qt.WA_DeleteOnClose)
 
-        ui_lof.label_title_window.setText('Расчет выбросов. Метод LOF (Locally Outlier Factor)\n'
-                                           f'Выбросов: {label_lof.tolist().count(-1)} из {len(label_lof)}')
+
+        def set_title_lof_form(label_lof):
+            ui_lof.label_title_window.setText('Расчет выбросов. Метод LOF (Locally Outlier Factor)\n'
+                                              f'Выбросов: {label_lof.tolist().count(-1)} из {len(label_lof)}')
+
+        set_title_lof_form(label_lof)
+        ui_lof.spinBox_lof_n.setValue(n_LOF)
 
         # Визуализация
+        draw_lof_tsne(data_tsne, ui_lof)
+        draw_lof_pca(data_pca, ui_lof)
+        draw_lof_bar(colors, factor_lof, label_lof, ui_lof)
 
-        figure_tsne = plt.figure()
-        canvas_tsne = FigureCanvas(figure_tsne)
-        ui_lof.horizontalLayout_tsne.addWidget(canvas_tsne)
 
-        sns.scatterplot(data=data_tsne, x=0, y=1, hue='lof', s=100, palette={-1: 'red', 1: 'blue'})
-        plt.grid()
-        figure_tsne.suptitle(f't-SNE')
-        figure_tsne.tight_layout()
-        canvas_tsne.draw()
+        def calc_lof_in_window():
+            colors, data_pca_pd, data_tsne_pd, factor_lof, label_lof = calc_lof_model(data_pca, ui_lof.spinBox_lof_n.value(), train_tsne,
+                                                                                training_sample)
+            draw_lof_tsne(data_tsne_pd, ui_lof)
+            draw_lof_pca(data_pca_pd, ui_lof)
+            draw_lof_bar(colors, factor_lof, label_lof, ui_lof)
 
+            set_title_lof_form(label_lof)
+
+        def calc_clean_regression():
+            _, _, _, _, label_lof = calc_lof_model(data_pca, ui_lof.spinBox_lof_n.value(), train_tsne, training_sample)
+            data_train_clean = data_train.copy()
+            lof_index = [i for i, x in enumerate(label_lof) if x == -1]
+            data_train_clean.drop(lof_index, axis=0, inplace=True)
+            print(data_train_clean)
+            Form_Regmod.close()
+            show_regression_form(data_train_clean, list_param)
+
+        ui_lof.spinBox_lof_n.valueChanged.connect(calc_lof_in_window)
+        ui_lof.pushButton_clean_lof.clicked.connect(calc_clean_regression)
+        # ui_lof.pushButton_lof.clicked.connect(calc_lof_in_window)
+
+        Form_LOF.exec_()
+
+
+
+    def draw_lof_bar(colors, factor_lof, label_lof, ui_lof):
+        clear_horizontalLayout(ui_lof.horizontalLayout_bar)
+        figure_bar = plt.figure()
+        canvas_bar = FigureCanvas(figure_bar)
+        ui_lof.horizontalLayout_bar.addWidget(canvas_bar)
+        plt.bar(range(len(label_lof)), factor_lof, color=colors)
+        figure_bar.suptitle(f'коэффициенты LOF')
+        figure_bar.tight_layout()
+        canvas_bar.show()
+
+
+    def draw_lof_pca(data_pca, ui_lof):
+        clear_horizontalLayout(ui_lof.horizontalLayout_pca)
         figure_pca = plt.figure()
         canvas_pca = FigureCanvas(figure_pca)
+        figure_pca.clear()
         ui_lof.horizontalLayout_pca.addWidget(canvas_pca)
-
         sns.scatterplot(data=data_pca, x=0, y=1, hue='lof', s=100, palette={-1: 'red', 1: 'blue'})
         plt.grid()
         figure_pca.suptitle(f'PCA')
         figure_pca.tight_layout()
         canvas_pca.draw()
 
-        figure_bar = plt.figure()
-        canvas_bar = FigureCanvas(figure_bar)
-        ui_lof.horizontalLayout_bar.addWidget(canvas_bar)
 
-        plt.bar(range(len(label_lof)), -lof.negative_outlier_factor_, color=colors)
-        figure_bar.suptitle(f'коэффициенты LOF')
-        figure_bar.tight_layout()
-        canvas_bar.show()
+    def draw_lof_tsne(data_tsne, ui_lof):
+        clear_horizontalLayout(ui_lof.horizontalLayout_tsne)
+        figure_tsne = plt.figure()
+        canvas_tsne = FigureCanvas(figure_tsne)
+        figure_tsne.clear()
+        ui_lof.horizontalLayout_tsne.addWidget(canvas_tsne)
+        sns.scatterplot(data=data_tsne, x=0, y=1, hue='lof', s=100, palette={-1: 'red', 1: 'blue'})
+        plt.grid()
+        figure_tsne.suptitle(f't-SNE')
+        figure_tsne.tight_layout()
+        canvas_tsne.draw()
 
-        # plt.scatter(data_tsne[0][labels == 1, 0], X[labels == 1, 1], color='blue', label='Normal')
-        # plt.scatter(X[labels == -1, 0], X[labels == -1, 1], color='red', label='Outlier')
-        # plt.legend()
 
+    def calc_lof_model(data_pca, n_LOF, train_tsne, training_sample):
+        lof = LocalOutlierFactor(n_neighbors=n_LOF)
+        label_lof = lof.fit_predict(training_sample)
+        factor_lof = -lof.negative_outlier_factor_
 
-        Form_LOF.exec_()
+        data_tsne_pd = pd.DataFrame(train_tsne)
+        data_tsne_pd['lof'] = label_lof
+
+        data_pca_pd = pd.DataFrame(data_pca)
+        data_pca_pd['lof'] = label_lof
+
+        colors = ['red' if label == -1 else 'blue' for label in label_lof]
+
+        return colors, data_pca_pd, data_tsne_pd, factor_lof, label_lof
 
 
     def calc_regression_model():
@@ -441,11 +485,16 @@ def show_regression_form(data_train, list_param):
             n_comp = 'mle' if ui_frm.checkBox_pca_mle.isChecked() else ui_frm.spinBox_pca.value()
             pca = PCA(n_components=n_comp)
             training_sample = pca.fit_transform(training_sample)
-            if n_comp != 'mle':
+
+            ## Save PCA
+            if n_comp == 'mle':
+                training_sample_pca = pd.DataFrame(training_sample)
+            else:
                 training_sample_pca = pd.DataFrame(training_sample, columns=[f'pca_{i}' for i in range(n_comp)])
-                data_pca = data_train.copy()
-                data_pca = pd.concat([data_pca, training_sample_pca], axis=1)
-                data_pca.to_excel('table_pca.xlsx')
+            data_pca = data_train.copy()
+            data_pca = pd.concat([data_pca, training_sample_pca], axis=1)
+            print(data_pca)
+            data_pca.to_excel('table_pca.xlsx')
 
             pipe_steps.append(('pca', pca))
 

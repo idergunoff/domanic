@@ -938,3 +938,11 @@ def get_listwidget_by_table(table):
         return ui.listWidget_pir_kern
     if table == 'data_lit':
         return ui.listWidget_lit
+
+
+def clear_horizontalLayout(h_l_widget):
+    while h_l_widget.count():
+        item = h_l_widget.takeAt(0)
+        widget = item.widget()
+        if widget:
+            widget.deleteLater()

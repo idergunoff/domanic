@@ -51,7 +51,14 @@
      <item row="0" column="2">
       <layout class="QGridLayout" name="gridLayout_3">
        <item row="0" column="0">
-        <widget class="QSpinBox" name="spinBox_lof_n"/>
+        <widget class="QSpinBox" name="spinBox_lof_n">
+         <property name="minimum">
+          <number>1</number>
+         </property>
+         <property name="maximum">
+          <number>999</number>
+         </property>
+        </widget>
        </item>
        <item row="1" column="0">
         <widget class="QDoubleSpinBox" name="doubleSpinBox_label"/>
