@@ -335,7 +335,7 @@ def show_regression_form(data_train, list_param):
 
     def calc_lof():
         """ Расчет выбросов методом LOF """
-        global data_pca, data_tsne
+        global data_pca, data_tsne, colors, factor_lof
 
         data_lof = data_train.copy()
         data_lof.drop(['well', 'depth'], axis=1, inplace=True)
