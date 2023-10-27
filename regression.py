@@ -238,12 +238,21 @@ def build_train_table():
             dict_depth = {'well': well.well.title, 'depth': depth, 'target': target_value}
             for p in an.regression_features:
                 table = get_table(p.table_features)
-                p_value = session.query(literal_column(f'{p.table_features}.{p.param_features}')).filter(
-                    table.well_id == well.well.id,
-                    table.depth >= depth,
-                    table.depth < depth + 0.1,
-                    literal_column(f'{p.table_features}.{p.param_features}') != None
-                ).first()
+                if ui.checkBox_reg_features_med.isChecked():
+                    int_p_value = session.query(literal_column(f'{p.table_features}.{p.param_features}')).filter(
+                        table.well_id == well.well.id,
+                        table.depth >= depth - ui.doubleSpinBox_reg_features_med_int.value(),
+                        table.depth < depth + ui.doubleSpinBox_reg_features_med_int.value() + 0.1,
+                        literal_column(f'{p.table_features}.{p.param_features}') != None
+                    ).all()
+                    p_value = median(int_p_value) if len(int_p_value) > 0 else None
+                else:
+                    p_value = session.query(literal_column(f'{p.table_features}.{p.param_features}')).filter(
+                        table.well_id == well.well.id,
+                        table.depth >= depth,
+                        table.depth < depth + 0.1,
+                        literal_column(f'{p.table_features}.{p.param_features}') != None
+                    ).first()
                 if p_value:
                     dict_depth[f'{p.table_features}.{p.param_features}'] = p_value
             if len(dict_depth) == len(an.regression_features) + 3:
