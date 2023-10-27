@@ -90,13 +90,6 @@
        </widget>
       </item>
       <item row="0" column="1">
-       <widget class="QPushButton" name="pushButton_knn">
-        <property name="text">
-         <string>KNN</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="2">
        <widget class="QPushButton" name="pushButton_lof">
         <property name="text">
          <string>LOF</string>

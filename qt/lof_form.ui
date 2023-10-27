@@ -50,6 +50,20 @@
      </item>
      <item row="0" column="2">
       <layout class="QGridLayout" name="gridLayout_3">
+       <item row="2" column="0">
+        <widget class="QPushButton" name="pushButton">
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="0">
+        <widget class="QPushButton" name="pushButton_6">
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
+       </item>
        <item row="0" column="0">
         <widget class="QSpinBox" name="spinBox_lof_n">
          <property name="minimum">
@@ -61,24 +75,14 @@
         </widget>
        </item>
        <item row="1" column="0">
-        <widget class="QDoubleSpinBox" name="doubleSpinBox_label"/>
-       </item>
-       <item row="2" column="0">
         <widget class="QCheckBox" name="checkBox_samples">
          <property name="text">
           <string>samples</string>
          </property>
         </widget>
        </item>
-       <item row="3" column="0">
-        <widget class="QPushButton" name="pushButton_8">
-         <property name="text">
-          <string/>
-         </property>
-        </widget>
-       </item>
        <item row="4" column="0">
-        <widget class="QPushButton" name="pushButton_6">
+        <widget class="QPushButton" name="pushButton_8">
          <property name="text">
           <string/>
          </property>

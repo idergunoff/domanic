@@ -1,3 +1,5 @@
+import matplotlib.pyplot as plt
+
 from functions import *
 
 
@@ -333,6 +335,7 @@ def show_regression_form(data_train, list_param):
 
     def calc_lof():
         """ Расчет выбросов методом LOF """
+        global data_pca, data_tsne
 
         data_lof = data_train.copy()
         data_lof.drop(['well', 'depth'], axis=1, inplace=True)
@@ -342,13 +345,12 @@ def show_regression_form(data_train, list_param):
         n_LOF = ui_frm.spinBox_lof_neighbor.value()
 
         tsne = TSNE(n_components=2, perplexity=30, learning_rate=200, random_state=42)
-        train_tsne = tsne.fit_transform(training_sample_lof)
+        data_tsne = tsne.fit_transform(training_sample_lof)
 
         pca = PCA(n_components=2)
         data_pca = pca.fit_transform(training_sample_lof)
 
-        colors, data_pca, data_tsne, factor_lof, label_lof = calc_lof_model(data_pca, n_LOF, train_tsne,
-                                                                            training_sample_lof)
+        colors, data_pca, data_tsne, factor_lof, label_lof = calc_lof_model(n_LOF, training_sample_lof)
 
         Form_LOF = QtWidgets.QDialog()
         ui_lof = Ui_LOF_form()
@@ -368,19 +370,25 @@ def show_regression_form(data_train, list_param):
         draw_lof_tsne(data_tsne, ui_lof)
         draw_lof_pca(data_pca, ui_lof)
         draw_lof_bar(colors, factor_lof, label_lof, ui_lof)
+        insert_list_samples(data_train, ui_lof.listWidget_samples, label_lof)
+        insert_list_features(data_train, ui_lof.listWidget_features)
 
 
         def calc_lof_in_window():
-            colors, data_pca_pd, data_tsne_pd, factor_lof, label_lof = calc_lof_model(data_pca, ui_lof.spinBox_lof_n.value(), train_tsne,
-                                                                                training_sample_lof)
-            draw_lof_tsne(data_tsne_pd, ui_lof)
-            draw_lof_pca(data_pca_pd, ui_lof)
+            global data_pca, data_tsne, colors, factor_lof
+            colors, data_pca, data_tsne, factor_lof, label_lof = calc_lof_model(ui_lof.spinBox_lof_n.value(), training_sample_lof)
+            ui_lof.checkBox_samples.setChecked(False)
+            draw_lof_tsne(data_tsne, ui_lof)
+            draw_lof_pca(data_pca, ui_lof)
             draw_lof_bar(colors, factor_lof, label_lof, ui_lof)
 
             set_title_lof_form(label_lof)
+            insert_list_samples(data_train, ui_lof.listWidget_samples, label_lof)
+            insert_list_features(data_train, ui_lof.listWidget_features)
+
 
         def calc_clean_regression():
-            _, _, _, _, label_lof = calc_lof_model(data_pca, ui_lof.spinBox_lof_n.value(), train_tsne, training_sample_lof)
+            _, _, _, _, label_lof = calc_lof_model(ui_lof.spinBox_lof_n.value(), training_sample_lof)
             data_train_clean = data_train.copy()
             lof_index = [i for i, x in enumerate(label_lof) if x == -1]
             data_train_clean.drop(lof_index, axis=0, inplace=True)
@@ -390,12 +398,66 @@ def show_regression_form(data_train, list_param):
             Form_LOF.close()
             show_regression_form(data_train_clean, list_param)
 
-        ui_lof.spinBox_lof_n.valueChanged.connect(calc_lof_in_window)
+
+        def draw_checkbox_samples():
+            global data_pca, data_tsne, colors, factor_lof
+            if ui_lof.checkBox_samples.isChecked():
+                if ui_lof.listWidget_features.currentItem().text() == f'{ui.label_target_table.text()}.{ui.label_target_param.text()}':
+                    col = 'target'
+                else:
+                    col = ui_lof.listWidget_features.currentItem().text()
+                draw_hist_sample_feature(data_train, col, data_train[col][int(ui_lof.listWidget_samples.currentItem().text().split(') ')[0])], ui_lof)
+                draw_lof_bar(colors, factor_lof, label_lof, ui_lof)
+                draw_lof_pca(data_pca, ui_lof)
+            else:
+                draw_lof_tsne(data_tsne, ui_lof)
+                draw_lof_bar(colors, factor_lof, label_lof, ui_lof)
+                draw_lof_pca(data_pca, ui_lof)
+
+
+        # ui_lof.spinBox_lof_n.valueChanged.connect(calc_lof_in_window)
         ui_lof.pushButton_clean_lof.clicked.connect(calc_clean_regression)
-        # ui_lof.pushButton_lof.clicked.connect(calc_lof_in_window)
+        ui_lof.checkBox_samples.clicked.connect(draw_checkbox_samples)
+        ui_lof.listWidget_samples.currentItemChanged.connect(draw_checkbox_samples)
+
+        ui_lof.listWidget_features.currentItemChanged.connect(draw_checkbox_samples)
+        ui_lof.pushButton_lof.clicked.connect(calc_lof_in_window)
 
         Form_LOF.exec_()
 
+
+    def insert_list_samples(data, list_widget, label_lof):
+        list_widget.clear()
+        for i in data.index:
+            list_widget.addItem(f'{i}) {data["well"][i]} {data["depth"][i]}')
+            if label_lof[i] == -1:
+                list_widget.item(i).setBackground(QBrush(QColor('red')))
+        list_widget.setCurrentRow(0)
+
+
+    def insert_list_features(data, list_widget):
+        list_widget.clear()
+        for col in data.columns:
+            if col != 'well' and col != 'depth':
+                if col == 'target':
+                    list_widget.addItem(f'{ui.label_target_table.text()}.{ui.label_target_param.text()}')
+                else:
+                    list_widget.addItem(col)
+        list_widget.setCurrentRow(0)
+
+
+    def draw_hist_sample_feature(data, feature, value_sample, ui_widget):
+        clear_horizontalLayout(ui_widget.horizontalLayout_tsne)
+        figure_tsne = plt.figure()
+        canvas_tsne = FigureCanvas(figure_tsne)
+        figure_tsne.clear()
+        ui_widget.horizontalLayout_tsne.addWidget(canvas_tsne)
+        sns.histplot(data, x=feature, bins=50)
+        plt.axvline(value_sample, color='r', linestyle='dashed', linewidth=2)
+        plt.grid()
+        figure_tsne.suptitle(f't-SNE')
+        figure_tsne.tight_layout()
+        canvas_tsne.draw()
 
 
     def draw_lof_bar(colors, factor_lof, label_lof, ui_lof):
@@ -404,6 +466,8 @@ def show_regression_form(data_train, list_param):
         canvas_bar = FigureCanvas(figure_bar)
         ui_lof.horizontalLayout_bar.addWidget(canvas_bar)
         plt.bar(range(len(label_lof)), factor_lof, color=colors)
+        if ui_lof.checkBox_samples.isChecked():
+            plt.axvline(int(ui_lof.listWidget_samples.currentItem().text().split(') ')[0]), color='green', linestyle='dashed', linewidth=2)
         figure_bar.suptitle(f'коэффициенты LOF')
         figure_bar.tight_layout()
         canvas_bar.show()
@@ -416,6 +480,10 @@ def show_regression_form(data_train, list_param):
         figure_pca.clear()
         ui_lof.horizontalLayout_pca.addWidget(canvas_pca)
         sns.scatterplot(data=data_pca, x=0, y=1, hue='lof', s=100, palette={-1: 'red', 1: 'blue'})
+        if ui_lof.checkBox_samples.isChecked():
+            index_sample = int(ui_lof.listWidget_samples.currentItem().text().split(') ')[0])
+            plt.axvline(data_pca[0][index_sample], color='green', linestyle='dashed', linewidth=2)
+            plt.axhline(data_pca[1][index_sample], color='green', linestyle='dashed', linewidth=2)
         plt.grid()
         figure_pca.suptitle(f'PCA')
         figure_pca.tight_layout()
@@ -435,12 +503,13 @@ def show_regression_form(data_train, list_param):
         canvas_tsne.draw()
 
 
-    def calc_lof_model(data_pca, n_LOF, train_tsne, training_sample):
+    def calc_lof_model(n_LOF, training_sample):
+        global data_pca, data_tsne
         lof = LocalOutlierFactor(n_neighbors=n_LOF)
         label_lof = lof.fit_predict(training_sample)
         factor_lof = -lof.negative_outlier_factor_
 
-        data_tsne_pd = pd.DataFrame(train_tsne)
+        data_tsne_pd = pd.DataFrame(data_tsne)
         data_tsne_pd['lof'] = label_lof
 
         data_pca_pd = pd.DataFrame(data_pca)
@@ -632,7 +701,7 @@ def show_regression_form(data_train, list_param):
 
 
     ui_frm.pushButton_calc_model.clicked.connect(calc_regression_model)
-    ui_frm.pushButton_knn.clicked.connect(calc_knn)
+    # ui_frm.pushButton_knn.clicked.connect(calc_knn)
     ui_frm.pushButton_lof.clicked.connect(calc_lof)
     Form_Regmod.exec_()
 

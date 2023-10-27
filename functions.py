@@ -2,7 +2,7 @@ import random
 import os
 
 from PyQt5.QtWidgets import QTableWidgetItem, QFileDialog, QCheckBox, QColorDialog, QListWidgetItem, QLabel, QMessageBox
-from PyQt5.QtGui import QColor
+from PyQt5.QtGui import QColor, QBrush
 from PyQt5.QtCore import Qt
 
 from sqlalchemy import text, desc, literal_column
