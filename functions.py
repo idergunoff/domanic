@@ -51,6 +51,7 @@ from qt.edit_user_interval import *
 from qt.compare_table_dialog import *
 from qt.regression_form import *
 from qt.lof_form import *
+from qt.comment_form import *
 
 from objects import *
 

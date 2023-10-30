@@ -536,15 +536,15 @@ def show_regression_form(data_train, list_param):
         pipe_steps = []
 
         scaler = StandardScaler()
-        training_sample = scaler.fit_transform(training_sample_copy)
+        training_sample = training_sample_copy.copy()
 
         pipe_steps.append(('scaler', scaler))
 
-        # Сохранить параметры масштабирования
-        scaler_params = {
-            'mean': scaler.mean_,
-            'std': scaler.scale_
-        }
+        # # Сохранить параметры масштабирования
+        # scaler_params = {
+        #     'mean': scaler.mean_,
+        #     'std': scaler.scale_
+        # }
 
         x_train, x_test, y_train, y_test = train_test_split(
             training_sample, target, test_size=0.2, random_state=42
@@ -596,9 +596,11 @@ def show_regression_form(data_train, list_param):
                 n_cross += 1
             scores_cv = cross_val_score(pipe, training_sample, target, cv=kf)
             n_max = np.argmax(scores_cv)
-            print(n_max)
             train_index, test_index = list_train[n_max], list_test[n_max]
-            x_train, x_test = training_sample[train_index], training_sample[test_index]
+
+            x_train = [training_sample[i] for i in train_index]
+            x_test = [training_sample[i] for i in test_index]
+
             y_train = [target[i] for i in train_index]
             y_test = [target[i] for i in test_index]
             if ui_frm.checkBox_cross_val_save.isChecked():
@@ -684,11 +686,11 @@ def show_regression_form(data_train, list_param):
         if result == QtWidgets.QMessageBox.Yes:
             # Сохранение модели в файл с помощью pickle
             path_model = f'models/regression/{model_name}_{round(accuracy, 3)}_{datetime.datetime.now().strftime("%d%m%y")}.pkl'
-            path_scaler = f'models/regression/{model_name}_{round(accuracy, 3)}_{datetime.datetime.now().strftime("%d%m%y")}_scaler.pkl'
+            # path_scaler = f'models/regression/{model_name}_{round(accuracy, 3)}_{datetime.datetime.now().strftime("%d%m%y")}_scaler.pkl'
             with open(path_model, 'wb') as f:
                 pickle.dump(pipe, f)
-            with open(path_scaler, 'wb') as f:
-                pickle.dump(scaler_params, f)
+            # with open(path_scaler, 'wb') as f:
+            #     pickle.dump(scaler_params, f)
 
             an = session.query(RegressionAnalysis).filter_by(id=get_reg_analysis_id()).first()
             list_well = [{'id': well.well_id, 'area': well.well.area.title, 'well': well.well.title,
@@ -697,7 +699,7 @@ def show_regression_form(data_train, list_param):
             new_trained_model = TrainedRegModel(
                 title=f'{model_name}_{round(accuracy, 3)}_{datetime.datetime.now().strftime("%d%m%y")}',
                 path_model=path_model,
-                path_scaler=path_scaler,
+                # path_scaler=path_scaler,
                 target_param=an.target_param,
                 list_params=json.dumps(list_param),
                 list_wells=json.dumps(list_well)
@@ -781,21 +783,113 @@ def update_list_trained_regression_models():
         ui.listWidget_trained_reg_model.item(ui.listWidget_trained_reg_model.count() - 1).setToolTip(
             f'Target param: {reg_model.target_param}\n '
             f'Params: {", ".join([i.split(".")[-1] for i in json.loads(reg_model.list_params)])}\n '
-            f'Wells: {", ".join([i["well"] for i in json.loads(reg_model.list_wells)])}'
+            f'Wells: {", ".join([i["well"] for i in json.loads(reg_model.list_wells)])}\n'
+            f'Comment: {reg_model.comment}'
         )
 
 
 def remove_trained_regression_model():
     """ Удаление обученной модели регрессионного анализа """
-    model = session.query(TrainedRegModel).filter_by(id=ui.listWidget_trained_reg_model.currentItem().text().split(' id')[-1]).first()
+    try:
+        model = session.query(TrainedRegModel).filter_by(id=ui.listWidget_trained_reg_model.currentItem().text().split(' id')[-1]).first()
+    except AttributeError:
+        QMessageBox.critical(MainWindow, 'Не выбрана модель', 'Не выбрана модель для удаления')
+        set_label_info('Не выбрана модель для удаления', 'red')
+        return
     os.remove(model.path_model)
-    os.remove(model.path_scaler)
+    # os.remove(model.path_scaler)
     session.delete(model)
     session.commit()
     update_list_trained_regression_models()
     set_label_info(f'Модель {model.title} удалена', 'blue')
 
 
+def update_trained_model_comment():
+    """ Изменить комментарий обученной модели """
+    try:
+        an = session.query(TrainedRegModel).filter_by(id=ui.listWidget_trained_reg_model.currentItem().text().split(' id')[-1]).first()
+    except AttributeError:
+        QMessageBox.critical(MainWindow, 'Не выбрана модель', 'Не выбрана модель.')
+        set_label_info('Не выбрана модель', 'red')
+        return
+
+    FormComment = QtWidgets.QDialog()
+    ui_cmt = Ui_Form_comment()
+    ui_cmt.setupUi(FormComment)
+    FormComment.show()
+    FormComment.setAttribute(QtCore.Qt.WA_DeleteOnClose)
+
+    ui_cmt.textEdit.setText(an.comment)
+
+    def update_comment():
+        session.query(TrainedRegModel).filter_by(id=an.id).update({'comment': ui_cmt.textEdit.toPlainText()}, synchronize_session='fetch')
+        session.commit()
+        update_list_trained_regression_models()
+        FormComment.close()
+
+    ui_cmt.buttonBox.accepted.connect(update_comment)
+
+    FormComment.exec_()
+
+
+def build_work_table():
+    """ Создание таблицы работы """
+    try:
+        model = session.query(TrainedRegModel).filter_by(id=ui.listWidget_trained_reg_model.currentItem().text().split(' id')[-1]).first()
+    except AttributeError:
+        QMessageBox.critical(MainWindow, 'Не выбрана модель', 'Не выбрана модель.')
+        set_label_info('Не выбрана модель', 'red')
+        return
+    start, stop = check_start_stop()
+
+    list_column = ['depth'] + [i for i in json.loads(model.list_params)]
+
+    data_work = pd.DataFrame(columns=list_column)
+
+    ui.progressBar.setMaximum(int((stop - start) / 0.1))
+    depth, k = start, 0
+    while depth < stop:
+        depth = round(depth, 2)
+        ui.progressBar.setValue(k)
+        dict_depth = {'depth': depth}
+        for p in json.loads(model.list_params):
+
+            table = get_table(p.split('.')[0])
+            p_value = session.query(literal_column(f'{p.split(".")[0]}.{p.split(".")[1]}')).filter(
+                table.well_id == get_well_id(),
+                table.depth >= depth,
+                table.depth < depth + 0.1,
+                literal_column(f'{p.split(".")[0]}.{p.split(".")[1]}') != None
+            ).first()
+            if p_value:
+                dict_depth[f'{p.split(".")[0]}.{p.split(".")[1]}'] = p_value
+        if len(dict_depth) == len(json.loads(model.list_params)) + 1:
+            data_work = pd.concat([data_work, pd.DataFrame(dict_depth)], ignore_index=True)
+        depth += 0.1
+        k += 1
+    return data_work, model
+
+
 def calc_regression_model():
     """ Расчёт модели регрессионного анализа """
-    pass
+    data_work, model = build_work_table()
+    print(len(data_work.index))
+    print(data_work)
+    with open(model.path_model, 'rb') as f:
+        reg_model = pickle.load(f)
+
+
+    working_sample = data_work[json.loads(model.list_params)].values.tolist()
+
+    y_pred = reg_model.predict(working_sample)
+    data_work['pred'] = y_pred
+    print(data_work)
+
+    ui.graphicsView.clear()
+    color = choice_color()
+    dash = choice_dash()
+    width = choice_width()
+    curve = pg.PlotCurveItem(x=data_work['pred'].tolist(), y=data_work['depth'].tolist(), pen=pg.mkPen(color=color, width=width, dash=dash))
+
+    ui.graphicsView.addItem(curve)
+    curve.getViewBox().invertY(True)

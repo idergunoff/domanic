@@ -167,6 +167,7 @@ ui.pushButton_clear_reg_param.clicked.connect(clear_list_features_regression)
 ui.pushButton_model_reg.clicked.connect(train_regression_model)
 ui.pushButton_del_reg_model.clicked.connect(remove_trained_regression_model)
 ui.pushButton_calc_reg_model.clicked.connect(calc_regression_model)
+ui.pushButton_trained_models_comment.clicked.connect(update_trained_model_comment)
 
 reset_fake_lda()
 comboBox_region_update()

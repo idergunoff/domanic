@@ -555,6 +555,7 @@ class TrainedRegModel(Base):
     target_param = Column(String)
     list_params = Column(Text)
     list_wells = Column(Text)
+    comment = Column(Text)
 
 
 Base.metadata.create_all(engine)
