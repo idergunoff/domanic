@@ -365,7 +365,6 @@ def draw_relation():
                     d += 0.1
                 list_mean.append(mean(list_value))
             list_result.append(list_mean)
-        print(list_result)
     else:
         d, n, list_result = start, 0, []
         while d <= stop:
