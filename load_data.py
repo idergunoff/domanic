@@ -1,5 +1,6 @@
 from functions import *
 from user_interval import user_interval_list_update
+from calculated_data import update_list_calculated_data
 
 
 def comboBox_region_update():
@@ -28,6 +29,7 @@ def comboBox_well_update():
         ui.comboBox_well.addItem(i.title)
     well_interval()
     user_interval_list_update()
+
 
 
 def add_region():
@@ -167,6 +169,7 @@ def well_interval():
             ui.doubleSpinBox_start.setValue(min(starts))
         check_list_param()
         user_interval_list_update()
+        update_list_calculated_data()
 
 
 def load_data_from_las():

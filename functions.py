@@ -947,3 +947,9 @@ def clear_horizontalLayout(h_l_widget):
         widget = item.widget()
         if widget:
             widget.deleteLater()
+
+
+def get_calc_data():
+    return session.query(CalculatedData).filter_by(id=ui.listWidget_calc_data.currentItem().text().split(' id')[-1]).first()
+
+

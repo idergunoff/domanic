@@ -5,6 +5,7 @@ from graph_tablet import *
 from user_interval import *
 from compare_interval import *
 from regression import *
+from calculated_data import *
 
 MainWindow.show()
 
@@ -50,8 +51,11 @@ ui.pushButton_chrom_extr.clicked.connect(load_data_chrom_extr)
 ui.pushButton_depth.clicked.connect(load_depth_name)
 ui.pushButton_add_age.clicked.connect(load_age)
 ui.pushButton_lit.clicked.connect(load_data_lit)
+
+
 ui.pushButton_del_param.clicked.connect(del_param)
 ui.pushButton_add_param.clicked.connect(choice_param)
+ui.pushButton_add_param_ml.clicked.connect(add_param_ml)
 ui.pushButton_add_all_param.clicked.connect(choice_all_param)
 ui.pushButton_clear_param.clicked.connect(clear_param)
 ui.pushButton_draw_param.clicked.connect(draw_sev_param)
@@ -59,6 +63,7 @@ ui.pushButton_norm_param.clicked.connect(draw_norm_sev_param)
 ui.pushButton_table.clicked.connect(build_table_sev_param)
 ui.pushButton_table_save.clicked.connect(save_table_sev_param)
 ui.pushButton_add_param_rel.clicked.connect(add_param_for_relation)
+ui.pushButton_add_param_ml_rel.clicked.connect(add_param_ml_for_relation)
 ui.pushButton_clear_param_rel.clicked.connect(clear_param_relation)
 ui.pushButton_draw_rel.clicked.connect(draw_relation)
 ui.pushButton_rel_save.clicked.connect(save_relation)
@@ -169,6 +174,11 @@ ui.pushButton_del_reg_model.clicked.connect(remove_trained_regression_model)
 ui.pushButton_calc_reg_model.clicked.connect(calc_regression_model)
 ui.pushButton_trained_models_comment.clicked.connect(update_trained_model_comment)
 
+# calculated data
+ui.listWidget_calc_data.itemSelectionChanged.connect(show_calc_data)
+ui.pushButton_del_calc_data.clicked.connect(delete_calc_data)
+ui.pushButton_cut_calc_data.clicked.connect(cut_calc_data)
+
 reset_fake_lda()
 comboBox_region_update()
 draw_current_graph_by_style()
@@ -187,6 +197,7 @@ add_stat_checkbox()
 update_template_graph_tablet()
 update_list_regression_analysis()
 update_list_trained_regression_models()
+update_list_calculated_data()
 
 sys.excepthook = log_uncaught_exceptions
 

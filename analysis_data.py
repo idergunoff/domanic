@@ -63,6 +63,23 @@ def choice_param():
         ui.label_info.setStyleSheet('color: red')
 
 
+def add_param_ml():
+    """  Добавление расчетного параметра в список для отображения нескольких параметров """
+    calc_data = get_calc_data()
+    if calc_data:
+        param = f'{calc_data.title} {calc_data.model_title.split("_")[0]}'
+        color = choice_color_rel()
+        new_graph = DrawSeveralGraph(well_id=calc_data.id, table='ML', param=param, color=color,
+                                     dash=' '.join(list(map(str, choice_dash()))), width=choice_width())
+        session.add(new_graph)  # параметр добавляется в отдельную таблицу + параметры графика
+        session.commit()
+        ui.listWidget_param.addItem(param)
+        ui.listWidget_param.item(ui.listWidget_param.count() - 1).setBackground(QtGui.QColor(color))
+    else:
+        ui.label_info.setText(f'Внимание! Не выбран расчетный параметр.')
+        ui.label_info.setStyleSheet('color: red')
+
+
 def choice_all_param():
     """ Добавление всех параметров выбранной таблицы для расчёта корреляций """
     table, table_text, widget = check_tabWidjet()
@@ -98,13 +115,19 @@ def draw_sev_param():
     sev_param = session.query(DrawSeveralGraph).all()
     ui.graphicsView.clear()
     for i in sev_param:
-        tab = get_table(i.table)
-        X = sum(list(map(list, session.query(literal_column(f'{i.table}.{i.param}')).filter(tab.depth >= start,
-                        tab.depth <= stop, tab.well_id == i.well_id, literal_column(f'{i.table}.{i.param}') != None).
-                         order_by(tab.depth).all())), [])
-        Y = sum(list(map(list, session.query(tab.depth).filter(tab.depth >= start, tab.depth <= stop,
-            tab.well_id == i.well_id, literal_column(f'{i.table}.{i.param}') != None).order_by(tab.depth).all())), [])
-        if i.table == 'data_las':
+        if i.table == 'ML':
+            calc_data = session.query(CalculatedData).filter_by(id=i.well_id).first()
+
+            Y = [float(key) for key in (json.loads(calc_data.data).keys())]
+            X = list(json.loads(calc_data.data).values())
+        else:
+            tab = get_table(i.table)
+            X = sum(list(map(list, session.query(literal_column(f'{i.table}.{i.param}')).filter(tab.depth >= start,
+                            tab.depth <= stop, tab.well_id == i.well_id, literal_column(f'{i.table}.{i.param}') != None).
+                             order_by(tab.depth).all())), [])
+            Y = sum(list(map(list, session.query(tab.depth).filter(tab.depth >= start, tab.depth <= stop,
+                tab.well_id == i.well_id, literal_column(f'{i.table}.{i.param}') != None).order_by(tab.depth).all())), [])
+        if i.table == 'data_las' or i.table == 'ML':
             curve = pg.PlotCurveItem(x=X, y=Y, pen=pg.mkPen(color=i.color, width=float(i.width),
                                                             dash=list(map(int, (i.dash).split(' ')))))
         else:
@@ -124,15 +147,21 @@ def draw_norm_sev_param():
     sev_param = session.query(DrawSeveralGraph).all()
     ui.graphicsView.clear()
     for i in sev_param:
-        tab = get_table(i.table)
-        X = sum(list(map(list, session.query(literal_column(f'{i.table}.{i.param}')).filter(tab.depth >= start,
-                tab.depth <= stop, tab.well_id == i.well_id, literal_column(f'{i.table}.{i.param}') != None).
-                                                                                order_by(tab.depth).all())), [])
+        if i.table == 'ML':
+            calc_data = session.query(CalculatedData).filter_by(id=i.well_id).first()
+
+            Y = [float(key) for key in (json.loads(calc_data.data).keys())]
+            X = list(json.loads(calc_data.data).values())
+        else:
+            tab = get_table(i.table)
+            X = sum(list(map(list, session.query(literal_column(f'{i.table}.{i.param}')).filter(tab.depth >= start,
+                    tab.depth <= stop, tab.well_id == i.well_id, literal_column(f'{i.table}.{i.param}') != None).
+                                                                                    order_by(tab.depth).all())), [])
+            Y = sum(list(map(list, session.query(tab.depth).filter(tab.depth >= start, tab.depth <= stop,
+                            tab.well_id == i.well_id, literal_column(f'{i.table}.{i.param}') != None).order_by(
+                            tab.depth).all())), [])
         X = [(j - min(X)) / (max(X) - min(X)) for j in X]
-        Y = sum(list(map(list, session.query(tab.depth).filter(tab.depth >= start, tab.depth <= stop,
-                        tab.well_id == i.well_id, literal_column(f'{i.table}.{i.param}') != None).order_by(
-                        tab.depth).all())), [])
-        if i.table == 'data_las':
+        if i.table == 'data_las' or i.table == 'ML':
             curve = pg.PlotCurveItem(x=X, y=Y, pen=pg.mkPen(color=i.color, width=float(i.width),
                                                             dash=list(map(int, (i.dash).split(' ')))))
         else:
@@ -149,14 +178,14 @@ def draw_norm_sev_param():
 def build_table_sev_param():
     """ Построение сводной таблицы по нескольким параметрам и отображение ее в виджете"""
     clear_table(ui.tableWidget)
-    w_id = get_well_id()
+
     start, stop = check_start_stop()
     sev_param = session.query(DrawSeveralGraph).all()
     if sev_param:
         list_param = ['depth', 'age', 'n_obr']
         [list_param.append(i.param) for i in sev_param]
         wlist_param = []
-        [wlist_param.append([i.table, i.param]) for i in sev_param]
+        [wlist_param.append([i.table, i.param, i.well_id]) for i in sev_param]
         pd_tab = pd.DataFrame(columns=list_param)
         ui.tableWidget.setColumnCount(len(list_param))
         ui.tableWidget.setHorizontalHeaderLabels(list_param)
@@ -172,38 +201,49 @@ def build_table_sev_param():
             pd_tab['depth'][n] = d
             ui.tableWidget.insertRow(n)
             ui.tableWidget.setItem(n, 0, QTableWidgetItem(str(round(d, 1))))
-            age = session.query(DataAge.age).filter(DataAge.well_id == w_id, DataAge.depth >= d,
+            age = session.query(DataAge.age).filter(DataAge.well_id == wlist_param[0][2], DataAge.depth >= d,
                                                     DataAge.depth < d + 0.1).first()
             age = '' if age is None else str(age[0])
             ui.tableWidget.setItem(n, 1, QTableWidgetItem(age))
             for col, l in enumerate(wlist_param):
-                tab = get_table(l[0])
-                if l[0] == 'data_las':
-                    value = session.query(literal_column(f'{l[0]}.{l[1]}')).filter(tab.depth >= d, tab.depth < d + 0.1,
-                                                                                   tab.well_id == w_id).first()
+                w_id = l[2]
+                if l[0] == 'ML':
+                    calc_data = session.query(CalculatedData).filter_by(id=w_id).first()
+                    try:
+                        value = json.loads(calc_data.data)[str(d)]
+                    except KeyError:
+                        value = None
                     if value:
-                        pd_tab[l[1]][n] = value[0]
-                        ui.tableWidget.setItem(n, col + 3, QTableWidgetItem(str(value[0])))
+                        pd_tab[l[1]][n] = value
+                        ui.tableWidget.setItem(n, col + 3, QTableWidgetItem(str(value)))
                 else:
-                    value = session.query(literal_column(f'{l[0]}.{l[1]}')).filter(tab.depth >= d, tab.depth < d + 0.1,
-                                                                                   tab.well_id == w_id).first()
-                    if value:
-                        pd_tab[l[1]][n] = value[0]
-                        if value[0]:
-                            ui.tableWidget.setItem(n, col + 3, QTableWidgetItem(str(round(value[0], 5))))
-                        else:
+                    tab = get_table(l[0])
+                    if l[0] == 'data_las':
+                        value = session.query(literal_column(f'{l[0]}.{l[1]}')).filter(tab.depth >= d, tab.depth < d + 0.1,
+                                                                                       tab.well_id == w_id).first()
+                        if value:
+                            pd_tab[l[1]][n] = value[0]
                             ui.tableWidget.setItem(n, col + 3, QTableWidgetItem(str(value[0])))
-                        value = session.query(tab.name).filter(tab.depth >= d, tab.depth < d + 0.1,
-                                                                        tab.well_id == w_id).first()
-                        pd_tab['n_obr'][n] = value.name
-                        ui.tableWidget.setItem(n, 2, QTableWidgetItem(value.name))
+                    else:
+                        value = session.query(literal_column(f'{l[0]}.{l[1]}')).filter(tab.depth >= d, tab.depth < d + 0.1,
+                                                                                       tab.well_id == w_id).first()
+                        if value:
+                            pd_tab[l[1]][n] = value[0]
+                            if value[0]:
+                                ui.tableWidget.setItem(n, col + 3, QTableWidgetItem(str(round(value[0], 5))))
+                            else:
+                                ui.tableWidget.setItem(n, col + 3, QTableWidgetItem(str(value[0])))
+                            value = session.query(tab.name).filter(tab.depth >= d, tab.depth < d + 0.1,
+                                                                            tab.well_id == w_id).first()
+                            pd_tab['n_obr'][n] = value.name
+                            ui.tableWidget.setItem(n, 2, QTableWidgetItem(value.name))
             d += 0.1
             n += 1
             ui.progressBar.setValue(n)
-        ui.tableWidget.verticalHeader().hide()
-        ui.tableWidget.resizeColumnsToContents()
-        ui.label_info.setText(f'Готово!')
-        ui.label_info.setStyleSheet('color: green')
+    ui.tableWidget.verticalHeader().hide()
+    ui.tableWidget.resizeColumnsToContents()
+    ui.label_info.setText(f'Готово!')
+    ui.label_info.setStyleSheet('color: green')
 
 
 def save_table_sev_param():
@@ -251,7 +291,7 @@ def save_table_sev_param():
 
 
 def add_param_for_relation():
-    """ Добавление параметра для построение зависимости """
+    """ Добавление параметра для построения зависимости """
     table, table_text, widget = check_tabWidjet()
     try:
         param = widget.currentItem().text()
@@ -267,112 +307,87 @@ def add_param_for_relation():
         ui.label_info.setStyleSheet('color: red')
 
 
+def add_param_ml_for_relation():
+    """ Добавление параметра для построения зависимости """
+    try:
+        calc_data = get_calc_data()
+        param = f'ML {calc_data.title} {calc_data.model_title.split("_")[0]} id{calc_data.id}'
+        if ui.listWidget_relation.findItems(param, QtCore.Qt.MatchExactly):
+            ui.label_info.setText(f'Внимание! Параметр "{param}" уже добавлен.')
+            ui.label_info.setStyleSheet('color: red')
+        else:
+            if ui.listWidget_relation.count() == 4:
+                ui.listWidget_relation.clear()
+            ui.listWidget_relation.addItem(param)
+    except AttributeError:
+        ui.label_info.setText(f'Внимание! Не выбран параметр.')
+        ui.label_info.setStyleSheet('color: red')
+
+
 def draw_relation():
     """ Построение зависимости """
     w_id = get_well_id()
-    try:
-        param_1 = ui.listWidget_relation.item(0).text().split(' ')[0]
-        table_name_1 = ui.listWidget_relation.item(0).text().split(' ')[1]
-        table_1 = get_table(table_name_1)
-        param_2 = ui.listWidget_relation.item(1).text().split(' ')[0]
-        table_name_2 = ui.listWidget_relation.item(1).text().split(' ')[1]
-        table_2 = get_table(table_name_2)
-        data = pd.DataFrame(columns=[f'{param_1}_{table_name_1}', f'{param_2}_{table_name_2}'])
-        if ui.listWidget_relation.count() > 2:
-            param_3 = ui.listWidget_relation.item(2).text().split(' ')[0]
-            table_name_3 = ui.listWidget_relation.item(2).text().split(' ')[1]
-            table_3 = get_table(table_name_3)
-            data[f'{param_3}_{table_name_3}'] = 0
-        if ui.listWidget_relation.count() > 3:
-            param_4 = ui.listWidget_relation.item(3).text().split(' ')[0]
-            table_name_4 = ui.listWidget_relation.item(3).text().split(' ')[1]
-            table_4 = get_table(table_name_4)
-            data[f'{param_4}_{table_name_4}'] = 0
-        if table_name_1 != 'data_las':
-            data['name'] = 0
-        start, stop = check_start_stop()
-        ui.progressBar.setMaximum(int((stop - start) / 0.1))
-        if ui.checkBox_class_int_rel.isChecked():
-            # расчёт в выбранных интервалах классификации
-            list_calc_int = session.query(IntervalFromCat.int_from, IntervalFromCat.int_to).all()
+    list_dict, columns = [], []
+    for i_param in range(ui.listWidget_relation.count()):
+        param = ui.listWidget_relation.item(i_param).text()
+        if param.startswith('ML'):
+            calc_data = session.query(CalculatedData).filter_by(id=param.split(' id')[-1]).first()
+            list_dict.append(json.loads(calc_data.data))
+            columns.append(param.split(' id')[0])
         else:
-            list_calc_int = [[start, stop]]
-        if ui.checkBox_class_int_mean_rel.isChecked():
+            table_name = param.split(' ')[1]
+            table = get_table(table_name)
+            p = param.split(' ')[0]
+            result = session.query(table.depth, literal_column(f'{table_name}.{p}')).filter(
+                table.well_id == w_id, literal_column(f'{table_name}.{p}').isnot(None)).all()
+            dictionary = {str(key)[:-1] if str(key)[-3] == '.' else str(key): value for key, value in result}
+            list_dict.append(dictionary)
+            columns.append(p)
+    start, stop = check_start_stop()
+    ui.progressBar.setMaximum(int((stop - start) / 0.1))
+    if ui.checkBox_class_int_rel.isChecked():
+        # расчёт в выбранных интервалах классификации
+        list_calc_int = session.query(IntervalFromCat.int_from, IntervalFromCat.int_to).all()
+    else:
+        list_calc_int = [[start, stop]]
+    if ui.checkBox_class_int_mean_rel.isChecked():
+        list_result = []
+        for i_int in list_calc_int:
+            list_mean = []
+            for i_dict in list_dict:
+                d, list_value = i_int[0], []
+                while d <= i_int[1]:
+                    d = round(d, 1)
+                    try:
+                        list_value.append(i_dict[str(d)])
+                    except KeyError:
+                        pass
+                    d += 0.1
+                list_mean.append(mean(list_value))
+            list_result.append(list_mean)
+        print(list_result)
+    else:
+        d, n, list_result = start, 0, []
+        while d <= stop:
+            ui.progressBar.setValue(n)
+            d = round(d, 1)
+            flag_int = False
             for i in list_calc_int:
-                # проверка интервала исследований
-                if start < i[1] < stop or start < i[0] < stop:
-                    h0 = i[0] if i[0] > start else start
-                    h1 = i[1] if i[1] < stop else stop
-                    dict_values = {}
-                    value_1 = np.mean(del_none_from_list(sum(list(map(
-                        list, session.query(literal_column(f'{table_name_1}.{param_1}')).filter(
-                        table_1.depth >= h0, table_1.depth <= h1, table_1.well_id == w_id).all())), [])))
-                    value_2 = np.mean(del_none_from_list(sum(list(map(
-                        list, session.query(literal_column(f'{table_name_2}.{param_2}')).filter(
-                            table_2.depth >= h0, table_2.depth < h1, table_2.well_id == w_id).all())), [])))
-                    if value_1 and value_2:
-                        dict_values[f'{param_1}_{table_name_1}'] = value_1
-                        dict_values[f'{param_2}_{table_name_2}'] = value_2
-                        if ui.listWidget_relation.count() > 2:
-                            value_3 = np.mean(del_none_from_list(sum(list(map(
-                                list, session.query(literal_column(f'{table_name_3}.{param_3}')).filter(
-                                table_3.depth >= h0, table_3.depth <= h1, table_3.well_id == w_id).all())), [])))
-                            if value_3:
-                                dict_values[f'{param_3}_{table_name_3}'] = value_3
-                                if ui.listWidget_relation.count() > 3:
-                                    value_4 = np.mean(del_none_from_list(sum(list(map(
-                                        list, session.query(literal_column(f'{table_name_4}.{param_4}')).filter(
-                                        table_4.depth >= h0, table_4.depth <= h1, table_4.well_id == w_id).all())), [])))
-                                    if value_4:
-                                        dict_values[f'{param_4}_{table_name_4}'] = value_4
-                    data = pd.concat([data, pd.DataFrame(pd.Series(dict_values)).T], ignore_index=True)
-        else:
-            d, n = start, 0
-            while d <= stop:
-                d = round(d, 2)
-                flag_int = False
-                for i in list_calc_int:
-                    if i[0] <= d <= i[1]:
-                        flag_int = True
-                        break
-                if flag_int:
-                    dict_values = {}
-                    value_1 = session.query(literal_column(f'{table_name_1}.{param_1}')).filter(table_1.depth >= d,
-                                                                table_1.depth < d + 0.1, table_1.well_id == w_id).first()
-                    value_2 = session.query(literal_column(f'{table_name_2}.{param_2}')).filter(table_2.depth >= d,
-                                                                table_2.depth < d + 0.1, table_2.well_id == w_id).first()
-                    if value_1 and value_2:
-                        if value_1[0] and value_2[0]:
-                            dict_values[f'{param_1}_{table_name_1}'] = value_1[0]
-                            dict_values[f'{param_2}_{table_name_2}'] = value_2[0]
-                            if table_name_1 != 'data_las':
-                                name = session.query(table_1.name).filter(table_1.depth >= d, table_1.depth < d + 0.1,
-                                                                          table_1.well_id == w_id).first()
-                                dict_values['name'] = name[0]
-                            if ui.listWidget_relation.count() > 2:
-                                value_3 = session.query(literal_column(f'{table_name_3}.{param_3}')).filter(table_3.depth >= d,
-                                                                table_3.depth < d + 0.1, table_3.well_id == w_id).first()
-                                if value_3:
-                                    if value_3[0]:
-                                        dict_values[f'{param_3}_{table_name_3}'] = value_3[0]
-                                        if ui.listWidget_relation.count() > 3:
-                                            value_4 = session.query(literal_column(f'{table_name_4}.{param_4}')).filter(table_4.depth >= d,
-                                                                                table_4.depth < d + 0.1, table_4.well_id == w_id).first()
-                                            if value_4:
-                                                if value_4[0]:
-                                                    dict_values[f'{param_4}_{table_name_4}'] = value_4[0]
-                    if table_name_1 != 'data_las':
-                        if len(dict_values) == ui.listWidget_relation.count() + 1:
-                            data = pd.concat([data, pd.DataFrame(pd.Series(dict_values)).T], ignore_index=True)
-                    else:
-                        if len(dict_values) == ui.listWidget_relation.count():
-                            data = pd.concat([data, pd.DataFrame(pd.Series(dict_values)).T], ignore_index=True)
-                d += 0.1
-                n += 1
-                ui.progressBar.setValue(n)
-    except AttributeError:
-        ui.label_info.setText(f'Внимание! Параметры не выбраны или выбран только один параметр.')
-        ui.label_info.setStyleSheet('color: red')
+                if i[0] <= d <= i[1]:
+                    flag_int = True
+                    break
+            if flag_int:
+                list_value = []
+                for i_dict in list_dict:
+                    try:
+                        list_value.append(i_dict[str(d)])
+                    except KeyError:
+                        pass
+                if len(list_value) == len(list_dict):
+                    list_result.append(list_value)
+            n += 1
+            d += 0.1
+    data = pd.DataFrame(list_result, columns=columns)
     pal = ui.comboBox_rel.currentText()
     fig = plt.figure(figsize=(10, 10), dpi=80)
     ax = plt.subplot()
@@ -381,36 +396,183 @@ def draw_relation():
     if ui.checkBox_ylg.isChecked():
         ax.set(yscale="log")
     if ui.listWidget_relation.count() == 2:
-        sns.scatterplot(data=data, x=f'{param_1}_{table_name_1}', y=f'{param_2}_{table_name_2}', s=100)
+
+        sns.scatterplot(data=data, x=columns[0], y=columns[1], s=100)
         # sns.lmplot(data=data, x=f'{param_1}_{table_name_1}', y=f'{param_2}_{table_name_2}')
     elif ui.listWidget_relation.count() == 3:
-        sns.scatterplot(data=data, x=f'{param_1}_{table_name_1}', y=f'{param_2}_{table_name_2}',
-                        hue=f'{param_3}_{table_name_3}', size=f'{param_3}_{table_name_3}', sizes=(5, 250), palette=pal)
+        sns.scatterplot(data=data, x=columns[0], y=columns[1], hue=columns[2], size=columns[2], sizes=(5, 250), palette=pal)
     else:
-        sns.scatterplot(data=data, x=f'{param_1}_{table_name_1}', y=f'{param_2}_{table_name_2}',
-                        hue=f'{param_3}_{table_name_3}', size=f'{param_4}_{table_name_4}', sizes=(5, 250), palette=pal)
+        sns.scatterplot(data=data, x=columns[0], y=columns[1], hue=columns[2], size=columns[3], sizes=(5, 250), palette=pal)
     if ui.checkBox_trend.isChecked():
         a, b = np.polyfit(
-            data[f'{param_1}_{table_name_1}'].astype(float),
-            data[f'{param_2}_{table_name_2}'].astype(float), deg=1)  # расчитываем коэф уравнения для линии тренда
-        x = data[f'{param_1}_{table_name_1}']
+            data[columns[0]].astype(float),
+            data[columns[1]].astype(float), deg=1)  # расчитываем коэф уравнения для линии тренда
+        x = data[columns[0]]
         y_trend = a * x + b
         ax.plot(x, y_trend, '-')
     ax.grid()
     ax.xaxis.grid(True, "minor", linewidth=.25)
     ax.yaxis.grid(True, "minor", linewidth=.25)
     title_graph = f'{ui.comboBox_area.currentText()} площадь, скв.{ui.comboBox_well.currentText()}\nИнтервал: ' \
-                  f'{str(start)} - {str(stop)} м. \nЗависимость ' f'{param_1} - {param_2}'
+                  f'{str(start)} - {str(stop)} м. \nЗависимость ' f'{columns[0]} - {columns[1]}'
     if ui.listWidget_relation.count() > 2:
-        title_graph += f' - {param_3}'
+        title_graph += f' - {columns[2]}'
     if ui.listWidget_relation.count() > 3:
-        title_graph += f' - {param_4}'
+        title_graph += f' - {columns[3]}'
     title_graph += f'\nКоличество образцов: {str(len(data.index))}'
     if ui.checkBox_trend.isChecked():
         title_graph += f'\ny = {round(a, 5)} * x + {round(b, 5)}'
     plt.title(title_graph, fontsize=16)
     fig.tight_layout()
     fig.show()
+
+
+
+
+# def draw_relation():
+#     """ Построение зависимости """
+#     w_id = get_well_id()
+#     try:
+#         param_1 = ui.listWidget_relation.item(0).text().split(' ')[0]
+#         table_name_1 = ui.listWidget_relation.item(0).text().split(' ')[1]
+#         table_1 = get_table(table_name_1)
+#         param_2 = ui.listWidget_relation.item(1).text().split(' ')[0]
+#         table_name_2 = ui.listWidget_relation.item(1).text().split(' ')[1]
+#         table_2 = get_table(table_name_2)
+#         data = pd.DataFrame(columns=[f'{param_1}_{table_name_1}', f'{param_2}_{table_name_2}'])
+#         if ui.listWidget_relation.count() > 2:
+#             param_3 = ui.listWidget_relation.item(2).text().split(' ')[0]
+#             table_name_3 = ui.listWidget_relation.item(2).text().split(' ')[1]
+#             table_3 = get_table(table_name_3)
+#             data[f'{param_3}_{table_name_3}'] = 0
+#         if ui.listWidget_relation.count() > 3:
+#             param_4 = ui.listWidget_relation.item(3).text().split(' ')[0]
+#             table_name_4 = ui.listWidget_relation.item(3).text().split(' ')[1]
+#             table_4 = get_table(table_name_4)
+#             data[f'{param_4}_{table_name_4}'] = 0
+#         if table_name_1 != 'data_las':
+#             data['name'] = 0
+#         start, stop = check_start_stop()
+#         ui.progressBar.setMaximum(int((stop - start) / 0.1))
+#         if ui.checkBox_class_int_rel.isChecked():
+#             # расчёт в выбранных интервалах классификации
+#             list_calc_int = session.query(IntervalFromCat.int_from, IntervalFromCat.int_to).all()
+#         else:
+#             list_calc_int = [[start, stop]]
+#         if ui.checkBox_class_int_mean_rel.isChecked():
+#             for i in list_calc_int:
+#                 # проверка интервала исследований
+#                 if start < i[1] < stop or start < i[0] < stop:
+#                     h0 = i[0] if i[0] > start else start
+#                     h1 = i[1] if i[1] < stop else stop
+#                     dict_values = {}
+#                     value_1 = np.mean(del_none_from_list(sum(list(map(
+#                         list, session.query(literal_column(f'{table_name_1}.{param_1}')).filter(
+#                         table_1.depth >= h0, table_1.depth <= h1, table_1.well_id == w_id).all())), [])))
+#                     value_2 = np.mean(del_none_from_list(sum(list(map(
+#                         list, session.query(literal_column(f'{table_name_2}.{param_2}')).filter(
+#                             table_2.depth >= h0, table_2.depth < h1, table_2.well_id == w_id).all())), [])))
+#                     if value_1 and value_2:
+#                         dict_values[f'{param_1}_{table_name_1}'] = value_1
+#                         dict_values[f'{param_2}_{table_name_2}'] = value_2
+#                         if ui.listWidget_relation.count() > 2:
+#                             value_3 = np.mean(del_none_from_list(sum(list(map(
+#                                 list, session.query(literal_column(f'{table_name_3}.{param_3}')).filter(
+#                                 table_3.depth >= h0, table_3.depth <= h1, table_3.well_id == w_id).all())), [])))
+#                             if value_3:
+#                                 dict_values[f'{param_3}_{table_name_3}'] = value_3
+#                                 if ui.listWidget_relation.count() > 3:
+#                                     value_4 = np.mean(del_none_from_list(sum(list(map(
+#                                         list, session.query(literal_column(f'{table_name_4}.{param_4}')).filter(
+#                                         table_4.depth >= h0, table_4.depth <= h1, table_4.well_id == w_id).all())), [])))
+#                                     if value_4:
+#                                         dict_values[f'{param_4}_{table_name_4}'] = value_4
+#                     data = pd.concat([data, pd.DataFrame(pd.Series(dict_values)).T], ignore_index=True)
+#         else:
+#             d, n = start, 0
+#             while d <= stop:
+#                 d = round(d, 2)
+#                 flag_int = False
+#                 for i in list_calc_int:
+#                     if i[0] <= d <= i[1]:
+#                         flag_int = True
+#                         break
+#                 if flag_int:
+#                     dict_values = {}
+#                     value_1 = session.query(literal_column(f'{table_name_1}.{param_1}')).filter(table_1.depth >= d,
+#                                                                 table_1.depth < d + 0.1, table_1.well_id == w_id).first()
+#                     value_2 = session.query(literal_column(f'{table_name_2}.{param_2}')).filter(table_2.depth >= d,
+#                                                                 table_2.depth < d + 0.1, table_2.well_id == w_id).first()
+#                     if value_1 and value_2:
+#                         if value_1[0] and value_2[0]:
+#                             dict_values[f'{param_1}_{table_name_1}'] = value_1[0]
+#                             dict_values[f'{param_2}_{table_name_2}'] = value_2[0]
+#                             if table_name_1 != 'data_las':
+#                                 name = session.query(table_1.name).filter(table_1.depth >= d, table_1.depth < d + 0.1,
+#                                                                           table_1.well_id == w_id).first()
+#                                 dict_values['name'] = name[0]
+#                             if ui.listWidget_relation.count() > 2:
+#                                 value_3 = session.query(literal_column(f'{table_name_3}.{param_3}')).filter(table_3.depth >= d,
+#                                                                 table_3.depth < d + 0.1, table_3.well_id == w_id).first()
+#                                 if value_3:
+#                                     if value_3[0]:
+#                                         dict_values[f'{param_3}_{table_name_3}'] = value_3[0]
+#                                         if ui.listWidget_relation.count() > 3:
+#                                             value_4 = session.query(literal_column(f'{table_name_4}.{param_4}')).filter(table_4.depth >= d,
+#                                                                                 table_4.depth < d + 0.1, table_4.well_id == w_id).first()
+#                                             if value_4:
+#                                                 if value_4[0]:
+#                                                     dict_values[f'{param_4}_{table_name_4}'] = value_4[0]
+#                     if table_name_1 != 'data_las':
+#                         if len(dict_values) == ui.listWidget_relation.count() + 1:
+#                             data = pd.concat([data, pd.DataFrame(pd.Series(dict_values)).T], ignore_index=True)
+#                     else:
+#                         if len(dict_values) == ui.listWidget_relation.count():
+#                             data = pd.concat([data, pd.DataFrame(pd.Series(dict_values)).T], ignore_index=True)
+#                 d += 0.1
+#                 n += 1
+#                 ui.progressBar.setValue(n)
+#     except AttributeError:
+#         ui.label_info.setText(f'Внимание! Параметры не выбраны или выбран только один параметр.')
+#         ui.label_info.setStyleSheet('color: red')
+#     pal = ui.comboBox_rel.currentText()
+#     fig = plt.figure(figsize=(10, 10), dpi=80)
+#     ax = plt.subplot()
+#     if ui.checkBox_xlg.isChecked():
+#         ax.set(xscale="log")
+#     if ui.checkBox_ylg.isChecked():
+#         ax.set(yscale="log")
+#     if ui.listWidget_relation.count() == 2:
+#         sns.scatterplot(data=data, x=f'{param_1}_{table_name_1}', y=f'{param_2}_{table_name_2}', s=100)
+#         # sns.lmplot(data=data, x=f'{param_1}_{table_name_1}', y=f'{param_2}_{table_name_2}')
+#     elif ui.listWidget_relation.count() == 3:
+#         sns.scatterplot(data=data, x=f'{param_1}_{table_name_1}', y=f'{param_2}_{table_name_2}',
+#                         hue=f'{param_3}_{table_name_3}', size=f'{param_3}_{table_name_3}', sizes=(5, 250), palette=pal)
+#     else:
+#         sns.scatterplot(data=data, x=f'{param_1}_{table_name_1}', y=f'{param_2}_{table_name_2}',
+#                         hue=f'{param_3}_{table_name_3}', size=f'{param_4}_{table_name_4}', sizes=(5, 250), palette=pal)
+#     if ui.checkBox_trend.isChecked():
+#         a, b = np.polyfit(
+#             data[f'{param_1}_{table_name_1}'].astype(float),
+#             data[f'{param_2}_{table_name_2}'].astype(float), deg=1)  # расчитываем коэф уравнения для линии тренда
+#         x = data[f'{param_1}_{table_name_1}']
+#         y_trend = a * x + b
+#         ax.plot(x, y_trend, '-')
+#     ax.grid()
+#     ax.xaxis.grid(True, "minor", linewidth=.25)
+#     ax.yaxis.grid(True, "minor", linewidth=.25)
+#     title_graph = f'{ui.comboBox_area.currentText()} площадь, скв.{ui.comboBox_well.currentText()}\nИнтервал: ' \
+#                   f'{str(start)} - {str(stop)} м. \nЗависимость ' f'{param_1} - {param_2}'
+#     if ui.listWidget_relation.count() > 2:
+#         title_graph += f' - {param_3}'
+#     if ui.listWidget_relation.count() > 3:
+#         title_graph += f' - {param_4}'
+#     title_graph += f'\nКоличество образцов: {str(len(data.index))}'
+#     if ui.checkBox_trend.isChecked():
+#         title_graph += f'\ny = {round(a, 5)} * x + {round(b, 5)}'
+#     plt.title(title_graph, fontsize=16)
+#     fig.tight_layout()
+#     fig.show()
 
 
 def save_relation():

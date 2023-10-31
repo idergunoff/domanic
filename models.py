@@ -558,4 +558,17 @@ class TrainedRegModel(Base):
     comment = Column(Text)
 
 
+class CalculatedData(Base):
+    __tablename__ = 'calculated_data'
+
+    id = Column(Integer, primary_key=True)
+    well_id = Column(Integer, ForeignKey('wells.id'), nullable=False)
+    title = Column(String)
+    data = Column(Text)
+    model_title = Column(String)
+    list_params_model = Column(Text)
+    list_wells_model = Column(Text)
+    comment = Column(Text)
+
+
 Base.metadata.create_all(engine)

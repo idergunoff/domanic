@@ -1,5 +1,4 @@
-import matplotlib.pyplot as plt
-
+from calculated_data import update_list_calculated_data
 from functions import *
 
 
@@ -882,14 +881,50 @@ def calc_regression_model():
     working_sample = data_work[json.loads(model.list_params)].values.tolist()
 
     y_pred = reg_model.predict(working_sample)
-    data_work['pred'] = y_pred
-    print(data_work)
+    y_pred = [round(i, 5) for i in y_pred]
+    data_work[model.target_param.split('.')[1]] = y_pred
+    data_work_to_widget = data_work[['depth', model.target_param.split('.')[1]]]
+    save_calculated_data(data_work_to_widget, model)
 
     ui.graphicsView.clear()
     color = choice_color()
     dash = choice_dash()
     width = choice_width()
-    curve = pg.PlotCurveItem(x=data_work['pred'].tolist(), y=data_work['depth'].tolist(), pen=pg.mkPen(color=color, width=width, dash=dash))
+    curve = pg.PlotCurveItem(x=data_work[model.target_param.split('.')[1]].tolist(), y=data_work['depth'].tolist(), pen=pg.mkPen(color=color, width=width, dash=dash))
 
     ui.graphicsView.addItem(curve)
     curve.getViewBox().invertY(True)
+
+    ui.tableWidget.setRowCount(data_work_to_widget.shape[0])
+    ui.tableWidget.setColumnCount(data_work_to_widget.shape[1])
+
+    # Заполнение данных
+    for row in range(data_work_to_widget.shape[0]):
+        for col in range(data_work_to_widget.shape[1]):
+            ui.tableWidget.setItem(row, col, QTableWidgetItem(str(data_work_to_widget.iat[row, col])))
+
+    # Заголовки столбцов
+    ui.tableWidget.setHorizontalHeaderLabels(data_work_to_widget.columns)
+    ui.tableWidget.verticalHeader().hide()
+    ui.tableWidget.resizeColumnsToContents()
+    ui.label_table_name.setText(f'Расчетный {model.target_param} по скв. {ui.comboBox_well.currentText()}')
+
+
+
+def save_calculated_data(data_result, model):
+    """ Сохранение расчитанных данных """
+    data_dict = data_result.set_index(data_result.columns[0])[data_result.columns[1]].to_dict()
+
+    new_data = CalculatedData(
+        well_id=get_well_id(),
+        title=model.target_param.split('.')[1],
+        data=json.dumps(data_dict),
+        model_title=model.title,
+        list_params_model = model.list_params,
+        list_wells_model = model.list_wells,
+        comment=model.comment
+    )
+
+    session.add(new_data)
+    session.commit()
+    update_list_calculated_data()

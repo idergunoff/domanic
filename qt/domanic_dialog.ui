@@ -1018,25 +1018,25 @@ selection-color: rgb(85, 0, 0);</string>
                      </item>
                      <item row="1" column="0">
                       <layout class="QGridLayout" name="gridLayout_31">
-                       <item row="0" column="2">
-                        <widget class="QPushButton" name="pushButton_draw_param">
+                       <item row="0" column="4">
+                        <widget class="QPushButton" name="pushButton_table">
                          <property name="font">
                           <font>
                            <pointsize>10</pointsize>
                           </font>
                          </property>
                          <property name="toolTip">
-                          <string>Отобразить выбранные параметры на одном графике</string>
+                          <string>Составить сводную таблицу по выбранным параметрам</string>
                          </property>
                          <property name="styleSheet">
                           <string notr="true">background-color: rgb(255, 255, 222);</string>
                          </property>
                          <property name="text">
-                          <string>DRAW</string>
+                          <string>TABLE</string>
                          </property>
                         </widget>
                        </item>
-                       <item row="1" column="2">
+                       <item row="1" column="3">
                         <widget class="QPushButton" name="pushButton_norm_param">
                          <property name="font">
                           <font>
@@ -1051,60 +1051,6 @@ selection-color: rgb(85, 0, 0);</string>
                          </property>
                          <property name="text">
                           <string>NORM</string>
-                         </property>
-                        </widget>
-                       </item>
-                       <item row="1" column="1">
-                        <widget class="QPushButton" name="pushButton_clear_param">
-                         <property name="font">
-                          <font>
-                           <pointsize>10</pointsize>
-                          </font>
-                         </property>
-                         <property name="toolTip">
-                          <string>Очистить список параметров</string>
-                         </property>
-                         <property name="styleSheet">
-                          <string notr="true">background-color: rgb(255, 185, 185);</string>
-                         </property>
-                         <property name="text">
-                          <string>CLEAR</string>
-                         </property>
-                        </widget>
-                       </item>
-                       <item row="1" column="3">
-                        <widget class="QPushButton" name="pushButton_table_save">
-                         <property name="font">
-                          <font>
-                           <pointsize>10</pointsize>
-                          </font>
-                         </property>
-                         <property name="toolTip">
-                          <string>Сохранить таблицу из виджета в XLS</string>
-                         </property>
-                         <property name="styleSheet">
-                          <string notr="true">background-color: rgb(165, 236, 255);</string>
-                         </property>
-                         <property name="text">
-                          <string>SAVE</string>
-                         </property>
-                        </widget>
-                       </item>
-                       <item row="1" column="0">
-                        <widget class="QPushButton" name="pushButton_del_param_srav">
-                         <property name="font">
-                          <font>
-                           <pointsize>10</pointsize>
-                          </font>
-                         </property>
-                         <property name="toolTip">
-                          <string>Удалить выбранный параметр</string>
-                         </property>
-                         <property name="styleSheet">
-                          <string notr="true">background-color: rgb(255, 185, 185);</string>
-                         </property>
-                         <property name="text">
-                          <string>DEL</string>
                          </property>
                         </widget>
                        </item>
@@ -1129,25 +1075,79 @@ selection-color: rgb(85, 0, 0);</string>
                          </property>
                         </widget>
                        </item>
-                       <item row="0" column="3">
-                        <widget class="QPushButton" name="pushButton_table">
+                       <item row="1" column="4">
+                        <widget class="QPushButton" name="pushButton_table_save">
                          <property name="font">
                           <font>
                            <pointsize>10</pointsize>
                           </font>
                          </property>
                          <property name="toolTip">
-                          <string>Составить сводную таблицу по выбранным параметрам</string>
+                          <string>Сохранить таблицу из виджета в XLS</string>
+                         </property>
+                         <property name="styleSheet">
+                          <string notr="true">background-color: rgb(165, 236, 255);</string>
+                         </property>
+                         <property name="text">
+                          <string>SAVE</string>
+                         </property>
+                        </widget>
+                       </item>
+                       <item row="0" column="3">
+                        <widget class="QPushButton" name="pushButton_draw_param">
+                         <property name="font">
+                          <font>
+                           <pointsize>10</pointsize>
+                          </font>
+                         </property>
+                         <property name="toolTip">
+                          <string>Отобразить выбранные параметры на одном графике</string>
                          </property>
                          <property name="styleSheet">
                           <string notr="true">background-color: rgb(255, 255, 222);</string>
                          </property>
                          <property name="text">
-                          <string>TABLE</string>
+                          <string>DRAW</string>
                          </property>
                         </widget>
                        </item>
-                       <item row="0" column="1">
+                       <item row="1" column="0">
+                        <widget class="QPushButton" name="pushButton_del_param_srav">
+                         <property name="font">
+                          <font>
+                           <pointsize>10</pointsize>
+                          </font>
+                         </property>
+                         <property name="toolTip">
+                          <string>Удалить выбранный параметр</string>
+                         </property>
+                         <property name="styleSheet">
+                          <string notr="true">background-color: rgb(255, 185, 185);</string>
+                         </property>
+                         <property name="text">
+                          <string>DEL</string>
+                         </property>
+                        </widget>
+                       </item>
+                       <item row="1" column="2">
+                        <widget class="QPushButton" name="pushButton_clear_param">
+                         <property name="font">
+                          <font>
+                           <pointsize>10</pointsize>
+                          </font>
+                         </property>
+                         <property name="toolTip">
+                          <string>Очистить список параметров</string>
+                         </property>
+                         <property name="styleSheet">
+                          <string notr="true">background-color: rgb(255, 185, 185);</string>
+                         </property>
+                         <property name="text">
+                          <string>CLEAR</string>
+                         </property>
+                        </widget>
+                       </item>
+                       <item row="0" column="2">
                         <widget class="QPushButton" name="pushButton_add_all_param">
                          <property name="font">
                           <font>
@@ -1159,6 +1159,16 @@ selection-color: rgb(85, 0, 0);</string>
                          </property>
                          <property name="text">
                           <string>ADD ALL</string>
+                         </property>
+                        </widget>
+                       </item>
+                       <item row="0" column="1">
+                        <widget class="QPushButton" name="pushButton_add_param_ml">
+                         <property name="styleSheet">
+                          <string notr="true">background-color: rgb(191, 255, 191);</string>
+                         </property>
+                         <property name="text">
+                          <string>ADD ML</string>
                          </property>
                         </widget>
                        </item>
@@ -1257,24 +1267,6 @@ selection-color: rgb(85, 0, 0);</string>
                      </item>
                     </layout>
                    </item>
-                   <item row="2" column="1">
-                    <widget class="QPushButton" name="pushButton_draw_rel">
-                     <property name="font">
-                      <font>
-                       <pointsize>10</pointsize>
-                      </font>
-                     </property>
-                     <property name="toolTip">
-                      <string>Построить график зависимости между параметрами</string>
-                     </property>
-                     <property name="styleSheet">
-                      <string notr="true">background-color: rgb(255, 255, 222);</string>
-                     </property>
-                     <property name="text">
-                      <string>DRAW</string>
-                     </property>
-                    </widget>
-                   </item>
                    <item row="0" column="0" colspan="2">
                     <widget class="QLabel" name="label_12">
                      <property name="font">
@@ -1315,6 +1307,24 @@ selection-color: rgb(85, 0, 0);</string>
                    <item row="2" column="2">
                     <layout class="QGridLayout" name="gridLayout_43">
                      <item row="0" column="1">
+                      <widget class="QPushButton" name="pushButton_rel_save">
+                       <property name="font">
+                        <font>
+                         <pointsize>10</pointsize>
+                        </font>
+                       </property>
+                       <property name="toolTip">
+                        <string>Сохранить таблицу исходных данных в XLS</string>
+                       </property>
+                       <property name="styleSheet">
+                        <string notr="true">background-color: rgb(165, 236, 255);</string>
+                       </property>
+                       <property name="text">
+                        <string>SAVE</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item row="0" column="2">
                       <widget class="QComboBox" name="comboBox_rel">
                        <property name="font">
                         <font>
@@ -1402,20 +1412,20 @@ selection-color: rgb(85, 0, 0);</string>
                       </widget>
                      </item>
                      <item row="0" column="0">
-                      <widget class="QPushButton" name="pushButton_rel_save">
+                      <widget class="QPushButton" name="pushButton_draw_rel">
                        <property name="font">
                         <font>
                          <pointsize>10</pointsize>
                         </font>
                        </property>
                        <property name="toolTip">
-                        <string>Сохранить таблицу исходных данных в XLS</string>
+                        <string>Построить график зависимости между параметрами</string>
                        </property>
                        <property name="styleSheet">
-                        <string notr="true">background-color: rgb(165, 236, 255);</string>
+                        <string notr="true">background-color: rgb(255, 255, 222);</string>
                        </property>
                        <property name="text">
-                        <string>SAVE</string>
+                        <string>DRAW</string>
                        </property>
                       </widget>
                      </item>
@@ -1456,6 +1466,16 @@ selection-color: rgb(85, 0, 0);</string>
                       </widget>
                      </item>
                     </layout>
+                   </item>
+                   <item row="2" column="1">
+                    <widget class="QPushButton" name="pushButton_add_param_ml_rel">
+                     <property name="styleSheet">
+                      <string notr="true">background-color: rgb(191, 255, 191);</string>
+                     </property>
+                     <property name="text">
+                      <string>ADD ML</string>
+                     </property>
+                    </widget>
                    </item>
                   </layout>
                  </item>
@@ -1921,7 +1941,7 @@ selection-color: rgb(85, 0, 0);</string>
                          <rect>
                           <x>0</x>
                           <y>0</y>
-                          <width>415</width>
+                          <width>432</width>
                           <height>279</height>
                          </rect>
                         </property>
@@ -3199,6 +3219,154 @@ selection-color: rgb(85, 0, 0);</string>
                     </layout>
                    </item>
                   </layout>
+                 </item>
+                </layout>
+               </widget>
+               <widget class="QWidget" name="tab_7">
+                <attribute name="title">
+                 <string>7</string>
+                </attribute>
+                <attribute name="toolTip">
+                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Рассчитанные параметры&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                </attribute>
+                <layout class="QGridLayout" name="gridLayout_105">
+                 <item row="0" column="0">
+                  <widget class="QLabel" name="label_param_10">
+                   <property name="font">
+                    <font>
+                     <pointsize>11</pointsize>
+                     <weight>75</weight>
+                     <italic>true</italic>
+                     <bold>true</bold>
+                     <underline>true</underline>
+                    </font>
+                   </property>
+                   <property name="text">
+                    <string>Рассчитанные параметры</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="1" column="0" colspan="2">
+                  <layout class="QGridLayout" name="gridLayout_104" columnstretch="1,2">
+                   <item row="0" column="0">
+                    <widget class="QListWidget" name="listWidget_calc_data"/>
+                   </item>
+                   <item row="0" column="1">
+                    <widget class="QTextEdit" name="textEdit_calc_data_info"/>
+                   </item>
+                  </layout>
+                 </item>
+                 <item row="2" column="0" colspan="2">
+                  <layout class="QGridLayout" name="gridLayout_103">
+                   <item row="0" column="1">
+                    <widget class="QPushButton" name="pushButton_calc_data_comment">
+                     <property name="font">
+                      <font>
+                       <pointsize>10</pointsize>
+                      </font>
+                     </property>
+                     <property name="styleSheet">
+                      <string notr="true">background-color: rgb(191, 255, 191);</string>
+                     </property>
+                     <property name="text">
+                      <string>Comment</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="0" column="2">
+                    <widget class="QPushButton" name="pushButton_model_reg_2">
+                     <property name="styleSheet">
+                      <string notr="true">background-color: rgb(255, 255, 222);</string>
+                     </property>
+                     <property name="text">
+                      <string/>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="0" column="0">
+                    <widget class="QPushButton" name="pushButton_del_calc_data">
+                     <property name="font">
+                      <font>
+                       <pointsize>10</pointsize>
+                      </font>
+                     </property>
+                     <property name="toolTip">
+                      <string>Удалить выбранный параметр</string>
+                     </property>
+                     <property name="styleSheet">
+                      <string notr="true">background-color: rgb(255, 185, 185);</string>
+                     </property>
+                     <property name="text">
+                      <string>DEL</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="1" column="2">
+                    <widget class="QPushButton" name="pushButton_add_reg_param_2">
+                     <property name="font">
+                      <font>
+                       <pointsize>10</pointsize>
+                      </font>
+                     </property>
+                     <property name="toolTip">
+                      <string>Добавить параметр</string>
+                     </property>
+                     <property name="autoFillBackground">
+                      <bool>false</bool>
+                     </property>
+                     <property name="styleSheet">
+                      <string notr="true">background-color: rgb(191, 255, 191);</string>
+                     </property>
+                     <property name="text">
+                      <string/>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="1" column="0">
+                    <widget class="QPushButton" name="pushButton_cut_calc_data">
+                     <property name="font">
+                      <font>
+                       <pointsize>10</pointsize>
+                      </font>
+                     </property>
+                     <property name="toolTip">
+                      <string>Очистить список параметров</string>
+                     </property>
+                     <property name="styleSheet">
+                      <string notr="true">background-color: rgb(255, 185, 185);</string>
+                     </property>
+                     <property name="text">
+                      <string>CUT</string>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
+                 </item>
+                 <item row="3" column="0">
+                  <spacer name="verticalSpacer_4">
+                   <property name="orientation">
+                    <enum>Qt::Vertical</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>20</width>
+                     <height>40</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                 <item row="3" column="1">
+                  <spacer name="verticalSpacer_5">
+                   <property name="orientation">
+                    <enum>Qt::Vertical</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>20</width>
+                     <height>40</height>
+                    </size>
+                   </property>
+                  </spacer>
                  </item>
                 </layout>
                </widget>
