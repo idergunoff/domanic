@@ -140,7 +140,7 @@ def del_param_for_class_lim():
 def calc_class_lim():
     """ Рассчитать классификацию по пределам в выбранной скважине в выбранном интервале """
     w_id = get_well_id()    # id скважины
-    start, stop = check_start_stop()    # нтервал исследований
+    start, stop = check_start_stop()    # интервал исследований
     c_id = int(ui.comboBox_class_lim.currentText().split('.')[0])   # id классификации по пределам
     class_params = session.query(ClassByLimitsParam).filter(ClassByLimitsParam.class_id == c_id).all()  # все параметры выбранной классификации
     list_name_cat = session.query(ClassByLimits.category_names).filter(ClassByLimits.id == c_id).first()[0].split(';')  # список названий категорий
@@ -151,6 +151,45 @@ def calc_class_lim():
         list_tab.append(i.table)
         list_param.append(i.param)
         list_limits.append([float(j) for j in i.limits.split(';')])     # список списков интервалов для каждого параметра
+
+    # сбор всех параметров классификации в словари
+    dict_param = {}
+    for i in range(len(list_param)):
+        if ui.checkBox_class_use_ml.isChecked():
+            calc_data = session.query(CalculatedData).filter_by(well_id=w_id, title=list_param[i]).all()
+            if len(calc_data) > 1:
+
+                ChooseCalcData = QtWidgets.QDialog()
+                ui_ccd = Ui_ChooseCalcData()
+                ui_ccd.setupUi(ChooseCalcData)
+                ChooseCalcData.show()
+                ChooseCalcData.setAttribute(QtCore.Qt.WA_DeleteOnClose)  # атрибут удаления виджета после закрытия
+
+                for calc_data_i in calc_data:
+                    ui_ccd.listWidget.addItem(f'{calc_data_i.title} - {calc_data_i.model_title} id{calc_data_i.id}')
+                    ui.listWidget_trained_reg_model.item(ui.listWidget_trained_reg_model.count() - 1).setToolTip(
+                        f'Params: {", ".join([i.split(".")[-1] for i in json.loads(calc_data_i.list_params_model)])}\n '
+                        f'Wells: {", ".join([i["well"] for i in json.loads(calc_data_i.list_wells_model)])}\n'
+                        f'Comment: {calc_data_i.comment}'
+                    )
+
+                def choose_calc_data():
+                    calc_data_choosed = session.query(CalculatedData).filter_by(id=ui_ccd.listWidget.currentItem().text().split(' id')[-1]).first()
+                    dict_param[f'ML_{list_param[i]}'] = json.loads(calc_data_choosed.data)
+                    ChooseCalcData.close()
+
+                ui_ccd.pushButton_ok.clicked.connect(choose_calc_data)
+                ChooseCalcData.exec_()
+
+            elif len(calc_data) == 1:
+                dict_param[f'ML_{list_param[i]}'] = json.loads(calc_data[0].data)
+
+        table = get_table(list_tab[i])
+        result = session.query(table.depth, literal_column(f'{list_tab[i]}.{list_param[i]}')).filter(
+            table.well_id == w_id, literal_column(f'{list_tab[i]}.{list_param[i]}').isnot(None)).all()
+        dictionary = {str(key)[:-1] if str(key)[-3] == '.' else str(key): value for key, value in result}
+        dict_param[list_param[i]] = dictionary
+
     data_lim = []   # список списков все результирующие данные по классификации
     d, n, k = start, 0, 0
     ui.progressBar.setMaximum(int((stop - start) / 0.1))
@@ -164,12 +203,14 @@ def calc_class_lim():
         d = round(d, 2)
         list_class = [round(d, 1)]  # список результатов классификации для глубины d
         for i in range(len(list_tab)):      # перебор всех параметров классификации
-            tab = get_table(list_tab[i])
-            val = session.query(literal_column(f'{list_tab[i]}.{list_param[i]}')).filter(
-                tab.well_id == w_id, tab.depth >= d, tab.depth < d + 0.1,
-                literal_column(f'{list_tab[i]}.{list_param[i]}') != None).first()   # значение параметра по глубине d
+            val = None
+            if ui.checkBox_class_use_ml.isChecked():
+                if f'ML_{list_param[i]}' in dict_param:
+                    val = dict_param[f'ML_{list_param[i]}'][str(d)] if str(d) in dict_param[f'ML_{list_param[i]}'].keys() else val
+            if not val or ui.checkBox_class_fact_priority.isChecked():
+                val = dict_param[list_param[i]][str(d)] if str(d) in dict_param[list_param[i]].keys() else val
             if val:     # если параметр по глубине d существует, определяем его категорию параметра классификации
-                lim = check_value_in_limits(val[0], list_limits[i])
+                lim = check_value_in_limits(val, list_limits[i])
                 list_class.append(lim)
         if len(list_class) == len(class_params) + 1:    # если определены все параметры
             ui.tableWidget.insertRow(k)     # создаем новую строку в виджете таблицы

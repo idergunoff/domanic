@@ -52,6 +52,7 @@ from qt.compare_table_dialog import *
 from qt.regression_form import *
 from qt.lof_form import *
 from qt.comment_form import *
+from qt.choose_calculated_data import *
 
 from objects import *
 
