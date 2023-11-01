@@ -291,9 +291,14 @@ def select_start_stop_depth(w_id, table):
 
 def select_start_stop_depth_param(w_id, table_text, param):
     """ Выбор минимального и максимального значений глубины в таблице по параметру """
-    table = get_table(table_text)
-    stop_depth = session.query(table.depth).filter(table.well_id == w_id, literal_column(f'{table_text}.{param}') != None).order_by(desc(table.depth)).first()[0]
-    start_depth = session.query(table.depth).filter(table.well_id == w_id, literal_column(f'{table_text}.{param}') != None).order_by(table.depth).first()[0]
+    if table_text == 'ML':
+        calc_data = session.query(CalculatedData).filter_by(id=w_id).first()
+        list_depth = [float(i) for i in json.loads(calc_data.data).keys()]
+        start_depth, stop_depth = min(list_depth), max(list_depth)
+    else:
+        table = get_table(table_text)
+        stop_depth = session.query(table.depth).filter(table.well_id == w_id, literal_column(f'{table_text}.{param}') != None).order_by(desc(table.depth)).first()[0]
+        start_depth = session.query(table.depth).filter(table.well_id == w_id, literal_column(f'{table_text}.{param}') != None).order_by(table.depth).first()[0]
     return start_depth, stop_depth
 
 

@@ -100,6 +100,7 @@ ui.pushButton_del_param_res.clicked.connect(del_param_resource)
 
 # graph tablet
 ui.pushButton_add_param_tablet.clicked.connect(add_param_tablet)
+ui.pushButton_add_param_tablet_ml.clicked.connect(add_ml_param_tablet)
 ui.pushButton_edit_param_tablet.clicked.connect(edit_param_tablet)
 ui.pushButton_clear_param_tablet.clicked.connect(clear_param_tablet)
 ui.pushButton_del_param_tablet.clicked.connect(del_param_tablet)

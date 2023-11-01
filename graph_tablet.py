@@ -26,6 +26,23 @@ def add_param_tablet():
         ui.label_info.setStyleSheet('color: red')
 
 
+def add_ml_param_tablet():
+    """ Добавление расчетного параметра в список для графического планшета """
+    try:
+        calc_data = get_calc_data()
+        param = f'{calc_data.title}_{calc_data.model_title.split("_")[0]}'
+        color = choice_color_tablet()
+        new_param_tablet = DrawGraphTablet(well_id=calc_data.id, table='ML', param=param, color=color,
+                                     dash=' '.join(list(map(str, choice_dash_tablet()))), width=choice_width_tablet(),
+                                           type_graph=ui.comboBox_type_graph.currentText())
+        session.add(new_param_tablet)  # параметр добавляется в отдельную таблицу + параметры графика
+        session.commit()
+        show_list_tablet()
+    except AttributeError:
+        ui.label_info.setText(f'Внимание! Не выбран параметр.')
+        ui.label_info.setStyleSheet('color: red')
+
+
 def add_next_graph():
     """ Добавление нового графика для графического планшета """
     new_param_tablet = DrawGraphTablet(well_id=get_well_id(), table='', param='', color='',
@@ -140,28 +157,35 @@ def add_graph_tablet(gs, param_row, min_Y, max_Y, count_graph, n_graph, fig, n, 
     :param interval: отображать интервалы
     :return:
     """
-
-
-    table = get_table(param_row.table)
-    X = sum(list(map(list, session.query(literal_column(f'{param_row.table}.{param_row.param}')).filter(
-        table.well_id == param_row.well_id,
-        literal_column(f'{param_row.table}.{param_row.param}') != None,
-        table.depth >= min_Y,
-        table.depth <= max_Y
-    ).order_by(table.depth).all())), [])
-    Y = sum(list(map(list, session.query(table.depth).filter(
-        table.well_id == param_row.well_id,
-        literal_column(f'{param_row.table}.{param_row.param}') != None,
-        table.depth >= min_Y,
-        table.depth <= max_Y
-    ).order_by(table.depth).all())), [])
+    if param_row.table == 'ML':
+        calc_data = session.query(CalculatedData).filter_by(id=param_row.well_id).first()
+        Y = [float(i) if float(i) > min_Y and float(i) < max_Y else None for i in json.loads(calc_data.data).keys()]
+        while None in Y:
+            Y.remove(None)
+        X = [value if float(key) > min_Y and float(key) < max_Y else None for key, value in json.loads(calc_data.data).items()]
+        while None in X:
+            X.remove(None)
+    else:
+        table = get_table(param_row.table)
+        X = sum(list(map(list, session.query(literal_column(f'{param_row.table}.{param_row.param}')).filter(
+            table.well_id == param_row.well_id,
+            literal_column(f'{param_row.table}.{param_row.param}') != None,
+            table.depth >= min_Y,
+            table.depth <= max_Y
+        ).order_by(table.depth).all())), [])
+        Y = sum(list(map(list, session.query(table.depth).filter(
+            table.well_id == param_row.well_id,
+            literal_column(f'{param_row.table}.{param_row.param}') != None,
+            table.depth >= min_Y,
+            table.depth <= max_Y
+        ).order_by(table.depth).all())), [])
 
     # ax = fig.add_subplot(1, count_graph, n_graph)
     ax = fig.add_subplot(gs[n_graph])
     ax.grid(axis='x', color=param_row.color, lw=0.5, ls=':')
     ax.grid(axis='y', lw=0.5, ls=':')
     ax.patch.set_alpha(0) # убираем прозрачность
-    if param_row.table == 'data_las':
+    if param_row.table == 'data_las' or param_row.table == 'ML':
         ax.plot(X, Y, c=param_row.color, lw=param_row.width, ls=get_dash(param_row.dash))
     else:
         if param_row.type_graph == 'bar':
@@ -173,6 +197,9 @@ def add_graph_tablet(gs, param_row, min_Y, max_Y, count_graph, n_graph, fig, n, 
             except TypeError:
                 ui.label_info.setText(f'Графики формата "stem" не принимают оттенки цветов (с приставкой dark и light)')
                 ui.label_info.setStyleSheet('color: red')
+            except ValueError:
+                ax.stem(Y, X, orientation='horizontal', linefmt=(get_dash(param_row.dash), 'red'),
+                        markerfmt=(get_marker(param_row.dash), 'red'), basefmt=('black'))
     height_grapf = max_Y - min_Y # высота графика
     plt.ylim(min_Y - height_grapf / 100, max_Y + height_grapf / 100) # установка границ графика
 
