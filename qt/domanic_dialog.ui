@@ -1306,21 +1306,21 @@ selection-color: rgb(85, 0, 0);</string>
                    </item>
                    <item row="2" column="2">
                     <layout class="QGridLayout" name="gridLayout_43">
-                     <item row="0" column="1">
-                      <widget class="QPushButton" name="pushButton_rel_save">
+                     <item row="0" column="0">
+                      <widget class="QPushButton" name="pushButton_draw_rel">
                        <property name="font">
                         <font>
                          <pointsize>10</pointsize>
                         </font>
                        </property>
                        <property name="toolTip">
-                        <string>Сохранить таблицу исходных данных в XLS</string>
+                        <string>Построить график зависимости между параметрами</string>
                        </property>
                        <property name="styleSheet">
-                        <string notr="true">background-color: rgb(165, 236, 255);</string>
+                        <string notr="true">background-color: rgb(255, 255, 222);</string>
                        </property>
                        <property name="text">
-                        <string>SAVE</string>
+                        <string>DRAW</string>
                        </property>
                       </widget>
                      </item>
@@ -1411,21 +1411,13 @@ selection-color: rgb(85, 0, 0);</string>
                        </item>
                       </widget>
                      </item>
-                     <item row="0" column="0">
-                      <widget class="QPushButton" name="pushButton_draw_rel">
-                       <property name="font">
-                        <font>
-                         <pointsize>10</pointsize>
-                        </font>
-                       </property>
-                       <property name="toolTip">
-                        <string>Построить график зависимости между параметрами</string>
-                       </property>
+                     <item row="0" column="1">
+                      <widget class="QCheckBox" name="checkBox_save_rel">
                        <property name="styleSheet">
-                        <string notr="true">background-color: rgb(255, 255, 222);</string>
+                        <string notr="true">background-color: rgb(165, 236, 255);</string>
                        </property>
                        <property name="text">
-                        <string>DRAW</string>
+                        <string>SAVE</string>
                        </property>
                       </widget>
                      </item>
@@ -1481,6 +1473,60 @@ selection-color: rgb(85, 0, 0);</string>
                  </item>
                  <item row="1" column="0">
                   <layout class="QGridLayout" name="gridLayout_42">
+                   <item row="3" column="0">
+                    <widget class="QPushButton" name="pushButton_del_param_corr">
+                     <property name="font">
+                      <font>
+                       <pointsize>10</pointsize>
+                      </font>
+                     </property>
+                     <property name="toolTip">
+                      <string>Удалить выбранный параметр</string>
+                     </property>
+                     <property name="styleSheet">
+                      <string notr="true">background-color: rgb(255, 185, 185);</string>
+                     </property>
+                     <property name="text">
+                      <string>DEL</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="3" column="2">
+                    <widget class="QCheckBox" name="checkBox_save_data_corr">
+                     <property name="font">
+                      <font>
+                       <pointsize>9</pointsize>
+                      </font>
+                     </property>
+                     <property name="toolTip">
+                      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Если включено, сохраняется таблица параметров,&lt;/p&gt;&lt;p&gt;использованная для расчета корреляционной матрицы&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                     </property>
+                     <property name="styleSheet">
+                      <string notr="true">background-color: rgb(165, 236, 255);</string>
+                     </property>
+                     <property name="text">
+                      <string>SAVE</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="3" column="1">
+                    <widget class="QPushButton" name="pushButton_clear_param_corr">
+                     <property name="font">
+                      <font>
+                       <pointsize>10</pointsize>
+                      </font>
+                     </property>
+                     <property name="toolTip">
+                      <string>Очистить список параметров</string>
+                     </property>
+                     <property name="styleSheet">
+                      <string notr="true">background-color: rgb(255, 185, 185);</string>
+                     </property>
+                     <property name="text">
+                      <string>CLEAR</string>
+                     </property>
+                    </widget>
+                   </item>
                    <item row="2" column="0">
                     <widget class="QPushButton" name="pushButton_add_param_corr">
                      <property name="font">
@@ -1518,6 +1564,24 @@ selection-color: rgb(85, 0, 0);</string>
                      </property>
                     </widget>
                    </item>
+                   <item row="0" column="2">
+                    <layout class="QGridLayout" name="gridLayout_52">
+                     <item row="0" column="0">
+                      <widget class="QCheckBox" name="checkBox_class_int">
+                       <property name="text">
+                        <string>в интервалах</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item row="0" column="1">
+                      <widget class="QCheckBox" name="checkBox_class_int_mean">
+                       <property name="text">
+                        <string>по средним</string>
+                       </property>
+                      </widget>
+                     </item>
+                    </layout>
+                   </item>
                    <item row="2" column="1">
                     <widget class="QPushButton" name="pushButton_add_tab_corr">
                      <property name="font">
@@ -1536,42 +1600,6 @@ selection-color: rgb(85, 0, 0);</string>
                      </property>
                     </widget>
                    </item>
-                   <item row="3" column="0">
-                    <widget class="QPushButton" name="pushButton_del_param_corr">
-                     <property name="font">
-                      <font>
-                       <pointsize>10</pointsize>
-                      </font>
-                     </property>
-                     <property name="toolTip">
-                      <string>Удалить выбранный параметр</string>
-                     </property>
-                     <property name="styleSheet">
-                      <string notr="true">background-color: rgb(255, 185, 185);</string>
-                     </property>
-                     <property name="text">
-                      <string>DEL</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="3" column="1">
-                    <widget class="QPushButton" name="pushButton_clear_param_corr">
-                     <property name="font">
-                      <font>
-                       <pointsize>10</pointsize>
-                      </font>
-                     </property>
-                     <property name="toolTip">
-                      <string>Очистить список параметров</string>
-                     </property>
-                     <property name="styleSheet">
-                      <string notr="true">background-color: rgb(255, 185, 185);</string>
-                     </property>
-                     <property name="text">
-                      <string>CLEAR</string>
-                     </property>
-                    </widget>
-                   </item>
                    <item row="1" column="0" colspan="3">
                     <widget class="QListWidget" name="listWidget_correlation">
                      <property name="styleSheet">
@@ -1580,54 +1608,32 @@ selection-color: rgb(85, 0, 0);</string>
                     </widget>
                    </item>
                    <item row="2" column="2">
-                    <widget class="QPushButton" name="pushButton_calc_corr">
-                     <property name="font">
-                      <font>
-                       <pointsize>10</pointsize>
-                      </font>
-                     </property>
-                     <property name="toolTip">
-                      <string>Построить корреляционную матрицу по выбранным парамаетрам</string>
-                     </property>
-                     <property name="styleSheet">
-                      <string notr="true">background-color: rgb(255, 255, 222);</string>
-                     </property>
-                     <property name="text">
-                      <string>CORR</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="3" column="2">
-                    <widget class="QCheckBox" name="checkBox_save_data_corr">
-                     <property name="font">
-                      <font>
-                       <pointsize>9</pointsize>
-                      </font>
-                     </property>
-                     <property name="toolTip">
-                      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Если включено, сохраняется таблица параметров,&lt;/p&gt;&lt;p&gt;использованная для расчета корреляционной матрицы&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                     </property>
-                     <property name="styleSheet">
-                      <string notr="true">background-color: rgb(165, 236, 255);</string>
-                     </property>
-                     <property name="text">
-                      <string>SAVE</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="0" column="2">
-                    <layout class="QGridLayout" name="gridLayout_52">
+                    <layout class="QGridLayout" name="gridLayout_106">
                      <item row="0" column="0">
-                      <widget class="QCheckBox" name="checkBox_class_int">
+                      <widget class="QPushButton" name="pushButton_add_param_ml_corr">
+                       <property name="styleSheet">
+                        <string notr="true">background-color: rgb(191, 255, 191);</string>
+                       </property>
                        <property name="text">
-                        <string>в интервалах</string>
+                        <string>ADD ML</string>
                        </property>
                       </widget>
                      </item>
                      <item row="0" column="1">
-                      <widget class="QCheckBox" name="checkBox_class_int_mean">
+                      <widget class="QPushButton" name="pushButton_calc_corr">
+                       <property name="font">
+                        <font>
+                         <pointsize>10</pointsize>
+                        </font>
+                       </property>
+                       <property name="toolTip">
+                        <string>Построить корреляционную матрицу по выбранным парамаетрам</string>
+                       </property>
+                       <property name="styleSheet">
+                        <string notr="true">background-color: rgb(255, 255, 222);</string>
+                       </property>
                        <property name="text">
-                        <string>по средним</string>
+                        <string>CORR</string>
                        </property>
                       </widget>
                      </item>
@@ -1941,7 +1947,7 @@ selection-color: rgb(85, 0, 0);</string>
                          <rect>
                           <x>0</x>
                           <y>0</y>
-                          <width>432</width>
+                          <width>424</width>
                           <height>279</height>
                          </rect>
                         </property>
