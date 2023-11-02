@@ -2834,24 +2834,150 @@ selection-color: rgb(85, 0, 0);</string>
                 </attribute>
                 <layout class="QGridLayout" name="gridLayout_98">
                  <item row="0" column="0">
-                  <widget class="QLabel" name="label_param_9">
-                   <property name="font">
-                    <font>
-                     <pointsize>11</pointsize>
-                     <weight>75</weight>
-                     <italic>true</italic>
-                     <bold>true</bold>
-                     <underline>true</underline>
-                    </font>
-                   </property>
-                   <property name="text">
-                    <string>Регрессионный анализ</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="1" column="0">
-                  <layout class="QGridLayout" name="gridLayout_97" rowstretch="0,1,5,3">
-                   <item row="0" column="0">
+                  <layout class="QGridLayout" name="gridLayout_97" rowstretch="0,1,5,3,0">
+                   <item row="3" column="0">
+                    <layout class="QGridLayout" name="gridLayout_93">
+                     <item row="0" column="0">
+                      <layout class="QGridLayout" name="gridLayout_91">
+                       <item row="1" column="0">
+                        <widget class="QListWidget" name="listWidget_reg_param"/>
+                       </item>
+                       <item row="0" column="0">
+                        <layout class="QGridLayout" name="gridLayout_101" columnstretch="1,0">
+                         <item row="0" column="0">
+                          <widget class="QLabel" name="label_24">
+                           <property name="text">
+                            <string>Параметры:</string>
+                           </property>
+                          </widget>
+                         </item>
+                         <item row="0" column="1">
+                          <widget class="QLabel" name="label_reg_n_features">
+                           <property name="text">
+                            <string>n</string>
+                           </property>
+                          </widget>
+                         </item>
+                        </layout>
+                       </item>
+                      </layout>
+                     </item>
+                     <item row="1" column="0">
+                      <layout class="QGridLayout" name="gridLayout_82">
+                       <item row="0" column="1">
+                        <widget class="QPushButton" name="pushButton_add_reg_all_param">
+                         <property name="font">
+                          <font>
+                           <pointsize>10</pointsize>
+                          </font>
+                         </property>
+                         <property name="styleSheet">
+                          <string notr="true">background-color: rgb(191, 255, 191);</string>
+                         </property>
+                         <property name="text">
+                          <string>ADD ALL</string>
+                         </property>
+                        </widget>
+                       </item>
+                       <item row="1" column="1">
+                        <widget class="QPushButton" name="pushButton_clear_reg_param">
+                         <property name="font">
+                          <font>
+                           <pointsize>10</pointsize>
+                          </font>
+                         </property>
+                         <property name="toolTip">
+                          <string>Очистить список параметров</string>
+                         </property>
+                         <property name="styleSheet">
+                          <string notr="true">background-color: rgb(255, 185, 185);</string>
+                         </property>
+                         <property name="text">
+                          <string>CLEAR</string>
+                         </property>
+                        </widget>
+                       </item>
+                       <item row="1" column="0">
+                        <widget class="QPushButton" name="pushButton_del_reg_param">
+                         <property name="font">
+                          <font>
+                           <pointsize>10</pointsize>
+                          </font>
+                         </property>
+                         <property name="toolTip">
+                          <string>Удалить выбранный параметр</string>
+                         </property>
+                         <property name="styleSheet">
+                          <string notr="true">background-color: rgb(255, 185, 185);</string>
+                         </property>
+                         <property name="text">
+                          <string>DEL</string>
+                         </property>
+                        </widget>
+                       </item>
+                       <item row="0" column="0">
+                        <widget class="QPushButton" name="pushButton_add_reg_param">
+                         <property name="font">
+                          <font>
+                           <pointsize>10</pointsize>
+                          </font>
+                         </property>
+                         <property name="toolTip">
+                          <string>Добавить параметр</string>
+                         </property>
+                         <property name="autoFillBackground">
+                          <bool>false</bool>
+                         </property>
+                         <property name="styleSheet">
+                          <string notr="true">background-color: rgb(191, 255, 191);</string>
+                         </property>
+                         <property name="text">
+                          <string>ADD</string>
+                         </property>
+                        </widget>
+                       </item>
+                       <item row="0" column="2">
+                        <widget class="QPushButton" name="pushButton_model_reg">
+                         <property name="styleSheet">
+                          <string notr="true">background-color: rgb(255, 255, 222);</string>
+                         </property>
+                         <property name="text">
+                          <string>MODEL</string>
+                         </property>
+                        </widget>
+                       </item>
+                       <item row="1" column="2">
+                        <layout class="QGridLayout" name="gridLayout_102">
+                         <item row="0" column="0">
+                          <widget class="QCheckBox" name="checkBox_reg_features_med">
+                           <property name="toolTip">
+                            <string>Усредненный сбор данных для модели - медиана в интервале</string>
+                           </property>
+                           <property name="text">
+                            <string>median</string>
+                           </property>
+                          </widget>
+                         </item>
+                         <item row="0" column="1">
+                          <widget class="QDoubleSpinBox" name="doubleSpinBox_reg_features_med_int">
+                           <property name="toolTip">
+                            <string>+/- метров от точки</string>
+                           </property>
+                           <property name="decimals">
+                            <number>1</number>
+                           </property>
+                           <property name="value">
+                            <double>1.000000000000000</double>
+                           </property>
+                          </widget>
+                         </item>
+                        </layout>
+                       </item>
+                      </layout>
+                     </item>
+                    </layout>
+                   </item>
+                   <item row="1" column="0">
                     <layout class="QGridLayout" name="gridLayout_88" columnstretch="7,1">
                      <property name="spacing">
                       <number>0</number>
@@ -2910,7 +3036,7 @@ selection-color: rgb(85, 0, 0);</string>
                      </item>
                     </layout>
                    </item>
-                   <item row="1" column="0">
+                   <item row="2" column="0">
                     <layout class="QGridLayout" name="gridLayout_96" columnstretch="3,2">
                      <item row="0" column="0">
                       <widget class="QGroupBox" name="groupBox_4">
@@ -3067,149 +3193,7 @@ selection-color: rgb(85, 0, 0);</string>
                      </item>
                     </layout>
                    </item>
-                   <item row="2" column="0">
-                    <layout class="QGridLayout" name="gridLayout_93">
-                     <item row="0" column="0">
-                      <layout class="QGridLayout" name="gridLayout_91">
-                       <item row="1" column="0">
-                        <widget class="QListWidget" name="listWidget_reg_param"/>
-                       </item>
-                       <item row="0" column="0">
-                        <layout class="QGridLayout" name="gridLayout_101" columnstretch="1,0">
-                         <item row="0" column="0">
-                          <widget class="QLabel" name="label_24">
-                           <property name="text">
-                            <string>Параметры:</string>
-                           </property>
-                          </widget>
-                         </item>
-                         <item row="0" column="1">
-                          <widget class="QLabel" name="label_reg_n_features">
-                           <property name="text">
-                            <string>n</string>
-                           </property>
-                          </widget>
-                         </item>
-                        </layout>
-                       </item>
-                      </layout>
-                     </item>
-                     <item row="1" column="0">
-                      <layout class="QGridLayout" name="gridLayout_82">
-                       <item row="0" column="1">
-                        <widget class="QPushButton" name="pushButton_add_reg_all_param">
-                         <property name="font">
-                          <font>
-                           <pointsize>10</pointsize>
-                          </font>
-                         </property>
-                         <property name="styleSheet">
-                          <string notr="true">background-color: rgb(191, 255, 191);</string>
-                         </property>
-                         <property name="text">
-                          <string>ADD ALL</string>
-                         </property>
-                        </widget>
-                       </item>
-                       <item row="1" column="1">
-                        <widget class="QPushButton" name="pushButton_clear_reg_param">
-                         <property name="font">
-                          <font>
-                           <pointsize>10</pointsize>
-                          </font>
-                         </property>
-                         <property name="toolTip">
-                          <string>Очистить список параметров</string>
-                         </property>
-                         <property name="styleSheet">
-                          <string notr="true">background-color: rgb(255, 185, 185);</string>
-                         </property>
-                         <property name="text">
-                          <string>CLEAR</string>
-                         </property>
-                        </widget>
-                       </item>
-                       <item row="1" column="0">
-                        <widget class="QPushButton" name="pushButton_del_reg_param">
-                         <property name="font">
-                          <font>
-                           <pointsize>10</pointsize>
-                          </font>
-                         </property>
-                         <property name="toolTip">
-                          <string>Удалить выбранный параметр</string>
-                         </property>
-                         <property name="styleSheet">
-                          <string notr="true">background-color: rgb(255, 185, 185);</string>
-                         </property>
-                         <property name="text">
-                          <string>DEL</string>
-                         </property>
-                        </widget>
-                       </item>
-                       <item row="0" column="0">
-                        <widget class="QPushButton" name="pushButton_add_reg_param">
-                         <property name="font">
-                          <font>
-                           <pointsize>10</pointsize>
-                          </font>
-                         </property>
-                         <property name="toolTip">
-                          <string>Добавить параметр</string>
-                         </property>
-                         <property name="autoFillBackground">
-                          <bool>false</bool>
-                         </property>
-                         <property name="styleSheet">
-                          <string notr="true">background-color: rgb(191, 255, 191);</string>
-                         </property>
-                         <property name="text">
-                          <string>ADD</string>
-                         </property>
-                        </widget>
-                       </item>
-                       <item row="0" column="2">
-                        <widget class="QPushButton" name="pushButton_model_reg">
-                         <property name="styleSheet">
-                          <string notr="true">background-color: rgb(255, 255, 222);</string>
-                         </property>
-                         <property name="text">
-                          <string>MODEL</string>
-                         </property>
-                        </widget>
-                       </item>
-                       <item row="1" column="2">
-                        <layout class="QGridLayout" name="gridLayout_102">
-                         <item row="0" column="0">
-                          <widget class="QCheckBox" name="checkBox_reg_features_med">
-                           <property name="toolTip">
-                            <string>Усредненный сбор данных для модели - медиана в интервале</string>
-                           </property>
-                           <property name="text">
-                            <string>median</string>
-                           </property>
-                          </widget>
-                         </item>
-                         <item row="0" column="1">
-                          <widget class="QDoubleSpinBox" name="doubleSpinBox_reg_features_med_int">
-                           <property name="toolTip">
-                            <string>+/- метров от точки</string>
-                           </property>
-                           <property name="decimals">
-                            <number>1</number>
-                           </property>
-                           <property name="value">
-                            <double>1.000000000000000</double>
-                           </property>
-                          </widget>
-                         </item>
-                        </layout>
-                       </item>
-                      </layout>
-                     </item>
-                    </layout>
-                   </item>
-                   <item row="3" column="0">
+                   <item row="4" column="0">
                     <layout class="QGridLayout" name="gridLayout_94">
                      <item row="0" column="0">
                       <layout class="QGridLayout" name="gridLayout_92" columnstretch="3,1,1,0">
@@ -3262,6 +3246,53 @@ selection-color: rgb(85, 0, 0);</string>
                      </item>
                      <item row="1" column="0">
                       <widget class="QListWidget" name="listWidget_trained_reg_model"/>
+                     </item>
+                    </layout>
+                   </item>
+                   <item row="0" column="0">
+                    <layout class="QGridLayout" name="gridLayout_108">
+                     <item row="0" column="0">
+                      <widget class="QLabel" name="label_param_12">
+                       <property name="font">
+                        <font>
+                         <pointsize>11</pointsize>
+                         <weight>75</weight>
+                         <italic>true</italic>
+                         <bold>true</bold>
+                         <underline>true</underline>
+                        </font>
+                       </property>
+                       <property name="text">
+                        <string>Регрессионный анализ</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item row="0" column="1">
+                      <spacer name="horizontalSpacer_2">
+                       <property name="orientation">
+                        <enum>Qt::Horizontal</enum>
+                       </property>
+                       <property name="sizeHint" stdset="0">
+                        <size>
+                         <width>40</width>
+                         <height>20</height>
+                        </size>
+                       </property>
+                      </spacer>
+                     </item>
+                     <item row="0" column="2">
+                      <widget class="QCheckBox" name="checkBox_regression_use_ml">
+                       <property name="text">
+                        <string>ML</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item row="0" column="3">
+                      <widget class="QCheckBox" name="checkBox_regression_fact_priority">
+                       <property name="text">
+                        <string>FACT PRIORITY</string>
+                       </property>
+                      </widget>
                      </item>
                     </layout>
                    </item>

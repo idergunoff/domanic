@@ -959,3 +959,17 @@ def get_calc_data():
     return session.query(CalculatedData).filter_by(id=ui.listWidget_calc_data.currentItem().text().split(' id')[-1]).first()
 
 
+def median_in_interval(dict_depth_param, depth_value, int_depth):
+    # Определите границы интервала
+    lower_bound = depth_value - int_depth
+    upper_bound = depth_value + int_depth
+
+    # Отфильтруйте элементы словаря, которые находятся в указанном интервале
+    filtered_values = [value for depth, value in dict_depth_param.items() if lower_bound <= float(depth) <= upper_bound]
+
+    # Если отфильтрованный список пуст, верните None или 0 (в зависимости от ваших требований)
+    if not filtered_values:
+        return None
+
+    # Верните среднее значение отфильтрованных значений
+    return median(filtered_values)

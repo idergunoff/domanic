@@ -165,9 +165,11 @@ def calc_class_lim():
                 ChooseCalcData.show()
                 ChooseCalcData.setAttribute(QtCore.Qt.WA_DeleteOnClose)  # атрибут удаления виджета после закрытия
 
+                ui_ccd.label.setText(f'Выберите расчетные данные\nдля {list_param[i]}:')
+
                 for calc_data_i in calc_data:
                     ui_ccd.listWidget.addItem(f'{calc_data_i.title} - {calc_data_i.model_title} id{calc_data_i.id}')
-                    ui.listWidget_trained_reg_model.item(ui.listWidget_trained_reg_model.count() - 1).setToolTip(
+                    ui_ccd.listWidget.item(ui_ccd.listWidget.count() - 1).setToolTip(
                         f'Params: {", ".join([i.split(".")[-1] for i in json.loads(calc_data_i.list_params_model)])}\n '
                         f'Wells: {", ".join([i["well"] for i in json.loads(calc_data_i.list_wells_model)])}\n'
                         f'Comment: {calc_data_i.comment}'

@@ -212,50 +212,93 @@ def show_features_regression():
 def build_train_table():
     """ Сборка таблицы для обучения модели регрессионного анализа """
     an = session.query(RegressionAnalysis).filter_by(id=get_reg_analysis_id()).first()
-    list_column = ['well', 'depth', 'target']
+    list_column, list_param = ['well', 'depth', 'target'], [an.target_param]
     for i in an.regression_features:
         list_column.append(f'{i.table_features}.{i.param_features}')
+        list_param.append(f'{i.table_features}.{i.param_features}')
 
     data_train = pd.DataFrame(columns=list_column)
     for well in an.wells:
+
+        # сбор всех параметров классификации в словари
+        dict_param = {}
+
+        for i_p in list_param:
+            t, p = i_p.split('.')[0], i_p.split('.')[1]
+            if ui.checkBox_regression_use_ml.isChecked():
+                calc_data = session.query(CalculatedData).filter_by(well_id=well.well.id, title=p).all()
+                if len(calc_data) > 1:
+
+                    ChooseCalcData = QtWidgets.QDialog()
+                    ui_ccd = Ui_ChooseCalcData()
+                    ui_ccd.setupUi(ChooseCalcData)
+                    ChooseCalcData.show()
+                    ChooseCalcData.setAttribute(QtCore.Qt.WA_DeleteOnClose)  # атрибут удаления виджета после закрытия
+
+                    ui_ccd.label.setText(f'Выберите расчетные данные\nдля {p}:')
+
+                    for calc_data_i in calc_data:
+                        ui_ccd.listWidget.addItem(f'{calc_data_i.title} - {calc_data_i.model_title} id{calc_data_i.id}')
+                        ui_ccd.listWidget.item(ui_ccd.listWidget.count() - 1).setToolTip(
+                            f'Params: {", ".join([i.split(".")[-1] for i in json.loads(calc_data_i.list_params_model)])}\n '
+                            f'Wells: {", ".join([i["well"] for i in json.loads(calc_data_i.list_wells_model)])}\n'
+                            f'Comment: {calc_data_i.comment}'
+                        )
+
+                    def choose_calc_data():
+                        calc_data_chose = session.query(CalculatedData).filter_by(
+                            id=ui_ccd.listWidget.currentItem().text().split(' id')[-1]).first()
+                        dict_param[f'ML_{p}'] = json.loads(calc_data_chose.data)
+                        ChooseCalcData.close()
+
+                    ui_ccd.pushButton_ok.clicked.connect(choose_calc_data)
+                    ChooseCalcData.exec_()
+
+                elif len(calc_data) == 1:
+                    dict_param[f'ML_{p}'] = json.loads(calc_data[0].data)
+
+            table = get_table(t)
+            result = session.query(table.depth, literal_column(f'{t}.{p}')).filter(
+                table.well_id == well.well.id, literal_column(f'{t}.{p}').isnot(None)).all()
+            dictionary = {str(key)[:-1] if str(key)[-3] == '.' else str(key): value for key, value in result}
+            dict_param[p] = dictionary
+
         ui.progressBar.setMaximum(int((well.int_to - well.int_from) / 0.1))
-        depth, k = well.int_from, 0
+        depth, k = well.int_from, 1
         while depth < well.int_to:
             depth = round(depth, 2)
             ui.progressBar.setValue(k)
-            target_table = get_table(an.target_param.split('.')[0])
-            target_value = session.query(literal_column(f'{an.target_param}')).filter(
-                target_table.well_id == well.well.id,
-                target_table.depth >= depth,
-                target_table.depth < depth + 0.1,
-                literal_column(f'{an.target_param}') != None
-            ).first()
-            if not target_value:
+            target_param = an.target_param.split(".")[1]
+            target_val = None
+            if ui.checkBox_regression_use_ml.isChecked():
+                if f'ML_{target_param}' in dict_param:
+                    target_val = dict_param[f'ML_{target_param}'][str(depth)] if str(depth) in dict_param[f'ML_{target_param}'].keys() else target_val
+
+            if not target_val or ui.checkBox_regression_fact_priority.isChecked():
+                target_val = dict_param[target_param][str(depth)] if str(depth) in dict_param[target_param].keys() else target_val
+
+            if not target_val:
                 depth += 0.1
                 k += 1
                 continue
-            dict_depth = {'well': well.well.title, 'depth': depth, 'target': target_value}
-            for p in an.regression_features:
-                table = get_table(p.table_features)
+            dict_depth = {'well': well.well.title, 'depth': depth, 'target': target_val}
+            for parameter in an.regression_features:
                 if ui.checkBox_reg_features_med.isChecked():
-                    int_p_value = session.query(literal_column(f'{p.table_features}.{p.param_features}')).filter(
-                        table.well_id == well.well.id,
-                        table.depth >= depth - ui.doubleSpinBox_reg_features_med_int.value(),
-                        table.depth < depth + ui.doubleSpinBox_reg_features_med_int.value() + 0.1,
-                        literal_column(f'{p.table_features}.{p.param_features}') != None
-                    ).all()
-                    p_value = median(int_p_value) if len(int_p_value) > 0 else None
+                    p_param = f'ML_{parameter.param_features}' if ui.checkBox_regression_use_ml.isChecked() else parameter.param_features
+                    if not p_param in dict_param.keys():
+                        p_param = parameter.param_features
+                    p_value = median_in_interval(dict_param[p_param], depth, ui.doubleSpinBox_reg_features_med_int.value())
                 else:
-                    p_value = session.query(literal_column(f'{p.table_features}.{p.param_features}')).filter(
-                        table.well_id == well.well.id,
-                        table.depth >= depth,
-                        table.depth < depth + 0.1,
-                        literal_column(f'{p.table_features}.{p.param_features}') != None
-                    ).first()
-                if p_value:
-                    dict_depth[f'{p.table_features}.{p.param_features}'] = p_value
+                    p_value, p_param = None, parameter.param_features
+                    if ui.checkBox_regression_use_ml.isChecked():
+                        if f'ML_{p_param}' in dict_param:
+                            p_value = dict_param[f'ML_{p_param}'][str(depth)] if str(depth) in dict_param[f'ML_{p_param}'].keys() else p_value
+                    if not p_value or ui.checkBox_regression_fact_priority.isChecked():
+                        p_value = dict_param[p_param][str(depth)] if str(depth) in dict_param[p_param].keys() else p_value
+                if p_value != None:
+                    dict_depth[f'{parameter.table_features}.{parameter.param_features}'] = p_value
             if len(dict_depth) == len(an.regression_features) + 3:
-                data_train = pd.concat([data_train, pd.DataFrame(dict_depth)], ignore_index=True)
+                data_train = pd.concat([data_train, pd.DataFrame(dict_depth, index=[0])], ignore_index=True)
             depth += 0.1
             k += 1
     return data_train, list_column[3:]
@@ -285,9 +328,9 @@ def show_regression_form(data_train, list_param):
     ui_frm.label_info.setText(f'Обучение модели на {len(data_train.index)} образцах')
 
 
-    def calc_knn():
-        """ Расчет выбросов методом KNN """
-        pass
+    # def calc_knn():
+    #     """ Расчет выбросов методом KNN """
+    #     pass
 
         # data_knn = data_train.copy()
         # data_knn.drop(['well', 'depth'], axis=1, inplace=True)

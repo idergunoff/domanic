@@ -413,7 +413,8 @@ def draw_relation():
             data[columns[1]].astype(float), deg=1)  # расчитываем коэф уравнения для линии тренда
         x = data[columns[0]]
         y_trend = a * x + b
-        ax.plot(x, y_trend, '-')
+        # ax.plot(x, y_trend, '-')
+        sns.regplot(data=data, x=columns[0], y=columns[1], scatter=False, color='r')
     ax.grid()
     ax.xaxis.grid(True, "minor", linewidth=.25)
     ax.yaxis.grid(True, "minor", linewidth=.25)
