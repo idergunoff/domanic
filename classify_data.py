@@ -157,7 +157,7 @@ def calc_class_lim():
     for i in range(len(list_param)):
         if ui.checkBox_class_use_ml.isChecked():
             calc_data = session.query(CalculatedData).filter_by(well_id=w_id, title=list_param[i]).all()
-            if len(calc_data) > 1:
+            if len(calc_data) > 0:
 
                 ChooseCalcData = QtWidgets.QDialog()
                 ui_ccd = Ui_ChooseCalcData()
@@ -183,9 +183,6 @@ def calc_class_lim():
                 ui_ccd.pushButton_ok.clicked.connect(choose_calc_data)
                 ChooseCalcData.exec_()
 
-            elif len(calc_data) == 1:
-                dict_param[f'ML_{list_param[i]}'] = json.loads(calc_data[0].data)
-
         table = get_table(list_tab[i])
         result = session.query(table.depth, literal_column(f'{list_tab[i]}.{list_param[i]}')).filter(
             table.well_id == w_id, literal_column(f'{list_tab[i]}.{list_param[i]}').isnot(None)).all()
@@ -207,11 +204,11 @@ def calc_class_lim():
         for i in range(len(list_tab)):      # перебор всех параметров классификации
             val = None
             if ui.checkBox_class_use_ml.isChecked():
-                if f'ML_{list_param[i]}' in dict_param:
+                if f'ML_{list_param[i]}' in dict_param.keys():
                     val = dict_param[f'ML_{list_param[i]}'][str(d)] if str(d) in dict_param[f'ML_{list_param[i]}'].keys() else val
             if not val or ui.checkBox_class_fact_priority.isChecked():
                 val = dict_param[list_param[i]][str(d)] if str(d) in dict_param[list_param[i]].keys() else val
-            if val:     # если параметр по глубине d существует, определяем его категорию параметра классификации
+            if val != None:     # если параметр по глубине d существует, определяем его категорию параметра классификации
                 lim = check_value_in_limits(val, list_limits[i])
                 list_class.append(lim)
         if len(list_class) == len(class_params) + 1:    # если определены все параметры

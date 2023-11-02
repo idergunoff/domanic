@@ -227,7 +227,7 @@ def build_train_table():
             t, p = i_p.split('.')[0], i_p.split('.')[1]
             if ui.checkBox_regression_use_ml.isChecked():
                 calc_data = session.query(CalculatedData).filter_by(well_id=well.well.id, title=p).all()
-                if len(calc_data) > 1:
+                if len(calc_data) > 0:
 
                     ChooseCalcData = QtWidgets.QDialog()
                     ui_ccd = Ui_ChooseCalcData()
@@ -254,9 +254,6 @@ def build_train_table():
                     ui_ccd.pushButton_ok.clicked.connect(choose_calc_data)
                     ChooseCalcData.exec_()
 
-                elif len(calc_data) == 1:
-                    dict_param[f'ML_{p}'] = json.loads(calc_data[0].data)
-
             table = get_table(t)
             result = session.query(table.depth, literal_column(f'{t}.{p}')).filter(
                 table.well_id == well.well.id, literal_column(f'{t}.{p}').isnot(None)).all()
@@ -271,13 +268,13 @@ def build_train_table():
             target_param = an.target_param.split(".")[1]
             target_val = None
             if ui.checkBox_regression_use_ml.isChecked():
-                if f'ML_{target_param}' in dict_param:
+                if f'ML_{target_param}' in dict_param.keys():
                     target_val = dict_param[f'ML_{target_param}'][str(depth)] if str(depth) in dict_param[f'ML_{target_param}'].keys() else target_val
 
             if not target_val or ui.checkBox_regression_fact_priority.isChecked():
                 target_val = dict_param[target_param][str(depth)] if str(depth) in dict_param[target_param].keys() else target_val
 
-            if not target_val:
+            if target_val == None:
                 depth += 0.1
                 k += 1
                 continue
@@ -291,7 +288,7 @@ def build_train_table():
                 else:
                     p_value, p_param = None, parameter.param_features
                     if ui.checkBox_regression_use_ml.isChecked():
-                        if f'ML_{p_param}' in dict_param:
+                        if f'ML_{p_param}' in dict_param.keys():
                             p_value = dict_param[f'ML_{p_param}'][str(depth)] if str(depth) in dict_param[f'ML_{p_param}'].keys() else p_value
                     if not p_value or ui.checkBox_regression_fact_priority.isChecked():
                         p_value = dict_param[p_param][str(depth)] if str(depth) in dict_param[p_param].keys() else p_value
@@ -444,7 +441,6 @@ def show_regression_form(data_train, list_param):
             lof_index = [i for i, x in enumerate(label_lof) if x == -1]
             data_train_clean.drop(lof_index, axis=0, inplace=True)
             data_train_clean.reset_index(drop=True, inplace=True)
-            print(data_train_clean)
             Form_Regmod.close()
             Form_LOF.close()
             show_regression_form(data_train_clean, list_param)
@@ -607,7 +603,6 @@ def show_regression_form(data_train, list_param):
             n_comp = 'mle' if ui_frm.checkBox_pca_mle.isChecked() else ui_frm.spinBox_pca.value()
             pca = PCA(n_components=n_comp)
             training_sample = pca.fit_transform(training_sample)
-            print('len_pca', len(training_sample))
 
             ## Save PCA
             if n_comp == 'mle':
@@ -615,9 +610,7 @@ def show_regression_form(data_train, list_param):
             else:
                 training_sample_pca = pd.DataFrame(training_sample, columns=[f'pca_{i}' for i in range(n_comp)])
             data_pca = data_train.copy()
-            print('len data_pca', len(data_pca.index))
             data_pca = pd.concat([data_pca, training_sample_pca], axis=1)
-            print(data_pca)
             data_pca.to_excel('table_pca.xlsx')
 
             pipe_steps.append(('pca', pca))
@@ -882,6 +875,46 @@ def build_work_table():
         QMessageBox.critical(MainWindow, 'Не выбрана модель', 'Не выбрана модель.')
         set_label_info('Не выбрана модель', 'red')
         return
+
+    # сбор всех параметров классификации в словари
+    dict_param = {}
+    for i_p in json.loads(model.list_params):
+        t, p = i_p.split('.')[0], i_p.split('.')[1]
+        if ui.checkBox_regression_use_ml.isChecked():
+            calc_data = session.query(CalculatedData).filter_by(well_id=get_well_id(), title=p).all()
+            if len(calc_data) > 0:
+
+                ChooseCalcData = QtWidgets.QDialog()
+                ui_ccd = Ui_ChooseCalcData()
+                ui_ccd.setupUi(ChooseCalcData)
+                ChooseCalcData.show()
+                ChooseCalcData.setAttribute(QtCore.Qt.WA_DeleteOnClose)  # атрибут удаления виджета после закрытия
+
+                ui_ccd.label.setText(f'Выберите расчетные данные\nдля {p}:')
+
+                for calc_data_i in calc_data:
+                    ui_ccd.listWidget.addItem(f'{calc_data_i.title} - {calc_data_i.model_title} id{calc_data_i.id}')
+                    ui_ccd.listWidget.item(ui_ccd.listWidget.count() - 1).setToolTip(
+                        f'Params: {", ".join([i.split(".")[-1] for i in json.loads(calc_data_i.list_params_model)])}\n '
+                        f'Wells: {", ".join([i["well"] for i in json.loads(calc_data_i.list_wells_model)])}\n'
+                        f'Comment: {calc_data_i.comment}'
+                    )
+
+                def choose_calc_data():
+                    calc_data_chose = session.query(CalculatedData).filter_by(
+                        id=ui_ccd.listWidget.currentItem().text().split(' id')[-1]).first()
+                    dict_param[f'ML_{p}'] = json.loads(calc_data_chose.data)
+                    ChooseCalcData.close()
+
+                ui_ccd.pushButton_ok.clicked.connect(choose_calc_data)
+                ChooseCalcData.exec_()
+
+        table = get_table(t)
+        result = session.query(table.depth, literal_column(f'{t}.{p}')).filter(
+            table.well_id == get_well_id(), literal_column(f'{t}.{p}').isnot(None)).all()
+        dictionary = {str(key)[:-1] if str(key)[-3] == '.' else str(key): value for key, value in result}
+        dict_param[p] = dictionary
+
     start, stop = check_start_stop()
 
     list_column = ['depth'] + [i for i in json.loads(model.list_params)]
@@ -894,19 +927,18 @@ def build_work_table():
         depth = round(depth, 2)
         ui.progressBar.setValue(k)
         dict_depth = {'depth': depth}
-        for p in json.loads(model.list_params):
-
-            table = get_table(p.split('.')[0])
-            p_value = session.query(literal_column(f'{p.split(".")[0]}.{p.split(".")[1]}')).filter(
-                table.well_id == get_well_id(),
-                table.depth >= depth,
-                table.depth < depth + 0.1,
-                literal_column(f'{p.split(".")[0]}.{p.split(".")[1]}') != None
-            ).first()
-            if p_value:
-                dict_depth[f'{p.split(".")[0]}.{p.split(".")[1]}'] = p_value
+        for parameter in json.loads(model.list_params):
+            t, p = parameter.split('.')[0], parameter.split('.')[1]
+            p_value = None
+            if ui.checkBox_regression_use_ml.isChecked():
+                if f'ML_{p}' in dict_param.keys():
+                    p_value = dict_param[f'ML_{p}'][str(depth)] if str(depth) in dict_param[f'ML_{p}'].keys() else p_value
+            if not p_value or ui.checkBox_regression_fact_priority.isChecked():
+                p_value = dict_param[p][str(depth)] if str(depth) in dict_param[p].keys() else p_value
+            if p_value != None:
+                dict_depth[f'{t}.{p}'] = p_value
         if len(dict_depth) == len(json.loads(model.list_params)) + 1:
-            data_work = pd.concat([data_work, pd.DataFrame(dict_depth)], ignore_index=True)
+            data_work = pd.concat([data_work, pd.DataFrame(dict_depth, index=[0])], ignore_index=True)
         depth += 0.1
         k += 1
     return data_work, model
@@ -915,8 +947,6 @@ def build_work_table():
 def calc_regression_model():
     """ Расчёт модели регрессионного анализа """
     data_work, model = build_work_table()
-    print(len(data_work.index))
-    print(data_work)
     with open(model.path_model, 'rb') as f:
         reg_model = pickle.load(f)
 

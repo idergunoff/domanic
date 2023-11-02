@@ -1988,8 +1988,8 @@ selection-color: rgb(85, 0, 0);</string>
                          <rect>
                           <x>0</x>
                           <y>0</y>
-                          <width>424</width>
-                          <height>272</height>
+                          <width>98</width>
+                          <height>38</height>
                          </rect>
                         </property>
                         <layout class="QGridLayout" name="gridLayout_75">
@@ -3046,6 +3046,26 @@ selection-color: rgb(85, 0, 0);</string>
                        <layout class="QGridLayout" name="gridLayout_90">
                         <item row="0" column="0">
                          <layout class="QGridLayout" name="gridLayout_89" columnstretch="0,1,0" columnminimumwidth="0,0,0">
+                          <item row="1" column="2">
+                           <widget class="QLabel" name="label_reg_n_target">
+                            <property name="text">
+                             <string>n</string>
+                            </property>
+                           </widget>
+                          </item>
+                          <item row="1" column="0">
+                           <widget class="QLabel" name="label_33">
+                            <property name="font">
+                             <font>
+                              <pointsize>10</pointsize>
+                              <italic>true</italic>
+                             </font>
+                            </property>
+                            <property name="text">
+                             <string>param:</string>
+                            </property>
+                           </widget>
+                          </item>
                           <item row="0" column="0">
                            <widget class="QLabel" name="label_32">
                             <property name="font">
@@ -3069,19 +3089,6 @@ selection-color: rgb(85, 0, 0);</string>
                             </property>
                             <property name="text">
                              <string>V</string>
-                            </property>
-                           </widget>
-                          </item>
-                          <item row="1" column="0">
-                           <widget class="QLabel" name="label_33">
-                            <property name="font">
-                             <font>
-                              <pointsize>10</pointsize>
-                              <italic>true</italic>
-                             </font>
-                            </property>
-                            <property name="text">
-                             <string>param:</string>
                             </property>
                            </widget>
                           </item>
@@ -3111,12 +3118,18 @@ selection-color: rgb(85, 0, 0);</string>
                             </property>
                            </widget>
                           </item>
-                          <item row="1" column="2">
-                           <widget class="QLabel" name="label_reg_n_target">
-                            <property name="text">
-                             <string>n</string>
+                          <item row="2" column="1">
+                           <spacer name="verticalSpacer_6">
+                            <property name="orientation">
+                             <enum>Qt::Vertical</enum>
                             </property>
-                           </widget>
+                            <property name="sizeHint" stdset="0">
+                             <size>
+                              <width>20</width>
+                              <height>40</height>
+                             </size>
+                            </property>
+                           </spacer>
                           </item>
                          </layout>
                         </item>
@@ -4348,8 +4361,8 @@ selection-color: rgb(85, 0, 0);</string>
                     <rect>
                      <x>0</x>
                      <y>0</y>
-                     <width>225</width>
-                     <height>234</height>
+                     <width>98</width>
+                     <height>88</height>
                     </rect>
                    </property>
                    <attribute name="label">
@@ -4399,8 +4412,8 @@ selection-color: rgb(85, 0, 0);</string>
                     <rect>
                      <x>0</x>
                      <y>0</y>
-                     <width>225</width>
-                     <height>234</height>
+                     <width>98</width>
+                     <height>88</height>
                     </rect>
                    </property>
                    <attribute name="label">
@@ -4427,7 +4440,7 @@ selection-color: rgb(85, 0, 0);</string>
                     <rect>
                      <x>0</x>
                      <y>0</y>
-                     <width>88</width>
+                     <width>98</width>
                      <height>88</height>
                     </rect>
                    </property>
