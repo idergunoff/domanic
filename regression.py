@@ -602,16 +602,16 @@ def show_regression_form(data_train, list_param):
         if ui_frm.checkBox_pca.isChecked():
             n_comp = 'mle' if ui_frm.checkBox_pca_mle.isChecked() else ui_frm.spinBox_pca.value()
             pca = PCA(n_components=n_comp)
-            training_sample = pca.fit_transform(training_sample)
+            # training_sample = pca.fit_transform(training_sample)
 
             ## Save PCA
-            if n_comp == 'mle':
-                training_sample_pca = pd.DataFrame(training_sample)
-            else:
-                training_sample_pca = pd.DataFrame(training_sample, columns=[f'pca_{i}' for i in range(n_comp)])
-            data_pca = data_train.copy()
-            data_pca = pd.concat([data_pca, training_sample_pca], axis=1)
-            data_pca.to_excel('table_pca.xlsx')
+            # if n_comp == 'mle':
+            #     training_sample_pca = pd.DataFrame(training_sample)
+            # else:
+            #     training_sample_pca = pd.DataFrame(training_sample, columns=[f'pca_{i}' for i in range(n_comp)])
+            # data_pca = data_train.copy()
+            # data_pca = pd.concat([data_pca, training_sample_pca], axis=1)
+            # data_pca.to_excel('table_pca.xlsx')
 
             pipe_steps.append(('pca', pca))
 
