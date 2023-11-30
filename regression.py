@@ -257,13 +257,14 @@ def build_train_table():
             table = get_table(t)
             result = session.query(table.depth, literal_column(f'{t}.{p}')).filter(
                 table.well_id == well.well.id, literal_column(f'{t}.{p}').isnot(None)).all()
+
             dictionary = {str(key)[:-1] if str(key)[-3] == '.' else str(key): value for key, value in result}
             dict_param[p] = dictionary
 
         ui.progressBar.setMaximum(int((well.int_to - well.int_from) / 0.1))
         depth, k = well.int_from, 1
         while depth < well.int_to:
-            depth = round(depth, 2)
+            depth = round(depth, 1)
             ui.progressBar.setValue(k)
             target_param = an.target_param.split(".")[1]
             target_val = None
@@ -279,6 +280,7 @@ def build_train_table():
                 k += 1
                 continue
             dict_depth = {'well': well.well.title, 'depth': depth, 'target': target_val}
+
             for parameter in an.regression_features:
                 if ui.checkBox_reg_features_med.isChecked():
                     p_param = f'ML_{parameter.param_features}' if ui.checkBox_regression_use_ml.isChecked() else parameter.param_features
