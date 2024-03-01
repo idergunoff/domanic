@@ -201,6 +201,18 @@ def load_param_from_las(param, null, file_name, row, index_list, well_id):
         return False
 
 
+# Функция для удаления всех пробелов из строки и преобразования во float
+def remove_spaces_and_convert_to_float(x):
+    if isinstance(x, str):  # Проверяем, является ли x строкой
+        x = x.replace(" ", "")  # Удаляем все пробелы из строки
+        try:
+            return float(x)  # Преобразуем во float
+        except ValueError:
+            return x  # Если не удалось преобразовать, оставляем как есть
+    else:
+        return x  # Возвращаем x без изменений, если не является строкой
+
+
 def load_param_pir_chrom(file_name, table, rename_column):
     """
     Загрузка параметров пиролиза и хроматографии
@@ -211,6 +223,8 @@ def load_param_pir_chrom(file_name, table, rename_column):
     """
     w_id = get_well_id()
     data_tab = read_excel(file_name, header=0)
+    data_tab.dropna(how='all', inplace=True)
+    data_tab = data_tab.applymap(remove_spaces_and_convert_to_float)
     if rename_column:
         dict_col = {}
         for i in data_tab.columns:
