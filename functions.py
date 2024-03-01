@@ -404,9 +404,19 @@ def draw_param_graph(widget_list, table, table_text):
     dash = choice_dash()
     width = choice_width()
     if table == DataLas:    # las файлы отображаются графиком
-        curve = pg.PlotCurveItem(x=X, y=Y, pen=pg.mkPen(color=color, width=width, dash=dash))
+        try:
+            curve = pg.PlotCurveItem(x=Y, y=X, pen=pg.mkPen(color=color, width=width, dash=dash))
+        except ValueError:
+            ui.label_info.setText(f'По данной скважине нет соответствующих данных.')
+            ui.label_info.setStyleSheet('color: red')
+            return
     else:   # остальные данные отображаются в виде гистограммы
-        curve = pg.BarGraphItem(x0=0, y=Y, height=0.1, width=X, brush=color, pen=pg.mkPen(color=color, width=0.4))
+        try:
+            curve = pg.BarGraphItem(x0=0, y=Y, height=0.1, width=X, brush=color, pen=pg.mkPen(color=color, width=0.4))
+        except ValueError:
+            ui.label_info.setText(f'По данной скважине нет соответствующих данных.')
+            ui.label_info.setStyleSheet('color: red')
+            return
     try:
         ui.graphicsView.addItem(curve)
         curve.getViewBox().invertY(True)
