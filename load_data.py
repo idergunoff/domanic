@@ -192,6 +192,15 @@ def load_data_from_las():
     param_las_db = param_las.copy()
     param_las_db = ['Ag' if i == 'AG' else i for i in param_las_db]
     param_las_db = ['Ang' if i == 'ANG' else i for i in param_las_db]
+    param_las_db = ['Mgl' if i == 'MGL' else i for i in param_las_db]
+    param_las_db = ['NNKb' if i == 'NNKB' else i for i in param_las_db]
+    param_las_db = ['NNKm' if i == 'NNKM' else i for i in param_las_db]
+    param_las_db = ['Rp' if i == 'RP' else i for i in param_las_db]
+    param_las_db = ['PHIg' if i == 'PHIG' else i for i in param_las_db]
+    param_las_db = ['LITOc' if i == 'LITOC' else i for i in param_las_db]
+    param_las_db = ['Kgl' if i == 'KGL' else i for i in param_las_db]
+    param_las_db = ['FLUIDc' if i == 'FLUIDC' else i for i in param_las_db]
+    param_las_db = ['COLLc' if i == 'COLLC' else i for i in param_las_db]
     param_las_db = ['DEPT' if i == 'DEPTH' else i for i in param_las_db]
     # print(param_las)
     list_columns = DataLas.__table__.columns.keys()
