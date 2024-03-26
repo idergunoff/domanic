@@ -191,6 +191,7 @@ def load_data_from_las():
     param_las = [curve.mnemonic for curve in las.curves]
     param_las = ['Ag' if i == 'AG' else i for i in param_las]
     param_las = ['Ang' if i == 'ANG' else i for i in param_las]
+    param_las = ['DEPT' if i == 'DEPT' else i for i in param_las]
     print(param_las)
     list_columns = DataLas.__table__.columns.keys()
     for i in param_las:
