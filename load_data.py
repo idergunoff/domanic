@@ -191,13 +191,16 @@ def load_data_from_las():
     param_las = [curve.mnemonic for curve in las.curves]
     param_las = ['Ag' if i == 'AG' else i for i in param_las]
     param_las = ['Ang' if i == 'ANG' else i for i in param_las]
-    param_las = ['DEPT' if i == 'DEPT' else i for i in param_las]
+    param_las = ['DEPT' if i == 'DEPTH' else i for i in param_las]
     # print(param_las)
     list_columns = DataLas.__table__.columns.keys()
     for i in param_las:
         if i != 'DEPT':
             if i in list_columns:
-                load_param_from_lasio(i, list(las['DEPT']), list(las[i]), w_id)
+                try:
+                    load_param_from_lasio(i, list(las['DEPT']), list(las[i]), w_id)
+                except KeyError:
+                    load_param_from_lasio(i, list(las['DEPTH']), list(las[i]), w_id)
                 param_result += f' {i}'
             else:
                 no_param += f' {i}'
