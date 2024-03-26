@@ -189,6 +189,9 @@ def load_data_from_las():
     # print(las.well['WELL'].value, las.well['STRT'].value, las.well['STOP'].value, las.well['NULL'].value)
 
     param_las = [curve.mnemonic for curve in las.curves]
+    param_las = ['Ag' if i == 'AG' else i for i in param_las]
+    param_las = ['Ang' if i == 'ANG' else i for i in param_las]
+    print(param_las)
     list_columns = DataLas.__table__.columns.keys()
     for i in param_las:
         if i != 'DEPT':
