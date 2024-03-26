@@ -419,7 +419,7 @@ def draw_param_graph(widget_list, table, table_text):
     width = choice_width()
     if table == DataLas:    # las файлы отображаются графиком
         try:
-            curve = pg.PlotCurveItem(x=Y, y=X, pen=pg.mkPen(color=color, width=width, dash=dash))
+            curve = pg.PlotCurveItem(x=X, y=Y, pen=pg.mkPen(color=color, width=width, dash=dash))
         except ValueError:
             ui.label_info.setText(f'По данной скважине нет соответствующих данных.')
             ui.label_info.setStyleSheet('color: red')
