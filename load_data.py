@@ -189,18 +189,19 @@ def load_data_from_las():
     # print(las.well['WELL'].value, las.well['STRT'].value, las.well['STOP'].value, las.well['NULL'].value)
 
     param_las = [curve.mnemonic for curve in las.curves]
-    param_las = ['Ag' if i == 'AG' else i for i in param_las]
-    param_las = ['Ang' if i == 'ANG' else i for i in param_las]
-    param_las = ['DEPT' if i == 'DEPTH' else i for i in param_las]
+    param_las_db = param_las.copy()
+    param_las_db = ['Ag' if i == 'AG' else i for i in param_las_db]
+    param_las_db = ['Ang' if i == 'ANG' else i for i in param_las_db]
+    param_las_db = ['DEPT' if i == 'DEPTH' else i for i in param_las_db]
     # print(param_las)
     list_columns = DataLas.__table__.columns.keys()
-    for i in param_las:
+    for n, i in enumerate(param_las_db):
         if i != 'DEPT':
             if i in list_columns:
                 try:
-                    load_param_from_lasio(i, list(las['DEPT']), list(las[i]), w_id)
+                    load_param_from_lasio(i, list(las['DEPT']), list(las[param_las[n]]), w_id)
                 except KeyError:
-                    load_param_from_lasio(i, list(las['DEPTH']), list(las[i]), w_id)
+                    load_param_from_lasio(i, list(las['DEPTH']), list(las[param_las[n]]), w_id)
                 param_result += f' {i}'
             else:
                 no_param += f' {i}'
