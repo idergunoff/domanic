@@ -244,7 +244,7 @@ def load_data_from_las():
 def load_param_from_lasio(param, depth, data, well_id):
     """Загрузка параметров из ласио"""
     for i in range(len(depth)):
-        session.query(DataLas).filter(DataLas.well_id == well_id, DataLas.depth == depth[i]).update(
+        session.query(DataLas).filter(DataLas.well_id == well_id, DataLas.depth == round(depth[i], 1)).update(
                             {param: data[i]}, synchronize_session="fetch")
     return True
 
