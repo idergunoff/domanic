@@ -387,10 +387,13 @@ def draw_param_las():
 
 def draw_param_lit():
     """ Отривсовка параметра литологии при клике в списке параметров  """
-    draw_param_table(ui.listWidget_lit, DataLit, 'data_lit')
-    draw_param_graph(ui.listWidget_lit, DataLit, 'data_lit')
-    calc_stat()
-    ui.label_param_for_class_lim.setText(ui.listWidget_lit.currentItem().text())
+    try:
+        draw_param_table(ui.listWidget_lit, DataLit, 'data_lit')
+        draw_param_graph(ui.listWidget_lit, DataLit, 'data_lit')
+        calc_stat()
+        ui.label_param_for_class_lim.setText(ui.listWidget_lit.currentItem().text())
+    except TypeError:
+        pass
 
 
 def draw_param_pir_kern():
