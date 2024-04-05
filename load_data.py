@@ -376,10 +376,13 @@ def del_param():
 
 def draw_param_las():
     """ Отривсовка параметра LAS при клике в списке параметров  """
-    draw_param_table(ui.listWidget_las, DataLas, 'data_las')
-    draw_param_graph(ui.listWidget_las, DataLas, 'data_las')
-    calc_stat()
-    ui.label_param_for_class_lim.setText(ui.listWidget_las.currentItem().text())
+    try:
+        draw_param_table(ui.listWidget_las, DataLas, 'data_las')
+        draw_param_graph(ui.listWidget_las, DataLas, 'data_las')
+        calc_stat()
+        ui.label_param_for_class_lim.setText(ui.listWidget_las.currentItem().text())
+    except TypeError:
+        pass
 
 
 def draw_param_lit():
