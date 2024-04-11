@@ -331,6 +331,13 @@ class DataLas(Base):
 
     SUM_GAS = Column(Float)
 
+    GZ1 = Column(Float)
+    GZ2 = Column(Float)
+    GZ3 = Column(Float)
+    GZ4 = Column(Float)
+    GZ5 = Column(Float)
+    GZR = Column(Float)
+
 
 class DataLit(Base):
     __tablename__ = 'data_lit'
