@@ -259,20 +259,39 @@ def upgrade_las_mean():
             DataLas.well_id == w_id,
             literal_column(f'{table_text}.{param}').isnot(None)
         ).order_by(DataLas.depth).all()
-        print(data_las)
+        ui.progressBar.setMaximum(len(data_las) - 1)
         d = data_las[0].depth
+        k, n_upd = 0, 0
         while d <= data_las[-1].depth:
+            ui.progressBar.setValue(k)
             d = round(d, 2)
             param_val = session.query(literal_column(f'{table_text}.{param}')).filter(
                 DataLas.well_id == w_id,
                 DataLas.depth == d,
-            ).first()
-            print(d, param_val)
+            ).first()[0]
+            if not param_val:
+                p0 = session.query(literal_column(f'{table_text}.{param}')).filter(
+                    DataLas.well_id == w_id,
+                    DataLas.depth == round(d - 0.1, 2),
+                ).first()
+                p2 = session.query(literal_column(f'{table_text}.{param}')).filter(
+                    DataLas.well_id == w_id,
+                    DataLas.depth == round(d + 0.1, 2),
+                ).first()
+                if p0[0] and p2[0]:
+                    session.query(DataLas).filter(
+                        DataLas.well_id == w_id,
+                        DataLas.depth == d
+                    ).update({param: round((p0[0] + p2[0]) / 2, 5)}, synchronize_session="fetch")
+                    n_upd += 1
             d += 0.1
+            k += 1
+        session.commit()
+        draw_param_las()
+        set_label_info(f'Параметр {param} обновлен, количество обновлений: {n_upd}', 'green')
     else:
         set_label_info('Данная функция усреднения применима только для LAS-данных', 'red')
-    # session.query(DataLas).update({'mean': None}, synchronize_session="fetch")
-    # session.commit()
+
 
 
 def load_data_pir():
