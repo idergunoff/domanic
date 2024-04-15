@@ -18,6 +18,7 @@ import math
 import json
 import datetime
 import pickle
+from tqdm import tqdm
 
 import traceback
 import matplotlib.pyplot as plt

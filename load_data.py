@@ -260,10 +260,12 @@ def upgrade_las_mean():
             literal_column(f'{table_text}.{param}').isnot(None)
         ).order_by(DataLas.depth).all()
         ui.progressBar.setMaximum(int((data_las[-1].depth - data_las[0].depth) / 0.1))
+        pbar = tqdm(total=ui.progressBar.maximum())
         d = data_las[0].depth
         k, n_upd = 0, 0
         while d <= data_las[-1].depth:
             ui.progressBar.setValue(k)
+            pbar.update(1)
             d = round(d, 2)
             param_val = session.query(literal_column(f'{table_text}.{param}')).filter(
                 DataLas.well_id == w_id,
@@ -286,6 +288,7 @@ def upgrade_las_mean():
                     n_upd += 1
             d += 0.1
             k += 1
+        pbar.close()
         session.commit()
         draw_param_las()
         set_label_info(f'Параметр {param} обновлен, количество обновлений: {n_upd}', 'green')
