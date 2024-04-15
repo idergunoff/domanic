@@ -997,3 +997,35 @@ def median_in_interval(dict_depth_param, depth_value, int_depth):
 
     # Верните среднее значение отфильтрованных значений
     return median(filtered_values)
+
+
+def math_round(number, n_digits=0):
+    """
+    Округляет число по математическим правилам до заданного количества десятичных знаков.
+
+    Параметры:
+    number (float): Число, которое необходимо округлить.
+    ndigits (int): Количество знаков после запятой для округления.
+
+    Возвращает:
+    float: Округлённое значение числа.
+    """
+    # Множитель для сдвига десятичной точки
+    multiplier = 10 ** n_digits
+
+    # Умножаем, чтобы сдвинуть десятичную точку на нужное количество знаков
+    result = number * multiplier
+
+    # Извлечение дробной части числа
+    fractional_part = result % 1
+
+    # Определение, нужно ли округлять вверх или вниз
+    if fractional_part < 0.5:
+        result = int(result)  # Округление вниз
+    else:
+        result = int(result) + 1  # Округление вверх
+
+    # Возвращаем значение, сдвинув десятичную точку обратно
+    return result / multiplier
+
+

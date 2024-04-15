@@ -244,9 +244,35 @@ def load_data_from_las():
 def load_param_from_lasio(param, depth, data, well_id):
     """Загрузка параметров из ласио"""
     for i in range(len(depth)):
-        session.query(DataLas).filter(DataLas.well_id == well_id, DataLas.depth == round(depth[i], 1)).update(
+        session.query(DataLas).filter(DataLas.well_id == well_id, DataLas.depth == math_round(depth[i], 1)).update(
                             {param: data[i]}, synchronize_session="fetch")
     return True
+
+
+def upgrade_las_mean():
+    """ Обновление параметров las с усреднением """
+    w_id = get_well_id()
+    table, table_text, widget = check_tabWidjet()
+    param = widget.currentItem().text()
+    if table_text == 'data_las':
+        data_las = session.query(DataLas.depth, literal_column(f'{table_text}.{param}')).filter(
+            DataLas.well_id == w_id,
+            literal_column(f'{table_text}.{param}').isnot(None)
+        ).order_by(DataLas.depth).all()
+        print(data_las)
+        d = data_las[0].depth
+        while d <= data_las[-1].depth:
+            d = round(d, 2)
+            param_val = session.query(literal_column(f'{table_text}.{param}')).filter(
+                DataLas.well_id == w_id,
+                DataLas.depth == d,
+            ).first()
+            print(d, param_val)
+            d += 0.1
+    else:
+        set_label_info('Данная функция усреднения применима только для LAS-данных', 'red')
+    # session.query(DataLas).update({'mean': None}, synchronize_session="fetch")
+    # session.commit()
 
 
 def load_data_pir():

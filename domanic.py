@@ -51,6 +51,7 @@ ui.pushButton_chrom_extr.clicked.connect(load_data_chrom_extr)
 ui.pushButton_depth.clicked.connect(load_depth_name)
 ui.pushButton_add_age.clicked.connect(load_age)
 ui.pushButton_lit.clicked.connect(load_data_lit)
+ui.pushButton_mean_las.clicked.connect(upgrade_las_mean)
 
 
 ui.pushButton_del_param.clicked.connect(del_param)
