@@ -259,7 +259,7 @@ def upgrade_las_mean():
             DataLas.well_id == w_id,
             literal_column(f'{table_text}.{param}').isnot(None)
         ).order_by(DataLas.depth).all()
-        ui.progressBar.setMaximum(len(data_las) - 1)
+        ui.progressBar.setMaximum(int((data_las[-1].depth - data_las[0].depth) / 0.1))
         d = data_las[0].depth
         k, n_upd = 0, 0
         while d <= data_las[-1].depth:
