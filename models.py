@@ -37,6 +37,7 @@ class Well(Base):
     user_interval = relationship("UserInterval", back_populates='well')
     compare_interval = relationship("CompareInterval", back_populates='well')
     regression_analysis = relationship("RegressionWell", back_populates='well')
+    linkings = relationship("Linking", back_populates='well')
 
 
 class DataAge(Base):
@@ -576,6 +577,66 @@ class CalculatedData(Base):
     list_params_model = Column(Text)
     list_wells_model = Column(Text)
     comment = Column(Text)
+
+
+class Linking(Base):
+    __tablename__ = 'linking'
+
+    id = Column(Integer, primary_key=True)
+    well_id = Column(Integer, ForeignKey('wells.id'), nullable=False)
+    table_curve = Column(String)
+    param_curve = Column(String)
+    table_sample = Column(String)
+    param_sample = Column(String)
+    old_corr = Column(Float)
+
+    well = relationship('Well', back_populates='linkings')
+    samples = relationship('Sample', back_populates='linking')
+    tryings = relationship('Trying', back_populates='linking')
+
+
+class Sample(Base):
+    __tablename__ = 'sample'
+
+    id = Column(Integer, primary_key=True)
+    linking_id = Column(Integer, ForeignKey('linking.id'))
+    value = Column(Float)
+    depth = Column(Float)
+    skip = Column(Boolean, default=False)
+
+    linking = relationship('Linking', back_populates='samples')
+    shifts = relationship('Shift', back_populates='sample')
+
+
+class Trying(Base):
+    __tablename__ = 'trying'
+
+    id = Column(Integer, primary_key=True)
+    linking_id = Column(Integer, ForeignKey('linking.id'))
+    up_depth = Column(Float)
+    down_depth = Column(Float)
+    algorithm = Column(String)
+    method_shift = Column(String)
+    n_iter = Column(Integer)
+    limit = Column(Float)
+    bin = Column(Integer)
+    corr = Column(Float)
+    used = Column(Boolean, default=False)
+
+    linking = relationship('Linking', back_populates='tryings')
+    shifts = relationship('Shift', back_populates='trying')
+
+
+class Shift(Base):
+    __tablename__ = 'shift'
+
+    id = Column(Integer, primary_key=True)
+    trying_id = Column(Integer, ForeignKey('trying.id'))
+    sample_id = Column(Integer, ForeignKey('sample.id'))
+    distance = Column(Float)
+
+    trying = relationship('Trying', back_populates='shifts')
+    sample = relationship('Sample', back_populates='shifts')
 
 
 Base.metadata.create_all(engine)
