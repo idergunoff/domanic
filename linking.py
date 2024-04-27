@@ -280,9 +280,8 @@ def draw_result_linking():
     shifts = []
 
     for sample in samples:
-        shifts.append(
-            session.query(Shift).filter_by(sample_id=sample.id, trying_id=trying.id).first().distance
-        )
+        shift = session.query(Shift).filter_by(sample_id=sample.id, trying_id=trying.id).first()
+        shifts.append(shift.distance if shift else 0)
     y_sample_shift = [i + j for i, j in zip(y_sample, shifts)]
 
     curve_graph = pg.PlotCurveItem(x=x_curve, y=y_curve, pen=pg.mkPen(color='k', width=float(1)))
@@ -313,4 +312,11 @@ def draw_result_linking_sample():
     depth_line2.setPos(sample.depth + shift.distance)
 
 
+def remove_trying():
+    trying = session.query(Trying).filter_by(id=get_trying_id()).first()
+    for i in trying.shifts:
+        session.delete(i)
+    session.delete(trying)
+    session.commit()
+    update_listwidget_trying()
 

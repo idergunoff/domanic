@@ -189,11 +189,13 @@ ui.toolButton_add_linking.clicked.connect(add_linking)
 ui.toolButton_rem_linking.clicked.connect(remove_linking)
 ui.pushButton_samples_linking.clicked.connect(add_samples_to_linking)
 ui.pushButton_calc_linking.clicked.connect(calc_linking)
+ui.pushButton_remove_linking.clicked.connect(remove_trying)
 ui.comboBox_linking.currentIndexChanged.connect(update_listwidget_trying)
 ui.comboBox_linking.currentIndexChanged.connect(update_listwidget_samples)
 ui.listWidget_trying.clicked.connect(update_listwidget_samples_for_trying)
 ui.listWidget_trying.clicked.connect(draw_result_linking)
 ui.listWidget_sample.clicked.connect(draw_result_linking_sample)
+
 
 reset_fake_lda()
 comboBox_region_update()
