@@ -6,6 +6,7 @@ from user_interval import *
 from compare_interval import *
 from regression import *
 from calculated_data import *
+from linking import *
 
 MainWindow.show()
 
@@ -118,6 +119,7 @@ ui.pushButton_rel_color.clicked.connect(set_style_pushbutton_color)
 ui.comboBox_region.currentIndexChanged.connect(comboBox_area_update)
 ui.comboBox_area.currentIndexChanged.connect(comboBox_well_update)
 ui.comboBox_well.currentIndexChanged.connect(well_interval)
+ui.comboBox_well.currentIndexChanged.connect(update_combobox_linking)
 # ui.comboBox_color.activated.connect(set_style_combobox)
 ui.comboBox_dash.activated.connect(draw_current_graph_by_style)
 ui.comboBox_width.activated.connect(draw_current_graph_by_style)
@@ -181,6 +183,17 @@ ui.pushButton_trained_models_comment.clicked.connect(update_trained_model_commen
 ui.listWidget_calc_data.itemSelectionChanged.connect(show_calc_data)
 ui.pushButton_del_calc_data.clicked.connect(delete_calc_data)
 ui.pushButton_cut_calc_data.clicked.connect(cut_calc_data)
+
+# linking
+ui.toolButton_add_linking.clicked.connect(add_linking)
+ui.toolButton_rem_linking.clicked.connect(remove_linking)
+ui.pushButton_samples_linking.clicked.connect(add_samples_to_linking)
+ui.pushButton_calc_linking.clicked.connect(calc_linking)
+ui.comboBox_linking.currentIndexChanged.connect(update_listwidget_trying)
+ui.comboBox_linking.currentIndexChanged.connect(update_listwidget_samples)
+ui.listWidget_trying.clicked.connect(update_listwidget_samples_for_trying)
+ui.listWidget_trying.clicked.connect(draw_result_linking)
+ui.listWidget_sample.clicked.connect(draw_result_linking_sample)
 
 reset_fake_lda()
 comboBox_region_update()

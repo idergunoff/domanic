@@ -8,7 +8,7 @@ from PyQt5.QtCore import Qt
 from sqlalchemy import text, desc, literal_column
 from pandas import read_excel
 import pyqtgraph as pg
-from scipy.stats import describe, gmean, gaussian_kde
+from scipy.stats import describe, gmean, gaussian_kde, pearsonr
 from numpy import median, float64
 from collections import Counter
 from statistics import mean
@@ -42,6 +42,9 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.svm import SVR
 from sklearn.tree import DecisionTreeRegressor
 from sklearn.pipeline import Pipeline
+
+
+from platypus import NSGAII, NSGAIII, OMOPSO, GDE3, Problem, Real
 
 from qt.add_area_dialog import *
 from qt.add_region_dialog import *
@@ -1030,3 +1033,63 @@ def math_round(number, n_digits=0):
     return result / multiplier
 
 
+def get_linking_id():
+    """ Возвращает id привязки """
+    return ui.comboBox_linking.currentText().split(' id')[-1]
+
+def get_trying_id():
+    """ Возвращает trying_id """
+    return ui.listWidget_trying.currentItem().text().split(' id')[-1]
+
+def get_sample_id():
+    """ Возвращает id образца """
+    return ui.listWidget_sample.currentItem().text().split(' id')[-1]
+
+
+def update_combobox_linking():
+    """ Обновление списка привязок """
+    ui.comboBox_linking.clear()
+    n = 1
+    for i in session.query(Linking).filter_by(well_id=get_well_id()).all():
+        ui.comboBox_linking.addItem(f'{n}. {i.table_curve}({i.param_curve}) - {i.table_sample}({i.param_sample}) id{i.id}')
+        n += 1
+    ui.comboBox_linking.setCurrentIndex(0)
+    update_listwidget_samples()
+
+
+def update_listwidget_samples():
+    """ Обновление списка образцов """
+    ui.listWidget_sample.clear()
+    n = 1
+    for i in session.query(Sample).filter_by(linking_id=get_linking_id()).all():
+        ui.listWidget_sample.addItem(f'{n}. {i.depth} - {i.value}')
+        n += 1
+
+
+def update_listwidget_samples_for_trying():
+    """ Обновление списка образцов """
+    ui.listWidget_sample.clear()
+    id_trying = get_trying_id()
+    n = 1
+    for i in session.query(Sample).filter_by(linking_id=get_linking_id()).all():
+        shift = session.query(Shift).filter_by(trying_id=id_trying, sample_id=i.id).first()
+        shift_dist = shift.distance if shift else 0
+        ui.listWidget_sample.addItem(f'{n}. {i.depth} - {i.value} shift: {shift_dist} м id{i.id}')
+        n += 1
+
+
+def update_listwidget_trying():
+    ui.listWidget_trying.clear()
+    n = 1
+    for i in session.query(Trying).filter_by(linking_id=get_linking_id()).all():
+        item = QtWidgets.QListWidgetItem(f'{n}. {i.algorithm} {i.old_corr}/{i.corr} {i.method_shift}:{i.shift_value} id{i.id}')
+        text_tooltip = (f'depth: {i.up_depth}-{i.down_depth}\n'
+                        f'algorithm: {i.algorithm}\n'
+                        f'n_iter: {i.n_iter}\n'
+                        f'limit:{i.limit}\n'
+                        f'bin:{i.bin}\n'
+                        f'{i.method_shift}: {i.shift_value}\n'
+                        f'old_corr/corr: {i.old_corr}/{i.corr}\n')
+        item.setToolTip(text_tooltip)
+        ui.listWidget_trying.addItem(item)
+        n += 1

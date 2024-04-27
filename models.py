@@ -579,6 +579,10 @@ class CalculatedData(Base):
     comment = Column(Text)
 
 
+########################
+####### LINKING ########
+########################
+
 class Linking(Base):
     __tablename__ = 'linking'
 
@@ -588,7 +592,6 @@ class Linking(Base):
     param_curve = Column(String)
     table_sample = Column(String)
     param_sample = Column(String)
-    old_corr = Column(Float)
 
     well = relationship('Well', back_populates='linkings')
     samples = relationship('Sample', back_populates='linking')
@@ -620,7 +623,9 @@ class Trying(Base):
     n_iter = Column(Integer)
     limit = Column(Float)
     bin = Column(Integer)
+    old_corr = Column(Float)
     corr = Column(Float)
+    shift_value = Column(Float)
     used = Column(Boolean, default=False)
 
     linking = relationship('Linking', back_populates='tryings')
