@@ -380,7 +380,7 @@ def draw_param_table(widget_list, table, table_text):
         ui.tableWidget.insertRow(n)
         for k, j in enumerate(i):
             if k == 0:
-                j = round(j, 1)
+                j = int(j * 10) / 10
                 age = session.query(DataAge.age).filter(DataAge.well_id == w_id, DataAge.depth >= j, DataAge.depth < j + 0.1).first()
                 age = '' if age is None else str(age[0])
             if k == 2:

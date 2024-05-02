@@ -1,5 +1,7 @@
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+from PyQt5.QtCore import QModelIndex
 
 from functions import *
 
@@ -201,19 +203,17 @@ def calc_linking():
     # Получаем множество Парето-оптимальных решений
     pareto_front = algorithm.result
 
-    for solution in pareto_front:
-        print(solution.objectives)
 
-    fig, ax = plt.subplots(nrows=1, ncols=2, figsize=(20, 10))
-    ax[0].scatter([s.objectives[0] for s in algorithm.result],
+    fig, ax = plt.subplots(nrows=2, ncols=2, figsize=(20, 16))
+    ax[0, 0].scatter([s.objectives[0] for s in algorithm.result],
                   [s.objectives[1] for s in algorithm.result], marker='o', s=30, alpha=0.7)
-    ax[0].grid()
+    ax[0, 0].grid()
+    ax[0, 0].set_title('Парето-фронт')
 
-    an, bins, patches = ax[1].hist([s.objectives[0] for s in algorithm.result], bins=ui.spinBox_linking_bin.value(), rwidth=0.9)
+    an, bins, patches = ax[0, 1].hist([s.objectives[0] for s in algorithm.result], bins=ui.spinBox_linking_bin.value(), rwidth=0.9)
 
-    ax[1].grid()
-
-    fig.show()
+    ax[0, 1].grid()
+    ax[0, 1].set_title('Гистограмма распределения значений корреляции')
 
     # Получение индекса последнего бина
     last_bin_idx = len(bins) - 2  # Индексы в bins от 0 до len(bins)-1, поэтому последний бин имеет индекс len(bins)-2
@@ -222,8 +222,14 @@ def calc_linking():
     last_bin_min, last_bin_max = bins[last_bin_idx], bins[last_bin_idx + 1]
 
     # Фильтрация значений из последнего бина
-    last_bin_values = [[s.objectives[0], s.objectives[1], s.variables] for s in algorithm.result if last_bin_min <= s.objectives[0] < last_bin_max]
-    best = sorted(last_bin_values, key=lambda x: x[1])[0]
+    last_bin_values = [[s.objectives[0], s.objectives[1], s.variables] for s in algorithm.result if last_bin_min <= s.objectives[0] <= last_bin_max]
+    try:
+        best = sorted(last_bin_values, key=lambda x: x[1])[0]
+    except IndexError:
+        print(f"Last bin: {last_bin_values}")
+        QMessageBox.critical(MainWindow, 'Ошибка', 'Не удалось построить распределение корреляции, попробуйте увеличить количество итераций')
+        return
+
     best_round = [round(best[0], 3), round(best[1], 3), [round(i, 1) for i in best[2]]]
     print(f"Best solution: {best_round}")
 
@@ -234,26 +240,37 @@ def calc_linking():
     session.commit()
 
     update_listwidget_trying()
+    ui.listWidget_trying.setCurrentRow(ui.listWidget_trying.count() - 1)
+    draw_result_linking()
 
-    fig2 = plt.figure(figsize=(25, 10))
-    ax2 = fig2.add_subplot(111)
-    ax2.plot(df['depth'], df['curve'])
-    ax2.scatter(start_depth, list_val_samples, marker='o', color='red', s=30, alpha=0.5)
-    ax2.scatter([best[2][i]+start_depth[i] for i in range(len(best[2]))], list_val_samples, marker='o', color='green', s=30, alpha=0.5)
-    ax2.grid()
-    fig2.show()
+    # fig2 = plt.figure(figsize=(25, 10))
+    # ax2 = fig2.add_subplot(111)
+    # ax2.plot(df['depth'], df['curve'])
+    # ax2.scatter(start_depth, list_val_samples, marker='o', color='red', s=30, alpha=0.5)
+    # ax2.scatter([best[2][i]+start_depth[i] for i in range(len(best[2]))], list_val_samples, marker='o', color='green', s=30, alpha=0.5)
+    # ax2.grid()
+    # fig2.show()
 
     corr_shifts = [round(i, 1) for i in best[2]]
     current_depth = [round(depth + x, 1) for depth, x in zip(start_depth, corr_shifts)]
     list_A = [df.loc[df['depth'] == depth, 'curve'].tolist()[0] for depth in current_depth]
     list_Aold = [df.loc[df['depth'] == depth, 'curve'].tolist()[0] for depth in start_depth]
 
-    df_graph = pd.DataFrame({'GK': list_A, 'toc': list_val_samples, 'GKold': list_Aold})
+    df_graph = pd.DataFrame({curr_link.param_curve: list_A,
+                             curr_link.param_sample: list_val_samples,
+                             f'{curr_link.param_curve} old': list_Aold})
 
-    sns.lmplot(data=df_graph, x='GK', y='toc')
-    sns.lmplot(data=df_graph, x='GKold', y='toc')
-
+    sns.regplot(data=df_graph, x=f'{curr_link.param_curve} old', y=curr_link.param_sample, ax=ax[1, 0])
+    ax[1, 0].grid()
+    ax[1, 0].set_title('График корреляции до сдвига')
+    sns.regplot(data=df_graph, x=curr_link.param_curve, y=curr_link.param_sample, ax=ax[1, 1])
+    ax[1, 1].grid()
+    ax[1, 1].set_title('График корреляции после сдвига')
+    fig.tight_layout()
+    fig.show()
     plt.show()
+
+
 
 def draw_result_linking():
     ui.graphicsView.clear()
@@ -319,4 +336,14 @@ def remove_trying():
     session.delete(trying)
     session.commit()
     update_listwidget_trying()
+
+
+def set_linking_options():
+    trying = session.query(Trying).filter_by(id=get_trying_id()).first()
+    ui.comboBox_opt_algorithm.setCurrentText(trying.algorithm)
+    ui.comboBox_shift_method.setCurrentText(trying.method_shift)
+    ui.spinBox_n_iter_linking.setValue(trying.n_iter)
+    ui.spinBox_linking_bin.setValue(trying.bin)
+    ui.doubleSpinBox_lim_shift.setValue(trying.limit)
+
 

@@ -194,6 +194,7 @@ ui.comboBox_linking.currentIndexChanged.connect(update_listwidget_trying)
 ui.comboBox_linking.currentIndexChanged.connect(update_listwidget_samples)
 ui.listWidget_trying.clicked.connect(update_listwidget_samples_for_trying)
 ui.listWidget_trying.clicked.connect(draw_result_linking)
+ui.listWidget_trying.clicked.connect(set_linking_options)
 ui.listWidget_sample.clicked.connect(draw_result_linking_sample)
 
 
