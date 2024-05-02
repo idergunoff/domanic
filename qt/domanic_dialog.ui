@@ -3573,16 +3573,6 @@ selection-color: rgb(85, 0, 0);</string>
                             </item>
                            </widget>
                           </item>
-                          <item row="5" column="0">
-                           <widget class="QPushButton" name="pushButton_samples_linking">
-                            <property name="styleSheet">
-                             <string notr="true">background-color: rgb(191, 255, 191);</string>
-                            </property>
-                            <property name="text">
-                             <string>samples</string>
-                            </property>
-                           </widget>
-                          </item>
                           <item row="1" column="0">
                            <widget class="QLabel" name="label_36">
                             <property name="text">
@@ -3590,13 +3580,6 @@ selection-color: rgb(85, 0, 0);</string>
                             </property>
                             <property name="alignment">
                              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                            </property>
-                           </widget>
-                          </item>
-                          <item row="7" column="0">
-                           <widget class="QPushButton" name="pushButton_5">
-                            <property name="text">
-                             <string/>
                             </property>
                            </widget>
                           </item>
@@ -3731,6 +3714,26 @@ selection-color: rgb(85, 0, 0);</string>
                            </widget>
                           </item>
                           <item row="8" column="0">
+                           <widget class="QPushButton" name="pushButton_samples_linking">
+                            <property name="styleSheet">
+                             <string notr="true">background-color: rgb(191, 255, 191);</string>
+                            </property>
+                            <property name="text">
+                             <string>samples</string>
+                            </property>
+                           </widget>
+                          </item>
+                          <item row="5" column="0">
+                           <widget class="QPushButton" name="pushButton_add_trying">
+                            <property name="styleSheet">
+                             <string notr="true">background-color: rgb(191, 255, 191);</string>
+                            </property>
+                            <property name="text">
+                             <string>add trying</string>
+                            </property>
+                           </widget>
+                          </item>
+                          <item row="7" column="0">
                            <widget class="QPushButton" name="pushButton">
                             <property name="text">
                              <string/>

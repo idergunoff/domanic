@@ -605,10 +605,10 @@ class Sample(Base):
     linking_id = Column(Integer, ForeignKey('linking.id'))
     value = Column(Float)
     depth = Column(Float)
-    skip = Column(Boolean, default=False)
 
     linking = relationship('Linking', back_populates='samples')
     shifts = relationship('Shift', back_populates='sample')
+    skips = relationship('SkipSample', back_populates='sample')
 
 
 class Trying(Base):
@@ -630,7 +630,18 @@ class Trying(Base):
 
     linking = relationship('Linking', back_populates='tryings')
     shifts = relationship('Shift', back_populates='trying')
+    skips = relationship('SkipSample', back_populates='trying')
 
+
+class SkipSample(Base):
+    __tablename__ = 'skip_sample'
+
+    id = Column(Integer, primary_key=True)
+    trying_id = Column(Integer, ForeignKey('trying.id'))
+    sample_id = Column(Integer, ForeignKey('sample.id'))
+
+    trying = relationship('Trying', back_populates='skips')
+    sample = relationship('Sample', back_populates='skips')
 
 class Shift(Base):
     __tablename__ = 'shift'

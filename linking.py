@@ -90,7 +90,7 @@ def add_samples_to_linking():
         ).first()
         if curve_val:
             new_sample = Sample(
-                depth=round(s[0], 1),
+                depth=int(s[0] * 10) / 10,
                 value=s[1],
                 linking_id=curr_link.id
             )
@@ -99,8 +99,46 @@ def add_samples_to_linking():
     update_listwidget_samples()
 
 
-def new_trying(old_correlation, correlation, shift_val, ):
-    """ Новая попытка """
+def add_samples_to_skip_by_interval(start_depth, stop_depth, trying):
+    for s in trying.linking.samples:
+        if s.depth < start_depth or s.depth >= stop_depth:
+            new_skip_sample = SkipSample(trying_id=trying.id, sample_id=s.id)
+            session.add(new_skip_sample)
+    session.commit()
+
+
+def add_sample_to_skip():
+    trying = session.query(Trying).filter_by(id=get_trying_id()).first()
+    if trying.corr:
+        result = QMessageBox.question(MainWindow, 'Внимание', 'Сдвиги привязки уже рассчитаны. При изменении списка '
+                                                              'исключений все расчеты будут сброшены. Продолжить?',
+                                      QMessageBox.Yes | QMessageBox.No)
+        if result == QMessageBox.No:
+            return
+        else:
+            trying.corr = None
+            trying.old_corr = None
+            trying.shift_value = None
+            for i in trying.shifts:
+                session.delete(i)
+            session.commit()
+            update_listwidget_trying()
+            for i in range(ui.listWidget_trying.count()):
+                if int(ui.listWidget_trying.item(i).text().split(' id')[-1]) == trying.id:
+                    ui.listWidget_trying.setCurrentRow(i)
+    skip = session.query(SkipSample).filter_by(trying_id=get_trying_id(), sample_id=get_sample_id()).first()
+    if skip:
+        session.delete(skip)
+    else:
+        new_skip_sample = SkipSample(trying_id=get_trying_id(), sample_id=get_sample_id())
+        session.add(new_skip_sample)
+    session.commit()
+    update_listwidget_samples_for_trying()
+    draw_result_linking()
+
+
+
+def add_new_trying():
     new_trying = Trying(
         linking_id=get_linking_id(),
         up_depth=round(ui.doubleSpinBox_start.value(), 1),
@@ -109,20 +147,20 @@ def new_trying(old_correlation, correlation, shift_val, ):
         method_shift=ui.comboBox_shift_method.currentText(),
         n_iter=ui.spinBox_n_iter_linking.value(),
         limit=round(ui.doubleSpinBox_lim_shift.value(), 1),
-        bin=ui.spinBox_linking_bin.value(),
-        old_corr=old_correlation,
-        corr=correlation,
-        shift_value=shift_val
-        )
+        bin=ui.spinBox_linking_bin.value()
+    )
     session.add(new_trying)
     session.commit()
 
-    return new_trying
+    start, stop = check_start_stop()
+    add_samples_to_skip_by_interval(start, stop, new_trying)
+    update_listwidget_trying()
 
 
 def calc_linking():
     """ Расчет привязки """
     curr_link = session.query(Linking).filter_by(id=get_linking_id()).first()
+    start, stop = check_start_stop()
     t_curve = get_table(curr_link.table_curve)
     curve = session.query(
         t_curve.depth, literal_column(f'{curr_link.table_curve}.{curr_link.param_curve}')
@@ -133,17 +171,19 @@ def calc_linking():
 
     samples = session.query(Sample).filter(
         Sample.linking_id == curr_link.id,
-        Sample.depth >= ui.doubleSpinBox_start.value(),
-        Sample.depth <= ui.doubleSpinBox_stop.value()
     ).order_by(Sample.depth).all()
     df = pd.DataFrame(curve, columns=['depth', 'curve'])
     print(df)
 
-    ui.progressBar.setMaximum(ui.spinBox_n_iter_linking.value())
+    curr_trying = session.query(Trying).filter_by(id=get_trying_id()).first()
+
+    ui.progressBar.setMaximum(curr_trying.n_iter)
     ui.progressBar.setValue(0)
 
-    list_val_samples = [s.value for s in samples]
-    start_depth = [s.depth for s in samples]
+    list_skip = [i.sample_id for i in session.query(SkipSample).filter_by(trying_id=curr_trying.id).all()]
+
+    list_val_samples = [s.value for s in samples if s.id not in list_skip]
+    start_depth = [s.depth for s in samples if s.id not in list_skip]
     # list_gk = [df.loc[df['depth'] == x, 'GK'].tolist()[0] for x in start_depth]
     start_shifts = [0 for _ in start_depth]
 
@@ -151,10 +191,10 @@ def calc_linking():
     old_corr, _ = pearsonr(list_curve, list_val_samples)
 
     def check_intersection_samples(start_depth: list, values: list, shifts: list) -> bool:
-        samples = [[d, v] for d, v in zip(start_depth, values)]
-        sort_sample = sorted(samples, key=lambda x: x[0])
+        list_samples = [[d, v] for d, v in zip(start_depth, values)]
+        sort_sample = sorted(list_samples, key=lambda x: x[0])
         value_old = [i[1] for i in sort_sample]
-        shift_sample = [[s[0] + shift, s[1]] for s, shift in zip(samples, shifts)]
+        shift_sample = [[s[0] + shift, s[1]] for s, shift in zip(list_samples, shifts)]
         sort_shift_simple = sorted(shift_sample, key=lambda x: x[0])
         value_new, depth_new = [i[1] for i in sort_shift_simple], [i[0] for i in sort_shift_simple]
 
@@ -178,31 +218,27 @@ def calc_linking():
         return corr
 
     def shift_func(shifts):
-        if ui.comboBox_shift_method.currentText() == 'sum':
+        if curr_trying.method_shift == 'sum':
             return np.sum(np.abs(shifts))  # Минимизируем сумму абсолютных значений сдвигов
-        elif ui.comboBox_shift_method.currentText() == 'mean':
+        elif curr_trying.method_shift == 'mean':
             return np.mean(np.abs(shifts))
-        elif ui.comboBox_shift_method.currentText() == 'median':
+        elif curr_trying.method_shift == 'median':
             return np.median(np.abs(shifts))
 
     # Определение проблемы мультиобъективной оптимизации
     problem = Problem(len(start_shifts), 2)  # Задача с len(depths_B) переменными и 2 целевыми функциями
-    problem.types[:] = Real(-ui.doubleSpinBox_lim_shift.value(), ui.doubleSpinBox_lim_shift.value())  # Ограничение на диапазон сдвигов
+    problem.types[:] = Real(-curr_trying.limit, curr_trying.limit)  # Ограничение на диапазон сдвигов
     problem.directions[0] = Problem.MAXIMIZE  # Минимизация отрицательной корреляции (максимизация корреляции)
     problem.directions[1] = Problem.MINIMIZE  # Минимизация суммы абсолютных значений сдвигов
     # problem.constraints[:] = ">=0"  # Ограничение на неотрицательные сдвиги
     problem.function = lambda shifts: [correlation_func(shifts, df, start_depth, list_val_samples, 'curve'), shift_func(shifts)]
 
     # Оптимизация с использованием NSGA-II или GDE3
-    if ui.comboBox_opt_algorithm.currentText() == 'NSGA-II':
+    if curr_trying.algorithm == 'NSGA-II':
         algorithm = NSGAII(problem)
     else:
         algorithm = GDE3(problem)
-    algorithm.run(ui.spinBox_n_iter_linking.value())  # Запускаем алгоритм с 10000 итераций
-
-    # Получаем множество Парето-оптимальных решений
-    pareto_front = algorithm.result
-
+    algorithm.run(curr_trying.n_iter)  # Запускаем алгоритм с 10000 итераций
 
     fig, ax = plt.subplots(nrows=2, ncols=2, figsize=(20, 16))
     ax[0, 0].scatter([s.objectives[0] for s in algorithm.result],
@@ -210,7 +246,7 @@ def calc_linking():
     ax[0, 0].grid()
     ax[0, 0].set_title('Парето-фронт')
 
-    an, bins, patches = ax[0, 1].hist([s.objectives[0] for s in algorithm.result], bins=ui.spinBox_linking_bin.value(), rwidth=0.9)
+    an, bins, patches = ax[0, 1].hist([s.objectives[0] for s in algorithm.result], bins=curr_trying.bin, rwidth=0.9)
 
     ax[0, 1].grid()
     ax[0, 1].set_title('Гистограмма распределения значений корреляции')
@@ -227,21 +263,27 @@ def calc_linking():
         best = sorted(last_bin_values, key=lambda x: x[1])[0]
     except IndexError:
         print(f"Last bin: {last_bin_values}")
-        QMessageBox.critical(MainWindow, 'Ошибка', 'Не удалось построить распределение корреляции, попробуйте увеличить количество итераций')
-        return
+        return QMessageBox.critical(MainWindow, 'Ошибка', 'Не удалось построить распределение корреляции, попробуйте увеличить количество итераций')
 
     best_round = [round(best[0], 3), round(best[1], 3), [round(i, 1) for i in best[2]]]
     print(f"Best solution: {best_round}")
 
-    curr_trying = new_trying(round(old_corr, 3), best_round[0], best_round[1])
+    curr_trying.old_corr = round(old_corr, 3)
+    curr_trying.corr = best_round[0]
+    curr_trying.shift_value = best_round[1]
+
+    list_samples_id = [s.id for s in samples if s.id not in list_skip]
     for n, i in enumerate(best_round[2]):
-        new_shift = Shift(sample_id=samples[n].id, trying_id=curr_trying.id, distance=i)
+        new_shift = Shift(sample_id=list_samples_id[n], trying_id=curr_trying.id, distance=i)
         session.add(new_shift)
     session.commit()
 
-    update_listwidget_trying()
-    ui.listWidget_trying.setCurrentRow(ui.listWidget_trying.count() - 1)
     draw_result_linking()
+    update_listwidget_trying()
+    for i in range(ui.listWidget_trying.count()):
+        if int(ui.listWidget_trying.item(i).text().split(' id')[-1]) == curr_trying.id:
+            ui.listWidget_trying.setCurrentRow(i)
+    update_listwidget_samples_for_trying()
 
     # fig2 = plt.figure(figsize=(25, 10))
     # ax2 = fig2.add_subplot(111)
@@ -276,14 +318,16 @@ def draw_result_linking():
     ui.graphicsView.clear()
     trying = session.query(Trying).filter_by(id=get_trying_id()).first()
     samples = session.query(Sample).filter_by(linking_id=trying.linking_id).order_by(Sample.depth).all()
+    list_skip = [i.sample_id for i in session.query(SkipSample).filter_by(trying_id=trying.id).all()]
+    samples = [s for s in samples if s.id not in list_skip]
     int_up, int_down = samples[0].depth, samples[-1].depth
     padding = (int_up - int_down) / 10
     tab = get_table(trying.linking.table_curve)
     curve = session.query(
         literal_column(f'{trying.linking.table_curve}.{trying.linking.param_curve}'), tab.depth
     ).filter(
-        tab.depth >= int_up + padding,
-        tab.depth <= int_down - padding,
+        # tab.depth >= int_up + padding,
+        # tab.depth <= int_down - padding,
         tab.well_id == trying.linking.well_id,
         literal_column(f'{trying.linking.table_curve}.{trying.linking.param_curve}').isnot(None)
     ).all()
@@ -313,6 +357,7 @@ def draw_result_linking():
     sample_graph.getViewBox().invertY(True)
     ui.graphicsView.addItem(sample_graph_shift)
     sample_graph_shift.getViewBox().invertY(True)
+    ui.graphicsView.setYRange(int_up, int_down, padding=-padding)
 
 
 
@@ -322,16 +367,19 @@ def draw_result_linking_sample():
     shift = session.query(Shift).filter_by(sample_id=sample.id, trying_id=get_trying_id()).first()
 
     depth_line1 = pg.InfiniteLine(angle=0, pen=pg.mkPen(color='b', width=1, dash=[2, 2]))
-    depth_line2 = pg.InfiniteLine(angle=0, pen=pg.mkPen(color='b', width=1, dash=[2, 2]))
     ui.graphicsView.addItem(depth_line1)
-    ui.graphicsView.addItem(depth_line2)
     depth_line1.setPos(sample.depth)
-    depth_line2.setPos(sample.depth + shift.distance)
+    if shift:
+        depth_line2 = pg.InfiniteLine(angle=0, pen=pg.mkPen(color='b', width=1, dash=[2, 2]))
+        ui.graphicsView.addItem(depth_line2)
+        depth_line2.setPos(sample.depth + shift.distance)
 
 
 def remove_trying():
     trying = session.query(Trying).filter_by(id=get_trying_id()).first()
     for i in trying.shifts:
+        session.delete(i)
+    for i in trying.skips:
         session.delete(i)
     session.delete(trying)
     session.commit()

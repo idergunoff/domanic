@@ -1046,6 +1046,7 @@ def get_sample_id():
     return ui.listWidget_sample.currentItem().text().split(' id')[-1]
 
 
+
 def update_combobox_linking():
     """ Обновление списка привязок """
     ui.comboBox_linking.clear()
@@ -1053,7 +1054,7 @@ def update_combobox_linking():
     for i in session.query(Linking).filter_by(well_id=get_well_id()).all():
         ui.comboBox_linking.addItem(f'{n}. {i.table_curve}({i.param_curve}) - {i.table_sample}({i.param_sample}) id{i.id}')
         n += 1
-    ui.comboBox_linking.setCurrentIndex(0)
+    # ui.comboBox_linking.setCurrentIndex(0)
     update_listwidget_samples()
 
 
@@ -1070,11 +1071,15 @@ def update_listwidget_samples_for_trying():
     """ Обновление списка образцов """
     ui.listWidget_sample.clear()
     id_trying = get_trying_id()
+    list_skip = [i.sample_id for i in session.query(SkipSample).filter_by(trying_id=id_trying).all()]
     n = 1
     for i in session.query(Sample).filter_by(linking_id=get_linking_id()).all():
         shift = session.query(Shift).filter_by(trying_id=id_trying, sample_id=i.id).first()
         shift_dist = shift.distance if shift else 0
-        ui.listWidget_sample.addItem(f'{n}. {i.depth} - {i.value} shift: {shift_dist} м id{i.id}')
+        item = QtWidgets.QListWidgetItem(f'{n}. {i.depth} - {i.value} shift: {shift_dist} м id{i.id}')
+        if i.id in list_skip:
+            item.setBackground(QtGui.QColor(255, 0, 0))
+        ui.listWidget_sample.addItem(item)
         n += 1
 
 
