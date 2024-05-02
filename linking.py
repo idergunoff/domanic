@@ -357,7 +357,7 @@ def draw_result_linking():
     sample_graph.getViewBox().invertY(True)
     ui.graphicsView.addItem(sample_graph_shift)
     sample_graph_shift.getViewBox().invertY(True)
-    ui.graphicsView.setYRange(int_up, int_down, padding=-padding)
+    ui.graphicsView.setYRange(int_up, int_down, padding=-5)
 
 
 
