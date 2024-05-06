@@ -38,6 +38,7 @@ class Well(Base):
     compare_interval = relationship("CompareInterval", back_populates='well')
     regression_analysis = relationship("RegressionWell", back_populates='well')
     linkings = relationship("Linking", back_populates='well')
+    used_shifts = relationship("UsedShift", back_populates='well')
 
 
 class DataAge(Base):
@@ -653,6 +654,21 @@ class Shift(Base):
 
     trying = relationship('Trying', back_populates='shifts')
     sample = relationship('Sample', back_populates='shifts')
+    used_shift = relationship('UsedShift', back_populates='shift')
+
+
+class UsedShift(Base):
+    __tablename__ = 'used_shift'
+
+    id = Column(Integer, primary_key=True)
+    shift_id = Column(Integer, ForeignKey('shift.id'))
+    well_id = Column(Integer, ForeignKey('wells.id'))
+    table_name = Column(String)
+    tab_sample_id = Column(Integer)
+    start_depth = Column(Float)
+
+    shift = relationship('Shift', back_populates='used_shift')
+    well = relationship('Well', back_populates='used_shifts')
 
 
 Base.metadata.create_all(engine)

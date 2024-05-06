@@ -273,6 +273,9 @@ def calc_linking():
     curr_trying.shift_value = best_round[1]
 
     list_samples_id = [s.id for s in samples if s.id not in list_skip]
+    for s in list_samples_id:
+        session.query(Shift).filter(Shift.sample_id == s, Shift.trying_id == curr_trying.id).delete()
+    session.commit()
     for n, i in enumerate(best_round[2]):
         new_shift = Shift(sample_id=list_samples_id[n], trying_id=curr_trying.id, distance=i)
         session.add(new_shift)
@@ -293,8 +296,11 @@ def calc_linking():
     # ax2.grid()
     # fig2.show()
 
-    corr_shifts = [round(i, 1) for i in best[2]]
+    corr_shifts = [i for i in best_round[2]]
     current_depth = [round(depth + x, 1) for depth, x in zip(start_depth, corr_shifts)]
+    # print(f"Current depth: {current_depth}")
+    # print(f"Start depth: {start_depth}")
+    # print(f"Corr shifts: {corr_shifts}")
     list_A = [df.loc[df['depth'] == depth, 'curve'].tolist()[0] for depth in current_depth]
     list_Aold = [df.loc[df['depth'] == depth, 'curve'].tolist()[0] for depth in start_depth]
 
@@ -303,6 +309,7 @@ def calc_linking():
                              f'{curr_link.param_curve} old': list_Aold})
 
     sns.regplot(data=df_graph, x=f'{curr_link.param_curve} old', y=curr_link.param_sample, ax=ax[1, 0])
+    print(df_graph)
     ax[1, 0].grid()
     ax[1, 0].set_title('График корреляции до сдвига')
     sns.regplot(data=df_graph, x=curr_link.param_curve, y=curr_link.param_sample, ax=ax[1, 1])
@@ -395,3 +402,71 @@ def set_linking_options():
     ui.doubleSpinBox_lim_shift.setValue(trying.limit)
 
 
+def use_trying_linking():
+    trying = session.query(Trying).filter_by(id=get_trying_id()).first()
+    tab = get_table(trying.linking.table_sample)
+    list_trying_id, list_new_used_shift = [trying.id], []
+    for shift in trying.shifts:
+        used_shift = session.query(UsedShift).filter(
+            UsedShift.well_id == get_well_id(),
+            UsedShift.start_depth >= shift.sample.depth,
+            UsedShift.start_depth < shift.sample.depth + 0.1
+        ).first()
+        if used_shift:
+            tab_sample = session.query(tab).filter_by(id=used_shift.tab_sample_id).first()
+            list_trying_id.append(used_shift.shift.trying_id)
+            tab_sample.depth = round(used_shift.start_depth + shift.distance, 2)
+            used_shift.shift_id = shift.id
+        else:
+            tab_sample = session.query(tab).filter(
+                tab.well_id == get_well_id(),
+                tab.depth >= shift.sample.depth,
+                tab.depth < shift.sample.depth + 0.1
+            ).first()
+            new_used_shift = UsedShift(
+                shift_id=shift.id,
+                well_id=get_well_id(),
+                table_name=trying.linking.table_sample,
+                tab_sample_id=tab_sample.id,
+                start_depth=tab_sample.depth
+            )
+            list_new_used_shift.append([tab_sample.id, round(tab_sample.depth + shift.distance, 2)])
+            session.add(new_used_shift)
+            # tab_sample.depth = tab_sample.depth + shift.distance
+    session.commit()
+
+    for i in list_new_used_shift:
+        session.query(tab).filter_by(id=i[0]).update({tab.depth: i[1]}, synchronize_session='fetch')
+    session.commit()
+
+    for t_id in list_trying_id:
+        if session.query(UsedShift).join(Shift).filter(Shift.trying_id == t_id).count() > 0:
+            session.query(Trying).filter_by(id=t_id).update({'used':True})
+        else:
+            session.query(Trying).filter_by(id=t_id).update({'used':False})
+    session.commit()
+    update_listwidget_trying()
+
+
+def cansel_used_linking():
+    trying = session.query(Trying).filter_by(id=get_trying_id()).first()
+    tab = get_table(trying.linking.table_sample)
+    for shift in trying.shifts:
+        if shift.used_shift:
+            session.query(tab).filter(tab.id == shift.used_shift[0].tab_sample_id).update(
+                {tab.depth: shift.used_shift[0].start_depth},
+                synchronize_session='fetch'
+            )
+            session.delete(shift.used_shift[0])
+            session.commit()
+    trying.used = False
+    session.commit()
+    update_listwidget_trying()
+
+
+def test_linking():
+    trying = session.query(Trying).filter_by(id=get_trying_id()).first()
+    n = 1
+    for shift in trying.shifts:
+        print(n, shift.used_shift[0].start_depth, shift.used_shift[0].tab_sample_id)
+        n += 1

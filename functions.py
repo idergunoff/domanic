@@ -1096,5 +1096,7 @@ def update_listwidget_trying():
                         f'{i.method_shift}: {i.shift_value}\n'
                         f'old_corr/corr: {i.old_corr}/{i.corr}\n')
         item.setToolTip(text_tooltip)
+        if i.used:
+            item.setBackground(QtGui.QColor('#ffe9a8'))
         ui.listWidget_trying.addItem(item)
         n += 1
