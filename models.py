@@ -87,6 +87,26 @@ class DataPirolizKern(Base):
     oi = Column(Float)
     oico = Column(Float)
 
+    s1r_r = Column(Float)
+    s2a_r = Column(Float)
+    oil_r = Column(Float)
+    s2b_r = Column(Float)
+    tmax_r = Column(Float)
+    s3_r = Column(Float)
+    pc_r = Column(Float)
+    rc_r = Column(Float)
+    toc_r = Column(Float)
+    cmin_r = Column(Float)
+    hi_r = Column(Float)
+    oi_r = Column(Float)
+    tpi_r = Column(Float)
+    nso_kero_r = Column(Float)
+    light_oil_r = Column(Float)
+    heavy_oil_r = Column(Float)
+    nso_kero_part_r = Column(Float)
+    osi_r = Column(Float)
+    api_index = Column(Float)
+
 
 class DataPirolizExtr(Base):
     __tablename__ = 'data_piroliz_extr'
@@ -121,6 +141,26 @@ class DataPirolizExtr(Base):
     pi = Column(Float)
     oi = Column(Float)
     oico = Column(Float)
+
+    s1r_r = Column(Float)
+    s2a_r = Column(Float)
+    oil_r = Column(Float)
+    s2b_r = Column(Float)
+    tmax_r = Column(Float)
+    s3_r = Column(Float)
+    pc_r = Column(Float)
+    rc_r = Column(Float)
+    toc_r = Column(Float)
+    cmin_r = Column(Float)
+    hi_r = Column(Float)
+    oi_r = Column(Float)
+    tpi_r = Column(Float)
+    nso_kero_r = Column(Float)
+    light_oil_r = Column(Float)
+    heavy_oil_r = Column(Float)
+    nso_kero_part_r = Column(Float)
+    osi_r = Column(Float)
+    api_index = Column(Float)
 
 
 class DataChromExtr(Base):
