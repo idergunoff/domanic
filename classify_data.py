@@ -214,23 +214,23 @@ def calc_class_lim():
         if len(list_class) == len(class_params) + 1:    # если определены все параметры
             ui.tableWidget.insertRow(k)     # создаем новую строку в виджете таблицы
             list_class.append(list_name_cat[choice_category(list_class[1:], len(list_param))])   # вычисление результирующей производной
-            if list_tab[0] != 'data_las':   # если первый параметр не LAS получаем номер образца
+            if list_tab[0] != 'data_las' and not ui.checkBox_class_use_ml.isChecked():   # если первый параметр не LAS получаем номер образца
                 tab = get_table(list_tab[0])
                 name_obr = session.query(tab.name).filter(tab.well_id == w_id, tab.depth >= d, tab.depth < d + 0.1).first()[0]
                 ui.tableWidget.setItem(k, 1, QTableWidgetItem(str(name_obr)))
                 list_class.append(name_obr)
             data_lim.append(list_class)     # добавляем в список результатов итоговый список категорий
             ui.tableWidget.setItem(k, 0, QTableWidgetItem(str(list_class[0])))      # добавляем глубину в виджет
-            ui.tableWidget.setItem(k, (2 if list_tab[0] != 'data_las' else 1), QTableWidgetItem(
-                str(list_class[-2 if list_tab[0] != 'data_las' else -1])))  # добавляем итоговую категорию в виджет
-            ui.tableWidget.item(k, (2 if list_tab[0] != 'data_las' else 1)).setBackground(
-                QtGui.QColor(color_list[list_name_cat.index(list_class[-2 if list_tab[0] != 'data_las' else -1])]))     # цвет ячейки по категории
-            list_cat = list_class[1:-2] if list_tab[0] != 'data_las' else list_class[1:-1]  # список резульирующих категорий по параметрам
+            ui.tableWidget.setItem(k, (2 if list_tab[0] != 'data_las' and not ui.checkBox_class_use_ml.isChecked() else 1), QTableWidgetItem(
+                str(list_class[-2 if list_tab[0] != 'data_las' and not ui.checkBox_class_use_ml.isChecked() else -1])))  # добавляем итоговую категорию в виджет
+            ui.tableWidget.item(k, (2 if list_tab[0] != 'data_las' and not ui.checkBox_class_use_ml.isChecked() else 1)).setBackground(
+                QtGui.QColor(color_list[list_name_cat.index(list_class[-2 if list_tab[0] != 'data_las' and not ui.checkBox_class_use_ml.isChecked() else -1])]))     # цвет ячейки по категории
+            list_cat = list_class[1:-2] if list_tab[0] != 'data_las' and not ui.checkBox_class_use_ml.isChecked() else list_class[1:-1]  # список резульирующих категорий по параметрам
             for m, j in enumerate(list_cat):
                 if ui.checkBox_pdf_class.isChecked():
                     j = round(j, 2)
-                ui.tableWidget.setItem(k, m + (3 if list_tab[0] != 'data_las' else 2), QTableWidgetItem(str(j)))    # категории по каждому параметру в виджет
-                ui.tableWidget.item(k, m + (3 if list_tab[0] != 'data_las' else 2)).setBackground(QtGui.QColor(color_list[int(j)]))  # цвет ячейки по категории
+                ui.tableWidget.setItem(k, m + (3 if list_tab[0] != 'data_las' and not ui.checkBox_class_use_ml.isChecked() else 2), QTableWidgetItem(str(j)))    # категории по каждому параметру в виджет
+                ui.tableWidget.item(k, m + (3 if list_tab[0] != 'data_las' and not ui.checkBox_class_use_ml.isChecked() else 2)).setBackground(QtGui.QColor(color_list[int(j)]))  # цвет ячейки по категории
             k += 1
         d += 0.1
         n += 1
@@ -242,7 +242,7 @@ def calc_class_lim():
 
     pd_data = pd.DataFrame(data_lim, columns=['depth'] + list_param + ['category'] + (
         ['name'] if list_tab[0] != 'data_las' else []))
-    if list_tab[0] != 'data_las':
+    if list_tab[0] != 'data_las' and not ui.checkBox_class_use_ml.isChecked():
         pd_data = pd_data[['depth', 'name'] + list_param + ['category']]
     ui.graphicsView.clear()
     for n, i in enumerate(list_name_cat):
