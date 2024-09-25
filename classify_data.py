@@ -194,7 +194,7 @@ def calc_class_lim():
     ui.progressBar.setMaximum(int((stop - start) / 0.1))
     clear_table(ui.tableWidget)
     ui.tableWidget.setColumnCount(len(list_param) + (3 if list_tab[0] != 'data_las' else 2))    # количество колонок сназваниями образцов или без них
-    ui.tableWidget.setHorizontalHeaderLabels((['depth', 'name', 'category'] if list_tab[0] != 'data_las' else
+    ui.tableWidget.setHorizontalHeaderLabels((['depth', 'name', 'category'] if list_tab[0] != 'data_las' and not ui.checkBox_class_use_ml.isChecked() else
                                              ['depth', 'category']) + list_param)   # названия колонок
     ui.label_info.setText(f'Процесс расчёта классификации по пределам. {ui.comboBox_area.currentText()} скв.{ui.comboBox_well.currentText()}')
     ui.label_info.setStyleSheet('color: blue')
