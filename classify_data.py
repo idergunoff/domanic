@@ -241,7 +241,7 @@ def calc_class_lim():
     ui.label_info.setStyleSheet('color: green')
 
     pd_data = pd.DataFrame(data_lim, columns=['depth'] + list_param + ['category'] + (
-        ['name'] if list_tab[0] != 'data_las' else []))
+        ['name'] if list_tab[0] != 'data_las' and not ui.checkBox_class_use_ml.isChecked() else []))
     if list_tab[0] != 'data_las' and not ui.checkBox_class_use_ml.isChecked():
         pd_data = pd_data[['depth', 'name'] + list_param + ['category']]
     ui.graphicsView.clear()
