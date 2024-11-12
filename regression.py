@@ -668,6 +668,7 @@ def show_regression_form(data_train, list_param):
         train_time = datetime.datetime.now() - start_time
         set_info(f'Модель {model}:\n точность: {accuracy}, r2: {r2}, '
                  f' Mean Squared Error:\n {mse}, \n время обучения: {train_time}', 'blue')
+        print('Модель', model, 'точность:', accuracy, 'r2:', r2, 'Mean Squared Error:', mse, 'время обучения:', train_time)
         y_remain = [round(y_test[i] - y_pred[i], 5) for i in range(len(y_pred))]
 
         data_graph = pd.DataFrame({
