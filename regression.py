@@ -1,3 +1,5 @@
+from sklearn.metrics import r2_score
+
 from calculated_data import update_list_calculated_data
 from functions import *
 
@@ -660,10 +662,11 @@ def show_regression_form(data_train, list_param):
         y_pred = pipe.predict(x_test)
 
         accuracy = round(pipe.score(x_test, y_test), 5)
+        r2 = round(r2_score(y_test, y_pred), 5)
         mse = round(mean_squared_error(y_test, y_pred), 5)
 
         train_time = datetime.datetime.now() - start_time
-        set_info(f'Модель {model}:\n точность: {accuracy} '
+        set_info(f'Модель {model}:\n точность: {accuracy}, r2: {r2}, '
                  f' Mean Squared Error:\n {mse}, \n время обучения: {train_time}', 'blue')
         y_remain = [round(y_test[i] - y_pred[i], 5) for i in range(len(y_pred))]
 

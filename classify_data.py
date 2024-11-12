@@ -543,8 +543,71 @@ def calc_lda():
             pass
 
 
+def draw_interp_resourse():
+    try:
+        if ui.checkBox_interp_resourse.isChecked():
+            w_id = get_well_id()
+            list_calc_int = session.query(IntervalFromCat.int_from, IntervalFromCat.int_to).all()
+            min_depth = np.min([x[0] for x in list_calc_int])
+            max_depth = np.max([x[1] for x in list_calc_int])
+            dict_s1 = {x.depth: x.s1 for x in session.query(DataPirolizKern.depth, DataPirolizKern.s1).filter(
+                DataPirolizKern.well_id == w_id,
+                DataPirolizKern.depth >= min_depth,
+                DataPirolizKern.depth <= max_depth
+            ).all() if x.s1}
+            dict_s2 = {x.depth: x.s2 for x in session.query(DataPirolizKern.depth, DataPirolizKern.s2).filter(
+                DataPirolizKern.well_id == w_id,
+                DataPirolizKern.depth >= min_depth,
+                DataPirolizKern.depth <= max_depth
+            ).all() if x.s2}
+            curve_s1 = interpolate_dict_for_resource(min_depth, max_depth, dict_s1)
+            curve_s2 = interpolate_dict_for_resource(min_depth, max_depth, dict_s2)
+            X_s1_int = [val for key, val in curve_s1.items()]
+            Y_s1_int = [key for key, val in curve_s1.items()]
+            X_s2_int = [val for key, val in curve_s2.items()]
+            Y_s2_int = [key for key, val in curve_s2.items()]
+
+            X_s1 = sum(list(map(list, session.query(DataPirolizKern.s1).filter(DataPirolizKern.well_id == w_id,
+                                          DataPirolizKern.s1 != None).order_by(DataPirolizKern.depth).all())), [])
+            Y_s1 = sum(list(map(list, session.query(DataPirolizKern.depth).filter(DataPirolizKern.well_id == w_id,
+                                          DataPirolizKern.s1 != None).order_by(DataPirolizKern.depth).all())), [])
+            X_s2 = sum(list(map(list, session.query(DataPirolizKern.s2).filter(DataPirolizKern.well_id == w_id,
+                                                                               DataPirolizKern.s2 != None).order_by(
+                DataPirolizKern.depth).all())), [])
+            Y_s2 = sum(list(map(list, session.query(DataPirolizKern.depth).filter(DataPirolizKern.well_id == w_id,
+                                                                                  DataPirolizKern.s2 != None).order_by(
+                DataPirolizKern.depth).all())), [])
+
+            ui.graphicsView.clear()
+            color_s1, color_s2 = 'blue', 'red'
+            dash = choice_dash()
+            width = choice_width()
+            curve_graph_s1 = pg.PlotCurveItem(x=X_s1_int, y=Y_s1_int, pen=pg.mkPen(color=color_s1, width=width, dash=dash))
+            curve_graph_s2 = pg.PlotCurveItem(x=X_s2_int, y=Y_s2_int, pen=pg.mkPen(color=color_s2, width=width, dash=dash))
+
+            curve_bar_s1 = pg.BarGraphItem(x0=0, y=Y_s1, height=0.1, width=X_s1, brush=color_s1, pen=pg.mkPen(color=color_s1, width=0.4))
+            curve_bar_s2 = pg.BarGraphItem(x0=0, y=Y_s2, height=0.1, width=X_s2, brush=color_s2, pen=pg.mkPen(color=color_s2, width=0.4))
+
+            try:
+                ui.graphicsView.addItem(curve_graph_s1)
+                curve_graph_s1.getViewBox().invertY(True)
+                ui.graphicsView.addItem(curve_graph_s2)
+                curve_graph_s2.getViewBox().invertY(True)
+                ui.graphicsView.addItem(curve_bar_s1)
+                curve_bar_s1.getViewBox().invertY(True)
+                ui.graphicsView.addItem(curve_bar_s2)
+                curve_bar_s2.getViewBox().invertY(True)
+            except TypeError:
+                ui.label_info.setText(f'Внимание! Ошибка. Образцы не привязаны к глубине.')
+                ui.label_info.setStyleSheet('color: red')
+    except Exception as e:
+        ui.label_info.setText(f'Внимание! Ошибка. {e}')
+        ui.label_info.setStyleSheet('color: red')
+
+
 def calc_resource():
     try:
+
         # d, n = get_n_cat_column()
         # start, stop = check_start_stop()
         # list_cat_for_calc = []
@@ -570,7 +633,23 @@ def calc_resource():
         # if len(list_int) > 0:
         #     list_calc_int.append([list_int[0], list_int[-1]])
         start, stop = check_start_stop()
+        w_id = get_well_id()
         list_calc_int = session.query(IntervalFromCat.int_from, IntervalFromCat.int_to).all()
+        if ui.checkBox_interp_resourse.isChecked():
+            min_depth = np.min([x[0] for x in list_calc_int])
+            max_depth = np.max([x[1] for x in list_calc_int])
+            dict_s1 = {x.depth: x.s1 for x in session.query(DataPirolizKern.depth, DataPirolizKern.s1).filter(
+                DataPirolizKern.well_id == w_id,
+                DataPirolizKern.depth >= min_depth,
+                DataPirolizKern.depth <= max_depth
+            ).all() if x.s1}
+            dict_s2 = {x.depth: x.s2 for x in session.query(DataPirolizKern.depth, DataPirolizKern.s2).filter(
+                DataPirolizKern.well_id == w_id,
+                DataPirolizKern.depth >= min_depth,
+                DataPirolizKern.depth <= max_depth
+            ).all() if x.s2}
+            curve_s1 = interpolate_dict_for_resource(min_depth, max_depth, dict_s1)
+            curve_s2 = interpolate_dict_for_resource(min_depth, max_depth, dict_s2)
         list_Qhs1, list_Qhs2, list_Ro, list_Ro_param, list_h, list_s1, list_s2 = [], [], [], [], [], [], []
         list_col = ['h', 'int_ot', 'int_do', 'Qhs1', 'Qhs2', 's1', 's2', 'Ro', 'Ro_param']
 
@@ -590,7 +669,6 @@ def calc_resource():
                 h0 = i[0] if i[0] > start else start
                 h1 = i[1] if i[1] < stop else stop
 
-                w_id = get_well_id()
                 h = h1 - h0
                 s1 = np.mean(del_none_from_list(sum(list(map(list, session.query(DataPirolizKern.s1).filter(
                     DataPirolizKern.well_id == w_id, DataPirolizKern.depth >= h0, DataPirolizKern.depth <= h1).all())), [])))
@@ -623,13 +701,20 @@ def calc_resource():
                     mes = ''
                     set_info(mes, 'blue')
                 if np.isnan(s1) or np.isnan(s2):
-                    s1 = list_s1[-1]
-                    s2 = list_s2[-1]
+                    if ui.checkBox_interp_resourse.isChecked():
+                        s1 = np.mean([val for key, val in curve_s1.items() if key >= h0 and key <= h1])
+                        s2 = np.mean([val for key, val in curve_s2.items() if key >= h0 and key <= h1])
+                    else:
+                        s1 = list_s1[-1]
+                        s2 = list_s2[-1]
                     mes = f'{round(h, 2)} м. {h0} - {h1}'
                     set_info(mes, 'red')
                     mes = 'S1 и S2 отсутствуют.'
                     set_info(mes, 'red')
-                    mes = 'Значения для расчетов взяты из предыдущего интервала.'
+                    if ui.checkBox_interp_resourse.isChecked():
+                        mes = 'Значения для расчетов - интерполяция.'
+                    else:
+                        mes = f'Значения для расчетов взяты из предыдущего интервала.'
                     set_info(mes, 'red')
                     mes = ''
                     set_info(mes, 'blue')

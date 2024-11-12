@@ -1100,3 +1100,34 @@ def update_listwidget_trying():
             item.setBackground(QtGui.QColor('#ffe9a8'))
         ui.listWidget_trying.addItem(item)
         n += 1
+
+
+def interpolate_dict_for_resource(min_depth, max_depth, known_values):
+    result = {}
+    depths = sorted(known_values.keys())
+    min_known = min(depths)
+    max_known = max(depths)
+
+    for depth in range(int(min_depth * 10), int(max_depth * 10) + 1, 1):
+        depth = depth / 10  # Преобразуем обратно в метры
+
+        if depth < min_known:
+            # Экстраполяция ниже известных данных
+            slope = (known_values[depths[1]] - known_values[depths[0]]) / (depths[1] - depths[0])
+            value = known_values[min_known] + slope * (depth - min_known)
+        elif depth > max_known:
+            # Экстраполяция выше известных данных
+            slope = (known_values[depths[-1]] - known_values[depths[-2]]) / (depths[-1] - depths[-2])
+            value = known_values[max_known] + slope * (depth - max_known)
+        elif depth in known_values:
+            value = known_values[depth]
+        else:
+            # Интерполяция внутри известного диапазона
+            lower = max([d for d in depths if d <= depth])
+            upper = min([d for d in depths if d >= depth])
+            fraction = (depth - lower) / (upper - lower)
+            value = known_values[lower] + fraction * (known_values[upper] - known_values[lower])
+
+        result[depth] = round(value, 2)
+
+    return result

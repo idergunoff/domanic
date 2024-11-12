@@ -2171,7 +2171,7 @@ selection-color: rgb(85, 0, 0);</string>
                            </item>
                            <item row="1" column="0">
                             <layout class="QGridLayout" name="gridLayout_73">
-                             <item row="0" column="2">
+                             <item row="0" column="3">
                               <widget class="QCheckBox" name="checkBox_save_table_resource">
                                <property name="font">
                                 <font>
@@ -2187,6 +2187,24 @@ selection-color: rgb(85, 0, 0);</string>
                                </property>
                                <property name="text">
                                 <string>SAVE</string>
+                               </property>
+                              </widget>
+                             </item>
+                             <item row="0" column="1">
+                              <widget class="QPushButton" name="pushButton_clear_resourse">
+                               <property name="font">
+                                <font>
+                                 <pointsize>10</pointsize>
+                                </font>
+                               </property>
+                               <property name="toolTip">
+                                <string>Очистить</string>
+                               </property>
+                               <property name="styleSheet">
+                                <string notr="true">background-color: rgb(255, 185, 185);</string>
+                               </property>
+                               <property name="text">
+                                <string>CLEAR</string>
                                </property>
                               </widget>
                              </item>
@@ -2208,21 +2226,13 @@ selection-color: rgb(85, 0, 0);</string>
                                </property>
                               </widget>
                              </item>
-                             <item row="0" column="1">
-                              <widget class="QPushButton" name="pushButton_clear_resourse">
-                               <property name="font">
-                                <font>
-                                 <pointsize>10</pointsize>
-                                </font>
-                               </property>
-                               <property name="toolTip">
-                                <string>Очистить</string>
-                               </property>
+                             <item row="0" column="2">
+                              <widget class="QCheckBox" name="checkBox_interp_resourse">
                                <property name="styleSheet">
-                                <string notr="true">background-color: rgb(255, 185, 185);</string>
+                                <string notr="true">background-color: rgb(240, 206, 252);</string>
                                </property>
                                <property name="text">
-                                <string>CLEAR</string>
+                                <string>INTERP.</string>
                                </property>
                               </widget>
                              </item>
@@ -4775,7 +4785,7 @@ selection-color: rgb(85, 0, 0);</string>
                     <rect>
                      <x>0</x>
                      <y>0</y>
-                     <width>88</width>
+                     <width>98</width>
                      <height>88</height>
                     </rect>
                    </property>
