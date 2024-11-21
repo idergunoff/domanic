@@ -408,16 +408,20 @@ def del_param():
         param = widget.currentItem().text()
     except AttributeError:
         return
-    d = start
-    n = 0
-    ui.progressBar.setMaximum(int((stop - start) / 0.1))
-    while d <= stop:
-        d = round(d, 2)
-        session.query(table).filter(table.well_id == w_id, table.depth >= d, table.depth < d + 0.1).update(
-            {param: None}, synchronize_session="fetch")
-        d += 0.1
-        n += 1
-        ui.progressBar.setValue(n)
+
+    session.query(table).filter(table.well_id == w_id, table.depth >= start, table.depth <= stop).update(
+        {param: None}, synchronize_session="fetch")
+
+    # d = start
+    # n = 0
+    # ui.progressBar.setMaximum(int((stop - start) / 0.1))
+    # while d <= stop:
+    #     d = round(d, 2)
+    #     session.query(table).filter(table.well_id == w_id, table.depth >= d, table.depth < d + 0.1).update(
+    #         {param: None}, synchronize_session="fetch")
+    #     d += 0.1
+    #     n += 1
+    #     ui.progressBar.setValue(n)
     session.commit()
     well_interval()
 
